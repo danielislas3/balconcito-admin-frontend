@@ -110,6 +110,19 @@ export const usePayrollApi = () => {
   // ===== ENDPOINTS DE SEMANAS =====
 
   /**
+   * Obtiene todas las semanas de un empleado
+   * @param employeeId - ID del empleado
+   * @returns Lista de semanas del empleado
+   */
+  const fetchWeeks = async (employeeId: string): Promise<PayrollWeek[]> => {
+    const response = await api.get<{ weeks: PayrollWeek[] }>(
+      `/payroll_employees/${employeeId}/weeks`,
+      { context: 'fetchWeeks' }
+    )
+    return response.weeks
+  }
+
+  /**
    * Crea una nueva semana laboral para un empleado
    * @param employeeId - ID del empleado
    * @param data - Datos de la semana (fecha de inicio, propinas opcionales)
@@ -189,6 +202,7 @@ export const usePayrollApi = () => {
     deleteEmployee,
 
     // Semanas
+    fetchWeeks,
     createWeek,
     updateWeekSchedule,
     updateWeek,
