@@ -303,14 +303,14 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
         </div>
 
         <div
-          class="flex items-center gap-2 p-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
+          class="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 sm:p-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
           <span
-            class="text-xs uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-300 whitespace-nowrap">
+            class="text-xs uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-300 whitespace-nowrap flex-shrink-0">
             Quick Fill
           </span>
-          <div class="flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
             <button v-for="preset in schedulePresets" :key="preset.label" @click="applyPresetToAll(preset)"
-              class="px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors whitespace-nowrap">
+              class="px-2.5 sm:px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-md transition-colors whitespace-nowrap touch-manipulation">
               {{ preset.label }}
             </button>
           </div>
@@ -327,26 +327,26 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
           : 'bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700'
       ]">
 
-        <!-- Header: Day + Actions -->
+        <!-- Header: Day + Actions - Mobile Optimized -->
         <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">{{ day.emoji }}</span>
-            <div>
-              <h3 class="font-semibold text-base text-gray-800 dark:text-gray-100">{{ day.name }}</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
+          <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <span class="text-xl sm:text-2xl flex-shrink-0">{{ day.emoji }}</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 truncate">{{ day.name }}</h3>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 {{ getDaySchedule(day.key).hoursWorked.toFixed(1) }}h trabajadas
               </p>
             </div>
           </div>
 
-          <!-- Actions -->
-          <div class="flex items-center gap-2">
+          <!-- Actions - Touch Optimized -->
+          <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <button @click="copyDay(day.key)"
-              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Copiar horario">
+              class="p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-600 rounded transition-colors touch-manipulation" title="Copiar horario">
               <UIcon name="i-lucide-copy" class="size-4 text-gray-600 dark:text-gray-400" />
             </button>
             <button @click="clearDay(day.key)"
-              class="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors" title="Limpiar día">
+              class="p-2 hover:bg-red-50 active:bg-red-100 dark:hover:bg-red-900/20 dark:active:bg-red-900/40 rounded transition-colors touch-manipulation" title="Limpiar día">
               <UIcon name="i-lucide-trash-2" class="size-4 text-red-600 dark:text-red-400" />
             </button>
           </div>
