@@ -18,7 +18,8 @@ const {
   currentEmployeeId,
   currentWeekId,
   currentEmployee,
-  currentEmployeeWeeks
+  currentEmployeeWeeks,
+  currentWeek
 } = storeToRefs(payrollStore)
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
@@ -38,14 +39,52 @@ const weekOptions = computed(() =>
   }))
 )
 
-const formattedShiftRate = computed(() => {
-  if (!currentEmployee.value || !currentEmployee.value.settings) return '--'
+// Computed: Default shift rate from employee settings
+const defaultShiftRate = computed(() => {
+  if (!currentEmployee.value || !currentEmployee.value.settings) return 0
   const hourlyRate = currentEmployee.value.settings.baseHourlyRate ?? 0
   const hoursPerShift = currentEmployee.value.settings.hoursPerShift ?? 8
-  const shiftRate = hourlyRate * hoursPerShift
-  const symbol = CURRENCY_SYMBOLS[currentEmployee.value.settings.currency] || '$'
-  return `${symbol}${shiftRate.toFixed(2)}`
+  return hourlyRate * hoursPerShift
 })
+
+// Local state for editing shift rate
+const editingShiftRate = ref(false)
+const localShiftRate = ref<number>(0)
+
+// Watch currentWeek to update local shift rate when week changes
+watch([currentWeek, currentEmployee], () => {
+  if (currentWeek.value && currentEmployee.value) {
+    // Use custom shift rate if set, otherwise use employee's default
+    localShiftRate.value = currentWeek.value.shiftRate ?? defaultShiftRate.value
+  } else {
+    localShiftRate.value = defaultShiftRate.value
+  }
+}, { immediate: true })
+
+const currencySymbol = computed(() => {
+  if (!currentEmployee.value?.settings?.currency) return '$'
+  return CURRENCY_SYMBOLS[currentEmployee.value.settings.currency] || '$'
+})
+
+// Handle shift rate update
+const handleShiftRateUpdate = async () => {
+  if (!currentWeek.value) return
+
+  editingShiftRate.value = false
+
+  // If the value equals the default, send null to clear custom override
+  const valueToSend = localShiftRate.value === defaultShiftRate.value
+    ? null
+    : localShiftRate.value
+
+  await payrollStore.updateShiftRate(valueToSend)
+}
+
+// Handle reset to default
+const resetToDefault = () => {
+  localShiftRate.value = defaultShiftRate.value
+  handleShiftRateUpdate()
+}
 </script>
 
 <template>
@@ -89,16 +128,37 @@ const formattedShiftRate = computed(() => {
         </div>
       </UFormField>
 
-      <!-- Tarifa por Turno (Read-only) -->
+      <!-- Tarifa por Turno (Editable por semana) -->
       <UFormField label="Tarifa por Turno">
-        <div
-          class="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex items-center gap-2 min-h-[42px]">
-          <UIcon name="i-lucide-dollar-sign" class="size-4 text-gray-500 flex-shrink-0" />
-          <span class="font-semibold text-sm sm:text-base truncate">{{ formattedShiftRate }}</span>
-          <span class="text-xs text-gray-500 flex-shrink-0" v-if="currentEmployee?.settings.hoursPerShift">
-            ({{ currentEmployee.settings.hoursPerShift }}h)
-          </span>
+        <div class="flex gap-2">
+          <div v-if="!editingShiftRate"
+            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex items-center gap-2 min-h-[42px] cursor-pointer hover:border-emerald-500 transition-colors"
+            @click="editingShiftRate = true">
+            <UIcon name="i-lucide-dollar-sign" class="size-4 text-gray-500 flex-shrink-0" />
+            <span class="font-semibold text-sm sm:text-base truncate">
+              {{ currencySymbol }}{{ localShiftRate.toFixed(2) }}
+            </span>
+            <span class="text-xs text-gray-500 flex-shrink-0" v-if="currentEmployee?.settings.hoursPerShift">
+              ({{ currentEmployee.settings.hoursPerShift }}h)
+            </span>
+            <UIcon name="i-lucide-pencil" class="size-3 text-gray-400 ml-auto flex-shrink-0" />
+          </div>
+
+          <input v-else v-model.number="localShiftRate" type="number" step="0.01" @blur="handleShiftRateUpdate"
+            @keyup.enter="handleShiftRateUpdate" @keyup.escape="editingShiftRate = false; localShiftRate = currentWeek?.shiftRate ?? defaultShiftRate"
+            class="flex-1 px-3 py-2 text-sm sm:text-base border-2 border-emerald-500 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm min-h-[42px]"
+            :disabled="!currentWeek" autofocus />
+
+          <UButton v-if="currentWeek?.shiftRate && currentWeek.shiftRate !== defaultShiftRate"
+            icon="i-lucide-rotate-ccw" color="gray" variant="ghost"
+            @click="resetToDefault" :size="smAndLarger ? 'md' : 'sm'"
+            square title="Restaurar a tarifa por defecto" />
         </div>
+        <template #hint v-if="currentWeek?.shiftRate && currentWeek.shiftRate !== defaultShiftRate">
+          <span class="text-xs text-amber-600 dark:text-amber-400">
+            Tarifa personalizada (default: {{ currencySymbol }}{{ defaultShiftRate.toFixed(2) }})
+          </span>
+        </template>
       </UFormField>
 
       <!-- Moneda (Read-only) -->
