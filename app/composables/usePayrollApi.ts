@@ -161,7 +161,7 @@ export const usePayrollApi = () => {
   }
 
   /**
-   * Actualiza datos generales de una semana (propinas, etc.)
+   * Actualiza datos generales de una semana (propinas, tarifa por turno, etc.)
    * @param employeeId - ID del empleado
    * @param weekId - ID de la semana
    * @param data - Datos a actualizar
@@ -170,7 +170,7 @@ export const usePayrollApi = () => {
   const updateWeek = async (
     employeeId: string,
     weekId: string,
-    data: { weekly_tips?: number }
+    data: { weekly_tips?: number; shift_rate?: number }
   ): Promise<PayrollWeek> => {
     const response = await api.patch<{ week: PayrollWeek }>(
       `/payroll_employees/${employeeId}/weeks/${weekId}`,

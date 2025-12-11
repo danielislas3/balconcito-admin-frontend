@@ -337,6 +337,43 @@ export const usePayrollStore = defineStore('payroll', () => {
   }
 
   /**
+   * Actualiza la tarifa por turno de una semana específica
+   */
+  async function updateShiftRate(shiftRate: number | null): Promise<{ success: boolean; error?: string }> {
+    if (!currentEmployeeId.value || !currentWeekId.value) {
+      return { success: false, error: 'No hay empleado o semana seleccionada' }
+    }
+
+    loading.value = true
+    error.value = undefined
+
+    try {
+      const api = usePayrollApi()
+      const updatedWeek = await api.updateWeek(
+        currentEmployeeId.value,
+        currentWeekId.value,
+        { shift_rate: shiftRate ?? undefined }
+      )
+
+      // Actualizar estado local
+      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
+      if (employee) {
+        const weekIndex = employee.weeks.findIndex(w => w.id === currentWeekId.value)
+        if (weekIndex !== -1) {
+          employee.weeks[weekIndex] = updatedWeek
+        }
+      }
+
+      return { success: true }
+    } catch (err: any) {
+      error.value = err?.message || 'Error al actualizar tarifa por turno'
+      return { success: false, error: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
    * Elimina la semana actual
    */
   async function deleteCurrentWeek(): Promise<{ success: boolean; error?: string }> {
@@ -395,6 +432,7 @@ export const usePayrollStore = defineStore('payroll', () => {
     createWeek,
     updateDaySchedule,
     updateWeeklyTips,
+    updateShiftRate,
     deleteCurrentWeek
   }
 })

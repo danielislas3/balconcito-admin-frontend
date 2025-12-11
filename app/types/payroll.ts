@@ -27,6 +27,7 @@ export interface PayrollWeek {
   id: string  // Format: YYYY-WXX
   startDate: string
   weeklyTips: number
+  shiftRate?: number   
   schedule: WeekSchedule
 }
 
