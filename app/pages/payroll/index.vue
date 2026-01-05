@@ -32,7 +32,47 @@ const showAddEmployeeModal = ref(false)
 const newEmployeeName = ref('')
 const newEmployeeRate = ref(450)
 const newEmployeeCurrency = ref<'MXN' | 'USD' | 'EUR'>('MXN')
+const rateType = ref<'hourly' | 'daily' | 'weekly'>('hourly')
+const hoursPerShift = ref(8)  // Horas por turno (día)
+const daysPerWeek = ref(6)    // Días laborales por semana
 const employeeNameError = ref('')
+
+// Calcular equivalencias de tarifas
+const rateEquivalences = computed(() => {
+  const rate = newEmployeeRate.value || 0
+
+  switch (rateType.value) {
+    case 'hourly':
+      return {
+        hourly: rate,
+        daily: rate * hoursPerShift.value,
+        weekly: rate * hoursPerShift.value * daysPerWeek.value
+      }
+    case 'daily':
+      return {
+        hourly: rate / hoursPerShift.value,
+        daily: rate,
+        weekly: rate * daysPerWeek.value
+      }
+    case 'weekly':
+      return {
+        hourly: rate / (hoursPerShift.value * daysPerWeek.value),
+        daily: rate / daysPerWeek.value,
+        weekly: rate
+      }
+    default:
+      return { hourly: 0, daily: 0, weekly: 0 }
+  }
+})
+
+const rateLabel = computed(() => {
+  switch (rateType.value) {
+    case 'hourly': return 'Tarifa por Hora'
+    case 'daily': return 'Tarifa por Turno (Día)'
+    case 'weekly': return 'Tarifa por Semana'
+    default: return 'Tarifa'
+  }
+})
 
 // Refs para animaciones
 const saveIndicatorVisible = ref(false)
@@ -48,6 +88,9 @@ const openAddEmployeeModal = () => {
   newEmployeeName.value = ''
   newEmployeeRate.value = 450
   newEmployeeCurrency.value = 'MXN'
+  rateType.value = 'hourly'
+  hoursPerShift.value = 8
+  daysPerWeek.value = 6
   employeeNameError.value = ''
   showAddEmployeeModal.value = true
 }
@@ -57,13 +100,17 @@ const closeAddEmployeeModal = () => {
   newEmployeeName.value = ''
   newEmployeeRate.value = 450
   newEmployeeCurrency.value = 'MXN'
+  rateType.value = 'hourly'
   employeeNameError.value = ''
 }
 
 const handleAddEmployee = async () => {
+  // Convertir siempre a tarifa por hora para el backend
+  const hourlyRate = rateEquivalences.value.hourly
+
   const result = await payrollStore.createEmployee(
     newEmployeeName.value,
-    newEmployeeRate.value,
+    hourlyRate,
     newEmployeeCurrency.value
   )
 
@@ -288,7 +335,7 @@ const tabs = computed(() => [
 
       <!-- Modal Agregar Empleado -->
       <UModal v-model:open="showAddEmployeeModal" title="Agregar Nuevo Empleado"
-        description="Ingresa los datos del nuevo empleado" :ui="{ content: 'w-full max-w-md' }">
+        description="Ingresa los datos del nuevo empleado" :ui="{ content: 'w-full max-w-lg' }">
         <template #body>
           <div class="space-y-4">
             <UFormField label="Nombre del Empleado" required :error="employeeNameError">
@@ -296,17 +343,55 @@ const tabs = computed(() => [
                 autofocus />
             </UFormField>
 
-            <UFormField label="Tarifa por Hora" required>
-              <UInput v-model.number="newEmployeeRate" type="number" placeholder="450" />
+            <div class="grid grid-cols-2 gap-3">
+              <UFormField label="Moneda" required>
+                <USelect v-model="newEmployeeCurrency" :options="[
+                  { value: 'MXN', label: 'MXN' },
+                  { value: 'USD', label: 'USD' },
+                  { value: 'EUR', label: 'EUR' }
+                ]" option-attribute="label" value-attribute="value" />
+              </UFormField>
+
+              <UFormField label="Tipo de Tarifa" required>
+                <USelect v-model="rateType" :options="[
+                  { value: 'hourly', label: 'Por Hora' },
+                  { value: 'daily', label: 'Por Día' },
+                  { value: 'weekly', label: 'Por Semana' }
+                ]" option-attribute="label" value-attribute="value" />
+              </UFormField>
+            </div>
+
+            <UFormField :label="rateLabel" required>
+              <UInput v-model.number="newEmployeeRate" type="number" step="0.01" placeholder="450" />
             </UFormField>
 
-            <UFormField label="Moneda" required>
-              <USelect v-model="newEmployeeCurrency" :options="[
-                { value: 'MXN', label: 'Pesos Mexicanos (MXN)' },
-                { value: 'USD', label: 'Dólares (USD)' },
-                { value: 'EUR', label: 'Euros (EUR)' }
-              ]" option-attribute="label" value-attribute="value" />
-            </UFormField>
+            <!-- Equivalencias calculadas -->
+            <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wider">Equivalencias Calculadas</div>
+              <div class="grid grid-cols-3 gap-3 text-sm">
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Por Hora</div>
+                  <div class="font-bold text-emerald-600 dark:text-emerald-400">
+                    {{ rateEquivalences.hourly.toFixed(2) }}
+                  </div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Por Día</div>
+                  <div class="font-bold text-blue-600 dark:text-blue-400">
+                    {{ rateEquivalences.daily.toFixed(2) }}
+                  </div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Por Semana</div>
+                  <div class="font-bold text-violet-600 dark:text-violet-400">
+                    {{ rateEquivalences.weekly.toFixed(2) }}
+                  </div>
+                </div>
+              </div>
+              <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
+                Basado en {{ hoursPerShift }}h/día × {{ daysPerWeek }} días/semana
+              </div>
+            </div>
           </div>
         </template>
 
