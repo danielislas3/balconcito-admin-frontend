@@ -58,6 +58,7 @@ const debouncedSave = async (dayKey: string, updates: Partial<DaySchedule>, dela
       exitHour: finalUpdates.exitHour || '',
       exitMinute: finalUpdates.exitMinute || '',
       isWorking: finalUpdates.isWorking ?? true,
+      forceOvertime: finalUpdates.forceOvertime ?? false,
       hoursWorked: 0,
       regularHours: 0,
       overtimeHours: 0,
@@ -127,6 +128,18 @@ const setExitTime = (dayKey: string, value: Time | null) => {
 
   // Guardar con debouncing
   debouncedSave(dayKey, { exitHour, exitMinute })
+}
+
+// Función para obtener el estado de forceOvertime de un día
+const getForceOvertime = (dayKey: string): boolean => {
+  const localSchedule = localSchedules.value[dayKey]
+  const schedule = props.week.schedule[dayKey as keyof WeekSchedule]
+  return localSchedule?.forceOvertime ?? schedule.forceOvertime ?? false
+}
+
+// Función para actualizar forceOvertime con debouncing
+const setForceOvertime = (dayKey: string, value: boolean) => {
+  debouncedSave(dayKey, { forceOvertime: value })
 }
 
 // Presets de horarios comunes
@@ -355,7 +368,8 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
       overtimeHours: 0,
       extraHours: 0,
       dailyPay: 0,
-      isWorking: false
+      isWorking: false,
+      forceOvertime: false
     }
   }
   return schedule
@@ -505,6 +519,42 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
             <UInputTime :model-value="getExitTime(day.key)" @update:model-value="(value) => setExitTime(day.key, value)"
               icon="i-lucide-clock" size="sm" />
           </div>
+        </div>
+
+        <!-- Force Overtime Checkbox - Solo para Lunes -->
+        <div v-if="day.key === 'monday'" class="mt-2 mb-2">
+          <label :class="[
+            'flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all',
+            getForceOvertime(day.key)
+              ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700'
+              : 'bg-gray-50 dark:bg-gray-900/30 border-gray-200 dark:border-gray-700 hover:border-amber-200 dark:hover:border-amber-600'
+          ]">
+            <input
+              type="checkbox"
+              :checked="getForceOvertime(day.key)"
+              @change="(e) => setForceOvertime(day.key, (e.target as HTMLInputElement).checked)"
+              class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500 cursor-pointer"
+            />
+            <div class="flex items-center gap-1.5 flex-1">
+              <UIcon name="i-lucide-zap" :class="[
+                'size-4',
+                getForceOvertime(day.key) ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-gray-400'
+              ]" />
+              <span :class="[
+                'text-xs font-medium',
+                getForceOvertime(day.key) ? 'text-amber-700 dark:text-amber-300' : 'text-gray-700 dark:text-gray-300'
+              ]">
+                Marcar todas las horas como extras
+              </span>
+            </div>
+            <div v-if="getForceOvertime(day.key)"
+              class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/40 rounded text-xs font-bold text-amber-700 dark:text-amber-300">
+              ACTIVO
+            </div>
+          </label>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">
+            Útil para horas trabajadas después de medianoche del domingo
+          </p>
         </div>
 
         <!-- Results - Responsive -->

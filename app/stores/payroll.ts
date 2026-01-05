@@ -265,14 +265,15 @@ export const usePayrollStore = defineStore('payroll', () => {
     try {
       const api = usePayrollApi()
 
-      // Enviar solo datos raw al backend (entry/exit times, isWorking)
+      // Enviar solo datos raw al backend (entry/exit times, isWorking, forceOvertime)
       // El backend calculará todo lo demás
       const rawSchedule = {
         entryHour: schedule.entryHour,
         entryMinute: schedule.entryMinute,
         exitHour: schedule.exitHour,
         exitMinute: schedule.exitMinute,
-        isWorking: schedule.isWorking ?? true
+        isWorking: schedule.isWorking ?? true,
+        forceOvertime: schedule.forceOvertime ?? false
       }
 
       const updatedWeek = await api.updateWeekSchedule(
