@@ -19,6 +19,8 @@ export interface WeekTotals {
   extraHours: number
   totalBasePay: number
   totalPay: number
+  totalShifts: number  // Número de días trabajados
+  totalOvertimeHours: number  // Suma de tier 1 + tier 2
 }
 
 /**
@@ -35,6 +37,11 @@ export const calculateWeekTotals = (week: PayrollWeek): WeekTotals => {
     const dayData = week.schedule?.[day.key as keyof WeekSchedule]
     if (!dayData) return acc
 
+    // Contar turno si está trabajando o tiene horas trabajadas
+    if (dayData.isWorking && dayData.hoursWorked > 0) {
+      acc.totalShifts += 1
+    }
+
     acc.totalHours += dayData.hoursWorked || 0
     acc.regularHours += dayData.regularHours || 0
     acc.overtimeHours += dayData.overtimeHours || 0
@@ -47,13 +54,17 @@ export const calculateWeekTotals = (week: PayrollWeek): WeekTotals => {
     regularHours: 0,
     overtimeHours: 0,
     extraHours: 0,
-    totalBasePay: 0
+    totalBasePay: 0,
+    totalShifts: 0
   })
 
   const weeklyTips = week.weeklyTips || 0
   const totalPay = totals.totalBasePay + weeklyTips
 
-  return { ...totals, totalPay }
+  // Calcular total de horas extras (tier 1 + tier 2)
+  const totalOvertimeHours = totals.overtimeHours + totals.extraHours
+
+  return { ...totals, totalPay, totalOvertimeHours }
 }
 
 /**

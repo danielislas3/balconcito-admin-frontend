@@ -59,7 +59,9 @@ export const usePayrollStore = defineStore('payroll', () => {
         overtimeHours: 0,
         extraHours: 0,
         totalBasePay: 0,
-        totalPay: 0
+        totalPay: 0,
+        totalShifts: 0,
+        totalOvertimeHours: 0
       }
     }
 

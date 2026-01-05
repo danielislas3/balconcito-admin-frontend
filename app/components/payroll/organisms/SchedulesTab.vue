@@ -74,8 +74,8 @@ const formatEmployeeCurrency = (amount: number) => {
       <!-- Widgets de Resumen - Después en móvil, 40% en desktop -->
       <div class="lg:col-span-2 space-y-3 sm:space-y-4 order-2">
         <!-- Resumen Semanal -->
-        <PayrollMoleculesWeeklySummaryCards :total-hours="weekTotals.totalHours" :total-shifts="weekTotals.totalBasePay"
-          :total-extra-hours="weekTotals.extraHours" :total-pay="weekTotals.totalPay" />
+        <PayrollMoleculesWeeklySummaryCards :total-hours="weekTotals.totalHours" :total-shifts="weekTotals.totalShifts"
+          :total-extra-hours="weekTotals.totalOvertimeHours" :total-pay="weekTotals.totalPay" />
 
         <!-- Resumen Compacto para Screenshot -->
         <PayrollMoleculesWeekSummaryCompact :week="currentWeek" :employee-name="currentEmployee.name"
