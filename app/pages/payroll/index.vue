@@ -29,6 +29,7 @@ const {
 
 // Modales
 const showAddEmployeeModal = ref(false)
+const showCreateWeekModal = ref(false)
 const newEmployeeName = ref('')
 const newEmployeeRate = ref(450)
 const newEmployeeCurrency = ref<'MXN' | 'USD' | 'EUR'>('MXN')
@@ -153,29 +154,12 @@ const handleDeleteEmployee = async () => {
 }
 
 // Funciones para semanas
-const handleCreateWeek = async () => {
-  // Calcular el siguiente lunes usando dayjs
-  const dayjs = useDayjs()
-  const today = dayjs()
-  const monday = today.day() === 1 ? today : today.day(1) // Si es lunes, usar hoy, sino ir al lunes de esta semana
-  const weekKey = monday.format('YYYY-MM-DD')
+const handleCreateWeek = () => {
+  showCreateWeekModal.value = true
+}
 
-  const result = await payrollStore.createWeek(weekKey, 0)
-
-  if (result.success) {
-    toast.add({
-      title: 'Éxito',
-      description: 'Nueva semana creada',
-      color: 'success'
-    })
-    showSaveIndicator('Nueva semana creada')
-  } else {
-    toast.add({
-      title: 'Error',
-      description: result.error || 'No se pudo crear la semana',
-      color: 'error'
-    })
-  }
+const onWeekCreated = () => {
+  showSaveIndicator('Nueva semana creada')
 }
 
 // Funciones de exportación
@@ -404,6 +388,14 @@ const tabs = computed(() => [
           </div>
         </template>
       </UModal>
+
+      <!-- Modal: Crear Nueva Semana (Componente Modular) -->
+      <PayrollMoleculesCreateWeekModal
+        v-model:open="showCreateWeekModal"
+        :current-employee="currentEmployee"
+        :loading="loading"
+        @created="onWeekCreated"
+      />
     </div>
   </ClientOnly>
 </template>
