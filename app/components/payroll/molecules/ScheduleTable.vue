@@ -544,7 +544,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
                 'text-xs font-medium',
                 getForceOvertime(day.key) ? 'text-amber-700 dark:text-amber-300' : 'text-gray-700 dark:text-gray-300'
               ]">
-                Marcar todas las horas como extras
+                Marcar horas después de 1 AM como extras
               </span>
             </div>
             <div v-if="getForceOvertime(day.key)"
@@ -553,7 +553,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
             </div>
           </label>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">
-            Útil para horas trabajadas después de medianoche del domingo
+            00:00-01:00 = regular, 01:00+ = overtime (continuación del domingo)
           </p>
         </div>
 
