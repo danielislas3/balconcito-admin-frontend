@@ -18,6 +18,7 @@ const localSchedules = ref<Record<string, Partial<DaySchedule>>>({})
 const saveTimers = ref<Record<string, NodeJS.Timeout>>({})
 const savingDays = ref<Set<string>>(new Set())
 const bulkSaving = ref(false)
+const editingBreakHours = ref<Set<string>>(new Set())
 
 watch(() => props.week, (newWeek) => {
   if (newWeek) {
@@ -59,6 +60,7 @@ const debouncedSave = async (dayKey: string, updates: Partial<DaySchedule>, dela
       exitMinute: finalUpdates.exitMinute || '',
       isWorking: finalUpdates.isWorking ?? true,
       forceOvertime: finalUpdates.forceOvertime ?? false,
+      breakHours: finalUpdates.breakHours ?? undefined,
       hoursWorked: 0,
       regularHours: 0,
       overtimeHours: 0,
@@ -140,6 +142,33 @@ const getForceOvertime = (dayKey: string): boolean => {
 // Función para actualizar forceOvertime con debouncing
 const setForceOvertime = (dayKey: string, value: boolean) => {
   debouncedSave(dayKey, { forceOvertime: value })
+}
+
+// Función para obtener las horas de descanso de un día
+const getBreakHours = (dayKey: string): number | null => {
+  const localSchedule = localSchedules.value[dayKey]
+  const schedule = props.week.schedule[dayKey as keyof WeekSchedule]
+  return localSchedule?.breakHours ?? schedule.breakHours ?? null
+}
+
+// Función para actualizar breakHours con debouncing
+const setBreakHours = (dayKey: string, value: number | null) => {
+  debouncedSave(dayKey, { breakHours: value })
+}
+
+// Toggle edición de break hours
+const toggleBreakHoursEdit = (dayKey: string) => {
+  if (editingBreakHours.value.has(dayKey)) {
+    editingBreakHours.value.delete(dayKey)
+  } else {
+    editingBreakHours.value.add(dayKey)
+  }
+}
+
+// Verificar si tiene break hours personalizado (diferente a null/1)
+const hasCustomBreakHours = (dayKey: string): boolean => {
+  const breakHours = getBreakHours(dayKey)
+  return breakHours !== null && breakHours !== 1
 }
 
 // Presets de horarios comunes
@@ -369,7 +398,8 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
       extraHours: 0,
       dailyPay: 0,
       isWorking: false,
-      forceOvertime: false
+      forceOvertime: false,
+      breakHours: undefined
     }
   }
   return schedule
@@ -553,22 +583,76 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
             </div>
           </label>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-6">
-            00:00-01:00 = regular, 01:00+ = overtime (continuación del domingo)
+            00:00-01:00 = regular, 01:20+ = overtime (mínimo 20 min)
           </p>
         </div>
 
         <!-- Results - Responsive -->
         <div v-if="hasDayData(day.key)" class="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
 
-          <!-- Break Time Indicator -->
-          <div v-if="isBreakDeducted(day.key)"
-            class="flex items-center gap-1.5 px-2 py-1 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
-            <UIcon name="i-lucide-coffee" class="size-3 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-            <span class="text-xs text-blue-700 dark:text-blue-300">
-              <span class="font-semibold">1h descanso</span> ·
-              {{ calculateHoursInPlace(day.key).toFixed(1) }}h → {{ getDaySchedule(day.key).hoursWorked.toFixed(1) }}h
-              pagadas
-            </span>
+          <!-- Break Time Indicator - Clickable para editar -->
+          <div v-if="isBreakDeducted(day.key)" class="space-y-2">
+            <button
+              @click="toggleBreakHoursEdit(day.key)"
+              :class="[
+                'flex items-center gap-1.5 px-2 py-1 rounded border transition-all w-full',
+                hasCustomBreakHours(day.key) || editingBreakHours.has(day.key)
+                  ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-700'
+                  : 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700'
+              ]"
+            >
+              <UIcon name="i-lucide-coffee" :class="[
+                'size-3 flex-shrink-0',
+                hasCustomBreakHours(day.key) ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-blue-400'
+              ]" />
+              <span :class="[
+                'text-xs flex-1 text-left',
+                hasCustomBreakHours(day.key) ? 'text-amber-700 dark:text-amber-300' : 'text-blue-700 dark:text-blue-300'
+              ]">
+                <span class="font-semibold">{{ getBreakHours(day.key) || 1 }}h descanso</span>
+                <span v-if="hasCustomBreakHours(day.key)" class="ml-1 text-amber-600 dark:text-amber-400">(ajustado)</span>
+                <span v-else> · {{ calculateHoursInPlace(day.key).toFixed(1) }}h → {{ getDaySchedule(day.key).hoursWorked.toFixed(1) }}h pagadas</span>
+              </span>
+              <UIcon :name="editingBreakHours.has(day.key) ? 'i-lucide-chevron-up' : 'i-lucide-edit-3'" class="size-3 text-gray-400" />
+            </button>
+
+            <!-- Input editable - Solo visible cuando está en modo edición o tiene valor personalizado -->
+            <Transition
+              enter-active-class="transition-all duration-200"
+              enter-from-class="opacity-0 max-h-0"
+              enter-to-class="opacity-100 max-h-20"
+              leave-active-class="transition-all duration-200"
+              leave-from-class="opacity-100 max-h-20"
+              leave-to-class="opacity-0 max-h-0"
+            >
+              <div v-if="editingBreakHours.has(day.key) || hasCustomBreakHours(day.key)" class="px-2">
+                <div class="flex items-center gap-2">
+                  <UInput
+                    :model-value="getBreakHours(day.key) || 1"
+                    type="number"
+                    step="0.25"
+                    min="0"
+                    max="4"
+                    placeholder="1.0"
+                    icon="i-lucide-clock"
+                    size="sm"
+                    @input="(e) => setBreakHours(day.key, parseFloat((e.target as HTMLInputElement).value) || null)"
+                    class="max-w-[120px]"
+                  />
+                  <button
+                    v-if="hasCustomBreakHours(day.key)"
+                    @click="setBreakHours(day.key, null); editingBreakHours.delete(day.key)"
+                    class="text-xs text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                    title="Restaurar default (1h)"
+                  >
+                    <UIcon name="i-lucide-rotate-ccw" class="size-4" />
+                  </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">
+                  Ajustar si tomó más/menos de 1 hora
+                </p>
+              </div>
+            </Transition>
           </div>
 
           <div class="flex flex-wrap items-center gap-3">
