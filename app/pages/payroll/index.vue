@@ -33,11 +33,10 @@ const newEmployeeName = ref('')
 const newEmployeeRate = ref(450)
 const newEmployeeCurrency = ref<'MXN' | 'USD' | 'EUR'>('MXN')
 const rateType = ref<'hourly' | 'daily' | 'weekly'>('hourly')
-const hoursPerShift = ref(8)  // Horas por turno (día)
-const daysPerWeek = ref(6)    // Días laborales por semana
+const hoursPerShift = ref(8)
+const daysPerWeek = ref(6)
 const employeeNameError = ref('')
 
-// Calcular equivalencias de tarifas
 const rateEquivalences = computed(() => {
   const rate = newEmployeeRate.value || 0
 
@@ -367,7 +366,8 @@ const tabs = computed(() => [
 
             <!-- Equivalencias calculadas -->
             <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-              <div class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wider">Equivalencias Calculadas</div>
+              <div class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wider">
+                Equivalencias Calculadas</div>
               <div class="grid grid-cols-3 gap-3 text-sm">
                 <div class="text-center">
                   <div class="text-xs text-gray-500 dark:text-gray-400">Por Hora</div>
@@ -388,7 +388,8 @@ const tabs = computed(() => [
                   </div>
                 </div>
               </div>
-              <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
+              <div
+                class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
                 Basado en {{ hoursPerShift }}h/día × {{ daysPerWeek }} días/semana
               </div>
             </div>

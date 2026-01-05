@@ -22,6 +22,35 @@ const {
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
 
+// Estado local para propinas con debouncing
+const localTips = ref<number>(0)
+const tipsTimer = ref<NodeJS.Timeout | null>(null)
+
+// Sincronizar local tips con currentWeek
+watch(currentWeek, (newWeek) => {
+  if (newWeek) {
+    localTips.value = newWeek.weeklyTips || 0
+  }
+}, { immediate: true })
+
+// Actualizar propinas con debouncing
+const updateTips = () => {
+  if (tipsTimer.value) {
+    clearTimeout(tipsTimer.value)
+  }
+
+  tipsTimer.value = setTimeout(async () => {
+    await payrollStore.updateWeeklyTips(localTips.value)
+  }, 800)
+}
+
+// Limpiar timer al desmontar
+onBeforeUnmount(() => {
+  if (tipsTimer.value) {
+    clearTimeout(tipsTimer.value)
+  }
+})
+
 // Helper to format currency using employee's settings
 const formatEmployeeCurrency = (amount: number) => {
   const currency = currentEmployee.value?.settings.currency || 'MXN'
@@ -64,8 +93,8 @@ const formatEmployeeCurrency = (amount: number) => {
 
           <div class="space-y-2 sm:space-y-3">
             <UFormField label="Total de Propinas" class="text-sm">
-              <UInput v-model.number="currentWeek.weeklyTips" type="number" step="0.01" min="0" placeholder="0.00"
-                icon="i-lucide-dollar-sign" :size="smAndLarger ? 'md' : 'sm'" @input="payrollStore.updateWeeklyTips" />
+              <UInput v-model.number="localTips" type="number" step="0.01" min="0" placeholder="0.00"
+                icon="i-lucide-dollar-sign" :size="smAndLarger ? 'md' : 'sm'" @input="updateTips" />
             </UFormField>
             <div class="flex justify-between items-center p-2 bg-white/50 dark:bg-gray-800/50 rounded">
               <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Pago Base</span>
@@ -78,7 +107,7 @@ const formatEmployeeCurrency = (amount: number) => {
               <span class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Total Final</span>
               <span
                 class="text-lg sm:text-2xl font-bold bg-linear-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent tabular-nums">
-                {{ formatEmployeeCurrency(weekTotals.totalBasePay + (currentWeek.weeklyTips || 0)) }}
+                {{ formatEmployeeCurrency(weekTotals.totalBasePay + (localTips || 0)) }}
               </span>
             </div>
           </div>
