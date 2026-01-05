@@ -37,8 +37,9 @@ export const calculateWeekTotals = (week: PayrollWeek): WeekTotals => {
     const dayData = week.schedule?.[day.key as keyof WeekSchedule]
     if (!dayData) return acc
 
-    // Contar turno si está trabajando o tiene horas trabajadas
-    if (dayData.isWorking && dayData.hoursWorked > 0) {
+    // Contar turno completo solo si trabajó 8+ horas
+    // (Un turno "completo" es considerado 8 o más horas trabajadas)
+    if (dayData.isWorking && dayData.hoursWorked >= 8) {
       acc.totalShifts += 1
     }
 
@@ -72,9 +73,11 @@ export const calculateWeekTotals = (week: PayrollWeek): WeekTotals => {
  */
 export interface EmployeeStats {
   totalWeeks: number
+  totalShifts: number  // Total de días trabajados
   totalHours: number
   totalPay: number
   avgHoursPerWeek: number
+  avgHoursPerShift: number  // Promedio de horas por turno
 }
 
 /**
@@ -87,18 +90,22 @@ export const calculateEmployeeStats = (employee: PayrollEmployee): EmployeeStats
   const totalWeeks = employee.weeks.length
   let totalHours = 0
   let totalPay = 0
+  let totalShifts = 0  // Turnos completos (8+ horas)
 
   employee.weeks.forEach(week => {
     const weekTotals = calculateWeekTotals(week)
     totalHours += weekTotals.totalHours
     totalPay += weekTotals.totalPay
+    totalShifts += weekTotals.totalShifts  // Ya cuenta solo turnos de 8+ horas
   })
 
   return {
     totalWeeks,
+    totalShifts,  // Total de turnos completos (8+ horas)
     totalHours,
     totalPay,
-    avgHoursPerWeek: totalWeeks > 0 ? (totalHours / totalWeeks) : 0
+    avgHoursPerWeek: totalWeeks > 0 ? (totalHours / totalWeeks) : 0,
+    avgHoursPerShift: totalShifts > 0 ? (totalHours / totalShifts) : 0
   }
 }
 

@@ -85,7 +85,7 @@ const { employees } = storeToRefs(payrollStore)
               </span>
             </div>
 
-            <!-- Total Turnos -->
+            <!-- Total Turnos (Días Trabajados) -->
             <div
               class="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors">
               <div class="flex items-center gap-3">
@@ -95,7 +95,7 @@ const { employees } = storeToRefs(payrollStore)
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Turnos</span>
               </div>
               <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                {{ calculateEmployeeStats(employee).totalWeeks }}
+                {{ calculateEmployeeStats(employee).totalShifts }}
               </span>
             </div>
 

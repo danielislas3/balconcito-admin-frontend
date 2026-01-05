@@ -78,9 +78,15 @@ const rateLabel = computed(() => {
 const saveIndicatorVisible = ref(false)
 const saveMessage = ref('Guardado automáticamente')
 
+// Composable para sincronizar con la URL
+const { initRouteSync } = usePayrollRouteSync()
+
 // Cargar datos al montar el componente
 onMounted(async () => {
   await payrollStore.fetchEmployees()
+
+  // Inicializar sincronización con URL (restaura selección y observa cambios)
+  await initRouteSync()
 })
 
 // Funciones para empleados
@@ -162,7 +168,7 @@ const onWeekCreated = () => {
   showSaveIndicator('Nueva semana creada')
 }
 
-// Funciones de exportación
+// Funciones de exportación e importación
 const handleExportAll = () => {
   exportAllEmployees(employees.value)
   showSaveIndicator('Reporte general exportado')
@@ -171,6 +177,24 @@ const handleExportAll = () => {
 const handleExportEmployee = (employee: PayrollEmployee) => {
   exportEmployeeData(employee)
   showSaveIndicator(`Datos de ${employee.name} exportados`)
+}
+
+const handleImportData = () => {
+  // TODO: Implementar importación de datos
+  toast.add({
+    title: 'Funcionalidad en desarrollo',
+    description: 'La importación de datos estará disponible próximamente',
+    color: 'info'
+  })
+}
+
+const handleClearAll = () => {
+  // TODO: Implementar limpieza de datos con confirmación
+  toast.add({
+    title: 'Funcionalidad en desarrollo',
+    description: 'La limpieza de datos estará disponible próximamente',
+    color: 'info'
+  })
 }
 
 const handleViewEmployee = (employeeId: string) => {
@@ -312,7 +336,10 @@ const tabs = computed(() => [
             @export-employee="handleExportEmployee" @view-employee="handleViewEmployee" />
 
           <!-- PESTAÑA DE CONFIGURACIÓN -->
-          <PayrollOrganismsSettingsTab v-show="activeTab === 'settings'" />
+          <PayrollOrganismsSettingsTab v-show="activeTab === 'settings'"
+            @export-system="handleExportAll"
+            @import-data="handleImportData"
+            @clear-all="handleClearAll" />
         </div>
       </div>
 
@@ -328,19 +355,19 @@ const tabs = computed(() => [
 
             <div class="grid grid-cols-2 gap-3">
               <UFormField label="Moneda" required>
-                <USelect v-model="newEmployeeCurrency" :options="[
-                  { value: 'MXN', label: 'MXN' },
-                  { value: 'USD', label: 'USD' },
-                  { value: 'EUR', label: 'EUR' }
-                ]" option-attribute="label" value-attribute="value" />
+                <USelect v-model="newEmployeeCurrency" :items="[
+                  { id: 'MXN', label: 'MXN' },
+                  { id: 'USD', label: 'USD' },
+                  { id: 'EUR', label: 'EUR' }
+                ]" value-key="id" />
               </UFormField>
 
               <UFormField label="Tipo de Tarifa" required>
-                <USelect v-model="rateType" :options="[
-                  { value: 'hourly', label: 'Por Hora' },
-                  { value: 'daily', label: 'Por Día' },
-                  { value: 'weekly', label: 'Por Semana' }
-                ]" option-attribute="label" value-attribute="value" />
+                <USelect v-model="rateType" :items="[
+                  { id: 'hourly', label: 'Por Hora' },
+                  { id: 'daily', label: 'Por Día' },
+                  { id: 'weekly', label: 'Por Semana' }
+                ]" value-key="id" />
               </UFormField>
             </div>
 
