@@ -11,6 +11,8 @@ export interface DaySchedule {
   extraHours: number     // Tier 2 overtime
   dailyPay: number
   isWorking: boolean
+  forceOvertime?: boolean  // Marcar horas después de 1 AM como overtime (útil para lunes de madrugada)
+  breakHours?: number      // Horas de descanso personalizadas (si es null, usa default de 1 hora)
 }
 
 export interface WeekSchedule {
@@ -27,6 +29,7 @@ export interface PayrollWeek {
   id: string  // Format: YYYY-WXX
   startDate: string
   weeklyTips: number
+  shiftRate?: number   
   schedule: WeekSchedule
 }
 

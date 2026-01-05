@@ -59,7 +59,9 @@ export const usePayrollStore = defineStore('payroll', () => {
         overtimeHours: 0,
         extraHours: 0,
         totalBasePay: 0,
-        totalPay: 0
+        totalPay: 0,
+        totalShifts: 0,
+        totalOvertimeHours: 0
       }
     }
 
@@ -265,14 +267,16 @@ export const usePayrollStore = defineStore('payroll', () => {
     try {
       const api = usePayrollApi()
 
-      // Enviar solo datos raw al backend (entry/exit times, isWorking)
+      // Enviar solo datos raw al backend (entry/exit times, isWorking, forceOvertime, breakHours)
       // El backend calculará todo lo demás
       const rawSchedule = {
         entryHour: schedule.entryHour,
         entryMinute: schedule.entryMinute,
         exitHour: schedule.exitHour,
         exitMinute: schedule.exitMinute,
-        isWorking: schedule.isWorking ?? true
+        isWorking: schedule.isWorking ?? true,
+        forceOvertime: schedule.forceOvertime ?? false,
+        breakHours: schedule.breakHours ?? null
       }
 
       const updatedWeek = await api.updateWeekSchedule(
@@ -330,6 +334,43 @@ export const usePayrollStore = defineStore('payroll', () => {
       return { success: true }
     } catch (err: any) {
       error.value = err?.message || 'Error al actualizar propinas'
+      return { success: false, error: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Actualiza la tarifa por turno de una semana específica
+   */
+  async function updateShiftRate(shiftRate: number | null): Promise<{ success: boolean; error?: string }> {
+    if (!currentEmployeeId.value || !currentWeekId.value) {
+      return { success: false, error: 'No hay empleado o semana seleccionada' }
+    }
+
+    loading.value = true
+    error.value = undefined
+
+    try {
+      const api = usePayrollApi()
+      const updatedWeek = await api.updateWeek(
+        currentEmployeeId.value,
+        currentWeekId.value,
+        { shift_rate: shiftRate ?? undefined }
+      )
+
+      // Actualizar estado local
+      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
+      if (employee) {
+        const weekIndex = employee.weeks.findIndex(w => w.id === currentWeekId.value)
+        if (weekIndex !== -1) {
+          employee.weeks[weekIndex] = updatedWeek
+        }
+      }
+
+      return { success: true }
+    } catch (err: any) {
+      error.value = err?.message || 'Error al actualizar tarifa por turno'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -395,6 +436,7 @@ export const usePayrollStore = defineStore('payroll', () => {
     createWeek,
     updateDaySchedule,
     updateWeeklyTips,
+    updateShiftRate,
     deleteCurrentWeek
   }
 })

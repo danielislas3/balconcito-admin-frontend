@@ -110,6 +110,19 @@ export const usePayrollApi = () => {
   // ===== ENDPOINTS DE SEMANAS =====
 
   /**
+   * Obtiene todas las semanas de un empleado
+   * @param employeeId - ID del empleado
+   * @returns Lista de semanas del empleado
+   */
+  const fetchWeeks = async (employeeId: string): Promise<PayrollWeek[]> => {
+    const response = await api.get<{ weeks: PayrollWeek[] }>(
+      `/payroll_employees/${employeeId}/weeks`,
+      { context: 'fetchWeeks' }
+    )
+    return response.weeks
+  }
+
+  /**
    * Crea una nueva semana laboral para un empleado
    * @param employeeId - ID del empleado
    * @param data - Datos de la semana (fecha de inicio, propinas opcionales)
@@ -148,7 +161,7 @@ export const usePayrollApi = () => {
   }
 
   /**
-   * Actualiza datos generales de una semana (propinas, etc.)
+   * Actualiza datos generales de una semana (propinas, tarifa por turno, etc.)
    * @param employeeId - ID del empleado
    * @param weekId - ID de la semana
    * @param data - Datos a actualizar
@@ -157,7 +170,7 @@ export const usePayrollApi = () => {
   const updateWeek = async (
     employeeId: string,
     weekId: string,
-    data: { weekly_tips?: number }
+    data: { weekly_tips?: number; shift_rate?: number }
   ): Promise<PayrollWeek> => {
     const response = await api.patch<{ week: PayrollWeek }>(
       `/payroll_employees/${employeeId}/weeks/${weekId}`,
@@ -189,6 +202,7 @@ export const usePayrollApi = () => {
     deleteEmployee,
 
     // Semanas
+    fetchWeeks,
     createWeek,
     updateWeekSchedule,
     updateWeek,
