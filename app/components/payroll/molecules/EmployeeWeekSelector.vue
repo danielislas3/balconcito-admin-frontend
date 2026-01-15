@@ -88,11 +88,10 @@ const resetToDefault = () => {
 </script>
 
 <template>
-  <UCard
-    class="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-emerald-100 dark:border-emerald-900">
+  <UCard class="hover:shadow-lg transition-shadow duration-200">
     <template #header>
       <div class="flex items-center gap-2">
-        <UIcon name="i-lucide-users" class="size-5 text-success-600" />
+        <UIcon name="i-lucide-users" class="size-5 text-primary" />
         <h2 class="text-lg font-semibold">Gestión de Empleados y Semanas</h2>
       </div>
     </template>
@@ -102,13 +101,13 @@ const resetToDefault = () => {
       <UFormField label="Empleado Activo" required class="sm:col-span-2 lg:col-span-1">
         <div class="flex gap-2">
           <select v-model="currentEmployeeId" @change="payrollStore.onEmployeeChange"
-            class="flex-1 min-w-0 px-3 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm">
+            class="flex-1 min-w-0 px-3 py-2 text-sm sm:text-base border border-stone-300 dark:border-stone-700 rounded-md bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm">
             <option value="" disabled>Seleccionar empleado...</option>
             <option v-for="emp in employees" :key="emp.id" :value="emp.id">
               {{ emp.name }}
             </option>
           </select>
-          <UButton icon="i-lucide-plus" color="success" @click="emit('add-employee')" :size="smAndLarger ? 'md' : 'sm'"
+          <UButton icon="i-lucide-plus" color="primary" @click="emit('add-employee')" :size="smAndLarger ? 'md' : 'sm'"
             square />
         </div>
       </UFormField>
@@ -117,13 +116,13 @@ const resetToDefault = () => {
       <UFormField label="Semana Activa" class="sm:col-span-2 lg:col-span-1">
         <div class="flex gap-2">
           <select v-model="currentWeekId" :disabled="!currentEmployee"
-            class="flex-1 min-w-0 px-3 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+            class="flex-1 min-w-0 px-3 py-2 text-sm sm:text-base border border-stone-300 dark:border-stone-700 rounded-md bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
             <option value="" disabled>Seleccionar semana...</option>
             <option v-for="week in currentEmployeeWeeks" :key="week.id" :value="week.id">
               Semana del {{ formatWeekDisplay(week.startDate) }}
             </option>
           </select>
-          <UButton icon="i-lucide-calendar-plus" color="success" @click="emit('create-week')"
+          <UButton icon="i-lucide-calendar-plus" color="primary" @click="emit('create-week')"
             :disabled="!currentEmployee" :size="smAndLarger ? 'md' : 'sm'" square />
         </div>
       </UFormField>
@@ -132,25 +131,25 @@ const resetToDefault = () => {
       <UFormField label="Tarifa por Turno">
         <div class="flex gap-2">
           <div v-if="!editingShiftRate"
-            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex items-center gap-2 min-h-[42px] cursor-pointer hover:border-emerald-500 transition-colors"
+            class="flex-1 px-3 py-2 border border-stone-300 dark:border-stone-700 rounded-md bg-white dark:bg-stone-800 flex items-center gap-2 min-h-[42px] cursor-pointer hover:border-orange-500 transition-colors"
             @click="editingShiftRate = true">
-            <UIcon name="i-lucide-dollar-sign" class="size-4 text-gray-500 flex-shrink-0" />
+            <UIcon name="i-lucide-dollar-sign" class="size-4 text-muted flex-shrink-0" />
             <span class="font-semibold text-sm sm:text-base truncate">
               {{ currencySymbol }}{{ localShiftRate.toFixed(2) }}
             </span>
-            <span class="text-xs text-gray-500 flex-shrink-0" v-if="currentEmployee?.settings.hoursPerShift">
+            <span class="text-xs text-muted flex-shrink-0" v-if="currentEmployee?.settings.hoursPerShift">
               ({{ currentEmployee.settings.hoursPerShift }}h)
             </span>
-            <UIcon name="i-lucide-pencil" class="size-3 text-gray-400 ml-auto flex-shrink-0" />
+            <UIcon name="i-lucide-pencil" class="size-3 text-muted ml-auto flex-shrink-0" />
           </div>
 
           <input v-else v-model.number="localShiftRate" type="number" step="0.01" @blur="handleShiftRateUpdate"
             @keyup.enter="handleShiftRateUpdate" @keyup.escape="editingShiftRate = false; localShiftRate = currentWeek?.shiftRate ?? defaultShiftRate"
-            class="flex-1 px-3 py-2 text-sm sm:text-base border-2 border-emerald-500 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm min-h-[42px]"
+            class="flex-1 px-3 py-2 text-sm sm:text-base border-2 border-orange-500 rounded-md bg-white dark:bg-stone-800 focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm min-h-[42px]"
             :disabled="!currentWeek" autofocus />
 
           <UButton v-if="currentWeek?.shiftRate && currentWeek.shiftRate !== defaultShiftRate"
-            icon="i-lucide-rotate-ccw" color="gray" variant="ghost"
+            icon="i-lucide-rotate-ccw" color="neutral" variant="ghost"
             @click="resetToDefault" :size="smAndLarger ? 'md' : 'sm'"
             square title="Restaurar a tarifa por defecto" />
         </div>
@@ -164,8 +163,8 @@ const resetToDefault = () => {
       <!-- Moneda (Read-only) -->
       <UFormField label="Moneda">
         <div
-          class="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex items-center gap-2 min-h-[42px]">
-          <UIcon name="i-lucide-banknote" class="size-4 text-gray-500 flex-shrink-0" />
+          class="px-3 py-2 border border-stone-300 dark:border-stone-700 rounded-md bg-stone-50 dark:bg-stone-900 flex items-center gap-2 min-h-[42px]">
+          <UIcon name="i-lucide-banknote" class="size-4 text-muted flex-shrink-0" />
           <span class="font-semibold text-sm sm:text-base">{{ currentEmployee?.settings.currency || 'MXN' }}</span>
         </div>
       </UFormField>
@@ -176,7 +175,7 @@ const resetToDefault = () => {
         <UButton label="Eliminar Empleado" icon="i-lucide-trash-2" color="error" variant="outline"
           @click="emit('delete-employee')" :disabled="!currentEmployee || employees.length <= 1"
           :size="smAndLarger ? 'md' : 'sm'" class="w-full sm:w-auto" />
-        <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+        <div class="text-xs text-muted flex items-center gap-1">
           <UIcon name="i-lucide-info" class="size-3 flex-shrink-0" />
           <span class="leading-tight">Para editar configuración, ve a la pestaña de Configuración</span>
         </div>
