@@ -8,6 +8,12 @@ export default defineNuxtConfig({
     'dayjs-nuxt'
   ],
 
+  // Dark mode como default
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark'
+  },
+
   dayjs: {
     locales: ['es'],
     defaultLocale: 'es',
