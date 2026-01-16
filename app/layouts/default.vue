@@ -41,6 +41,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'Proveedores',
+  icon: 'i-lucide-truck',
+  to: '/suppliers',
+  onSelect: () => {
+    open.value = false
+  }
 },], [{
   label: 'Configuración',
   icon: 'i-lucide-settings',
