@@ -1,41 +1,51 @@
 <script setup lang="ts">
+/**
+ * InlineStat - Compact metric badge following Balconcito Design System
+ *
+ * Colors map to semantic business contexts:
+ * - hours: Sky blue (work hours)
+ * - primary: Orange (main actions)
+ * - overtime: Amber (1.5x overtime)
+ * - money: Violet (payments)
+ * - neutral: Stone (general info)
+ */
 export interface InlineStatProps {
   icon: string
   value: string | number
   label?: string
-  color: 'blue' | 'emerald' | 'amber' | 'violet' | 'gray'
+  color: 'hours' | 'primary' | 'overtime' | 'money' | 'neutral'
   size?: 'sm' | 'md' | 'lg'
 }
 
-const props = withDefaults(defineProps<InlineStatProps>(), {
+withDefaults(defineProps<InlineStatProps>(), {
   size: 'md'
 })
 
 const colorClasses = {
-  blue: {
-    bg: 'bg-blue-100 dark:bg-blue-900/30',
-    text: 'text-blue-700 dark:text-blue-300',
-    icon: 'text-blue-600 dark:text-blue-400'
+  hours: {
+    bg: 'bg-sky-100 dark:bg-sky-900/30',
+    text: 'text-sky-700 dark:text-sky-300',
+    icon: 'text-sky-600 dark:text-sky-400'
   },
-  emerald: {
-    bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-    text: 'text-emerald-700 dark:text-emerald-300',
-    icon: 'text-emerald-600 dark:text-emerald-400'
+  primary: {
+    bg: 'bg-orange-100 dark:bg-orange-900/30',
+    text: 'text-orange-700 dark:text-orange-300',
+    icon: 'text-orange-600 dark:text-orange-400'
   },
-  amber: {
+  overtime: {
     bg: 'bg-amber-100 dark:bg-amber-900/30',
     text: 'text-amber-700 dark:text-amber-300',
     icon: 'text-amber-600 dark:text-amber-400'
   },
-  violet: {
+  money: {
     bg: 'bg-violet-100 dark:bg-violet-900/30',
     text: 'text-violet-700 dark:text-violet-300',
     icon: 'text-violet-600 dark:text-violet-400'
   },
-  gray: {
-    bg: 'bg-gray-100 dark:bg-gray-800',
-    text: 'text-gray-700 dark:text-gray-300',
-    icon: 'text-gray-600 dark:text-gray-400'
+  neutral: {
+    bg: 'bg-stone-100 dark:bg-stone-800',
+    text: 'text-stone-700 dark:text-stone-300',
+    icon: 'text-stone-600 dark:text-stone-400'
   }
 }
 

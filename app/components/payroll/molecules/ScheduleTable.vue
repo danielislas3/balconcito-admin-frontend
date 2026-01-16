@@ -417,33 +417,33 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
 </style>
 
 <template>
-  <UCard class="bg-white dark:bg-gray-800 shadow-lg border border-emerald-100 dark:border-emerald-900">
+  <UCard class="hover:shadow-lg transition-shadow duration-200">
     <template #header>
       <div class="space-y-4">
         <!-- Título -->
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <UIcon name="i-lucide-calendar-clock" class="size-5 text-emerald-600" />
+            <UIcon name="i-lucide-calendar-clock" class="size-5 text-primary" />
             <h2 class="text-lg font-semibold">Horarios - {{ employeeName }}</h2>
             <!-- Indicador de operación masiva -->
             <Transition enter-active-class="transition-all duration-200" enter-from-class="opacity-0 scale-95"
               enter-to-class="opacity-100 scale-100" leave-active-class="transition-all duration-200"
               leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
               <div v-if="bulkSaving"
-                class="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <UIcon name="i-lucide-loader-2" class="size-4 text-blue-600 animate-spin" />
-                <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Aplicando cambios...</span>
+                class="flex items-center gap-2 px-3 py-1 bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 rounded-lg">
+                <UIcon name="i-lucide-loader-2" class="size-4 text-sky-600 animate-spin" />
+                <span class="text-sm font-medium text-sky-700 dark:text-sky-300">Aplicando cambios...</span>
               </div>
             </Transition>
             <UPopover mode="hover">
-              <UButton icon="i-lucide-info" size="xs" color="blue" variant="ghost" />
+              <UButton icon="i-lucide-info" size="xs" color="info" variant="ghost" />
               <template #panel>
                 <div class="p-3 max-w-xs">
                   <div class="flex items-start gap-2 mb-2">
-                    <UIcon name="i-lucide-coffee" class="size-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <UIcon name="i-lucide-coffee" class="size-4 text-sky-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p class="text-sm font-semibold text-blue-900 dark:text-blue-100">Política de Descanso</p>
-                      <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                      <p class="text-sm font-semibold">Política de Descanso</p>
+                      <p class="text-xs text-muted mt-1">
                         Si trabajas <strong>5 horas o más</strong>, se deduce automáticamente 1 hora de descanso
                         obligatorio. Turnos menores a 5 horas no tienen descuento.
                       </p>
@@ -453,19 +453,19 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
               </template>
             </UPopover>
           </div>
-          <p class="text-sm text-gray-500">Semana del {{ formatDate(week.startDate) }}</p>
+          <p class="text-sm text-muted">Semana del {{ formatDate(week.startDate) }}</p>
         </div>
 
         <div
-          class="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 sm:p-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
+          class="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 sm:p-2 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-200 dark:border-orange-800">
           <span
-            class="text-xs uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-300 whitespace-nowrap flex-shrink-0">
+            class="text-xs uppercase tracking-wider font-semibold text-orange-700 dark:text-orange-300 whitespace-nowrap flex-shrink-0">
             Quick Fill
           </span>
           <div class="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
             <button v-for="preset in schedulePresets" :key="preset.label" @click="applyPresetToAll(preset)"
               :disabled="bulkSaving"
-              class="px-2.5 sm:px-3 py-1.5 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-md transition-colors whitespace-nowrap touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed">
+              class="px-2.5 sm:px-3 py-1.5 text-xs font-medium bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-md transition-colors whitespace-nowrap touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed">
               {{ preset.label }}
             </button>
           </div>
@@ -478,8 +478,8 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
       <div v-for="day in WEEK_DAYS" :key="day.key" :class="[
         'day-card p-2 rounded-lg border',
         hasDayData(day.key)
-          ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'
-          : 'bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700'
+          ? 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
+          : 'bg-default border-default hover:border-orange-200 dark:hover:border-orange-700'
       ]">
 
         <!-- Header: Day + Actions - Mobile Optimized -->
@@ -488,19 +488,19 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
             <span class="text-xl sm:text-2xl flex-shrink-0">{{ day.emoji }}</span>
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2">
-                <h3 class="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 truncate">{{ day.name }}
+                <h3 class="font-semibold text-sm sm:text-base truncate">{{ day.name }}
                 </h3>
                 <!-- Indicador de guardado -->
                 <Transition enter-active-class="transition-opacity duration-200" enter-from-class="opacity-0"
                   enter-to-class="opacity-100" leave-active-class="transition-opacity duration-200"
                   leave-from-class="opacity-100" leave-to-class="opacity-0">
                   <div v-if="savingDays.has(day.key)" class="flex items-center gap-1">
-                    <UIcon name="i-lucide-loader-2" class="size-3 text-blue-600 animate-spin" />
-                    <span class="text-xs text-blue-600">Guardando...</span>
+                    <UIcon name="i-lucide-loader-2" class="size-3 text-sky-600 animate-spin" />
+                    <span class="text-xs text-sky-600">Guardando...</span>
                   </div>
                 </Transition>
               </div>
-              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+              <p class="text-xs sm:text-sm text-muted">
                 {{ getDaySchedule(day.key).hoursWorked.toFixed(1) }}h trabajadas
               </p>
             </div>
@@ -509,9 +509,9 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
           <!-- Actions - Touch Optimized -->
           <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <button @click="copyDay(day.key)"
-              class="p-2 hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-600 rounded transition-colors touch-manipulation"
+              class="p-2 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600 rounded transition-colors touch-manipulation"
               title="Copiar horario">
-              <UIcon name="i-lucide-copy" class="size-4 text-gray-600 dark:text-gray-400" />
+              <UIcon name="i-lucide-copy" class="size-4 text-muted" />
             </button>
             <button @click="clearDay(day.key)"
               class="p-2 hover:bg-red-50 active:bg-red-100 dark:hover:bg-red-900/20 dark:active:bg-red-900/40 rounded transition-colors touch-manipulation"
@@ -524,7 +524,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
         <!-- Quick Presets -->
         <div class="flex flex-wrap gap-1 mb-2">
           <button v-for="preset in schedulePresets" :key="preset.label" @click="applyPreset(day.key, preset)"
-            class="px-2 py-1 text-xs font-medium bg-white dark:bg-gray-800 hover:bg-emerald-600 hover:text-white border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded transition-all"
+            class="px-2 py-1 text-xs font-medium bg-default hover:bg-orange-600 hover:text-white border border-default rounded transition-all"
             title="Quick fill">
             {{ preset.label }}
           </button>
@@ -534,7 +534,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
           <!-- Entry Time -->
           <div>
-            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label class="block text-xs font-medium text-muted mb-1">
               Entrada
             </label>
             <UInputTime :model-value="getEntryTime(day.key)" icon="i-lucide-clock"
@@ -543,7 +543,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
 
           <!-- Exit Time -->
           <div>
-            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <label class="block text-xs font-medium text-muted mb-1">
               Salida
             </label>
             <UInputTime :model-value="getExitTime(day.key)" @update:model-value="(value) => setExitTime(day.key, value)"
@@ -588,7 +588,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
         </div>
 
         <!-- Results - Responsive -->
-        <div v-if="hasDayData(day.key)" class="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+        <div v-if="hasDayData(day.key)" class="space-y-2 pt-2 border-t border-default">
 
           <!-- Break Time Indicator - Clickable para editar -->
           <div v-if="isBreakDeducted(day.key)" class="space-y-2">
@@ -598,22 +598,22 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
                 'flex items-center gap-1.5 px-2 py-1 rounded border transition-all w-full',
                 hasCustomBreakHours(day.key) || editingBreakHours.has(day.key)
                   ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-700'
-                  : 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700'
+                  : 'bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800 hover:border-sky-300 dark:hover:border-sky-700'
               ]"
             >
               <UIcon name="i-lucide-coffee" :class="[
                 'size-3 flex-shrink-0',
-                hasCustomBreakHours(day.key) ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-blue-400'
+                hasCustomBreakHours(day.key) ? 'text-amber-600 dark:text-amber-400' : 'text-sky-600 dark:text-sky-400'
               ]" />
               <span :class="[
                 'text-xs flex-1 text-left',
-                hasCustomBreakHours(day.key) ? 'text-amber-700 dark:text-amber-300' : 'text-blue-700 dark:text-blue-300'
+                hasCustomBreakHours(day.key) ? 'text-amber-700 dark:text-amber-300' : 'text-sky-700 dark:text-sky-300'
               ]">
                 <span class="font-semibold">{{ getBreakHours(day.key) || 1 }}h descanso</span>
                 <span v-if="hasCustomBreakHours(day.key)" class="ml-1 text-amber-600 dark:text-amber-400">(ajustado)</span>
                 <span v-else> · {{ calculateHoursInPlace(day.key).toFixed(1) }}h → {{ getDaySchedule(day.key).hoursWorked.toFixed(1) }}h pagadas</span>
               </span>
-              <UIcon :name="editingBreakHours.has(day.key) ? 'i-lucide-chevron-up' : 'i-lucide-edit-3'" class="size-3 text-gray-400" />
+              <UIcon :name="editingBreakHours.has(day.key) ? 'i-lucide-chevron-up' : 'i-lucide-edit-3'" class="size-3 text-muted" />
             </button>
 
             <!-- Input editable - Solo visible cuando está en modo edición o tiene valor personalizado -->
@@ -642,13 +642,13 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
                   <button
                     v-if="hasCustomBreakHours(day.key)"
                     @click="setBreakHours(day.key, null); editingBreakHours.delete(day.key)"
-                    class="text-xs text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                    class="text-xs text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors"
                     title="Restaurar default (1h)"
                   >
                     <UIcon name="i-lucide-rotate-ccw" class="size-4" />
                   </button>
                 </div>
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-xs text-muted mt-1">
                   Ajustar si tomó más/menos de 1 hora
                 </p>
               </div>
@@ -659,25 +659,25 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
             <div
               class="px-3 py-2 bg-violet-50 dark:bg-violet-900/10 rounded-lg border border-violet-200 dark:border-violet-800">
               <div class="text-xs text-violet-600 dark:text-violet-400 font-semibold mb-0.5">Total</div>
-              <div class="text-lg font-bold text-violet-600 dark:text-violet-400">
+              <div class="text-lg font-bold text-violet-600 dark:text-violet-400 tabular-nums">
                 {{ formatCurrency(getDaySchedule(day.key).dailyPay, 'MXN') }}
               </div>
             </div>
 
             <div class="flex gap-3 text-sm">
               <div>
-                <span class="text-gray-500 dark:text-gray-400">Regular: </span>
-                <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{
+                <span class="text-muted">Regular: </span>
+                <span class="font-semibold text-orange-600 dark:text-orange-400 tabular-nums">{{
                   getDaySchedule(day.key).regularHours.toFixed(1) }}h</span>
               </div>
               <div v-if="getDaySchedule(day.key).overtimeHours > 0">
-                <span class="text-gray-500 dark:text-gray-400">Extra 1.5x: </span>
-                <span class="font-semibold text-amber-600 dark:text-amber-400">{{
+                <span class="text-muted">Extra 1.5x: </span>
+                <span class="font-semibold text-amber-600 dark:text-amber-400 tabular-nums">{{
                   getDaySchedule(day.key).overtimeHours.toFixed(1) }}h</span>
               </div>
               <div v-if="getDaySchedule(day.key).extraHours > 0">
-                <span class="text-gray-500 dark:text-gray-400">Extra 2x: </span>
-                <span class="font-semibold text-red-600 dark:text-red-400">{{
+                <span class="text-muted">Extra 2x: </span>
+                <span class="font-semibold text-red-600 dark:text-red-400 tabular-nums">{{
                   getDaySchedule(day.key).extraHours.toFixed(1)
                 }}h</span>
               </div>
@@ -695,20 +695,20 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
         <label v-for="day in WEEK_DAYS" :key="day.key" v-if="day.key !== sourceDayForCopy" :class="[
           'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all',
           selectedDays.has(day.key)
-            ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 dark:border-emerald-500'
-            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-emerald-300'
+            ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500 dark:border-orange-500'
+            : 'bg-default border-default hover:border-orange-300'
         ]">
           <input type="checkbox" :checked="selectedDays.has(day.key)" @change="toggleDaySelection(day.key)"
-            class="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" />
+            class="w-4 h-4 text-orange-600 rounded focus:ring-orange-500" />
           <span class="text-xl">{{ day.emoji }}</span>
-          <span class="font-medium text-gray-800 dark:text-gray-100">{{ day.name }}</span>
+          <span class="font-medium">{{ day.name }}</span>
         </label>
       </div>
     </template>
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <UButton label="Cancelar" color="gray" variant="ghost" @click="showCopyDialog = false" />
+        <UButton label="Cancelar" color="neutral" variant="ghost" @click="showCopyDialog = false" />
         <UButton :label="`Copiar a ${selectedDays.size} día(s)`" icon="i-lucide-copy" color="primary" @click="applyCopy"
           :disabled="selectedDays.size === 0" />
       </div>
