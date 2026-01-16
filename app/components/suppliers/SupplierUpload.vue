@@ -19,11 +19,16 @@ const handleFile = async (file: File) => {
 
   loading.value = true
   try {
-    const products = await parseExcel(file)
-    store.setProducts(products, file.name)
+    const priceList = await parseExcel(file)
+    store.addPriceList(priceList)
+
+    const supplierName = priceList.supplierType === 'apys'
+      ? `APYS - ${priceList.month} ${priceList.year}`
+      : priceList.fileName
+
     toast.add({
-      title: 'Archivo cargado',
-      description: `Se cargaron ${products.length} productos correctamente`,
+      title: 'Lista de precios cargada',
+      description: `${supplierName} - ${priceList.totalProducts} productos`,
       color: 'success'
     })
   } catch (error) {
@@ -58,7 +63,7 @@ const onFileChange = (e: Event) => {
   <div
     class="relative flex flex-col items-center justify-center p-12 transition-all border-2 border-dashed rounded-xl cursor-pointer"
     :class="[
-      dragOver ? 'border-primary-500 bg-primary-500/10' : 'border-gray-700 hover:border-gray-600 bg-gray-800/50'
+      dragOver ? 'border-primary bg-primary/10' : 'border-default hover:border-primary/50 bg-default/50'
     ]"
     @dragover.prevent="dragOver = true"
     @dragleave.prevent="dragOver = false"
@@ -66,21 +71,21 @@ const onFileChange = (e: Event) => {
     @click="fileInput?.click()"
   >
     <div v-if="loading" class="flex flex-col items-center gap-4">
-      <UIcon name="i-lucide-loader-2" class="w-12 h-12 animate-spin text-primary-500" />
-      <p class="text-lg font-medium text-gray-400">Procesando archivo...</p>
+      <UIcon name="i-lucide-loader-2" class="w-12 h-12 animate-spin text-primary" />
+      <p class="text-lg font-medium text-muted">Procesando archivo...</p>
     </div>
-    
+
     <div v-else class="flex flex-col items-center gap-4 text-center">
-      <div class="p-4 rounded-full bg-gray-800">
-        <UIcon name="i-lucide-upload-cloud" class="w-10 h-10 text-primary-500" />
+      <div class="p-4 rounded-full bg-stone-100 dark:bg-stone-800">
+        <UIcon name="i-lucide-upload-cloud" class="w-10 h-10 text-primary" />
       </div>
       <div>
-        <h3 class="text-xl font-semibold text-white">Cargar lista de precios</h3>
-        <p class="mt-2 text-gray-400">
+        <h3 class="text-xl font-semibold">Cargar lista de precios</h3>
+        <p class="mt-2 text-muted">
           Arrastra tu archivo Excel aquí o haz clic para buscarlo
         </p>
       </div>
-      <p class="text-sm text-gray-500">Soporta .xlsx y .xls</p>
+      <p class="text-sm text-muted">Soporta .xlsx y .xls</p>
     </div>
 
     <input
