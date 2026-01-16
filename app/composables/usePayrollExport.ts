@@ -38,7 +38,7 @@ export const usePayrollExport = () => {
     exportText += `Fecha de exportación: ${dayjs().format('DD/MM/YYYY')}\n`
     exportText += `Total de empleados: ${employees.length}\n\n`
 
-    employees.forEach(employee => {
+    employees.forEach((employee) => {
       const stats = calculateEmployeeStats(employee)
       const currency = CURRENCY_SYMBOLS[employee.settings.currency] || '$'
 
@@ -80,10 +80,10 @@ export const usePayrollExport = () => {
       (a, b) => dayjs(b.startDate).valueOf() - dayjs(a.startDate).valueOf()
     )
 
-    sortedWeeks.forEach(week => {
+    sortedWeeks.forEach((week) => {
       exportText += `\nSemana del ${formatWeekDisplay(week.startDate)}:\n`
 
-      WEEK_DAYS.forEach(day => {
+      WEEK_DAYS.forEach((day) => {
         const dayData = week.schedule[day.key as keyof WeekSchedule]
         if (dayData && dayData.hoursWorked > 0) {
           const entry = dayData.entryHour && dayData.entryMinute

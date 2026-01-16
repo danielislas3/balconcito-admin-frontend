@@ -157,11 +157,20 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     <template #body>
       <UCard>
         <template #header>
-          <h3 class="text-lg font-semibold">Datos del Gasto</h3>
-          <p class="text-sm text-gray-500 mt-1">Registra un gasto del negocio</p>
+          <h3 class="text-lg font-semibold">
+            Datos del Gasto
+          </h3>
+          <p class="text-sm text-gray-500 mt-1">
+            Registra un gasto del negocio
+          </p>
         </template>
 
-        <UForm :schema="schema" :state="state" @submit="onSubmit" class="space-y-6">
+        <UForm
+          :schema="schema"
+          :state="state"
+          class="space-y-6"
+          @submit="onSubmit"
+        >
           <div class="grid md:grid-cols-2 gap-6">
             <!-- Fecha del gasto -->
             <UFormField label="Fecha del gasto" name="expense_date" required>
@@ -251,21 +260,35 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <!-- Resumen -->
           <UCard class="bg-blue-50 dark:bg-blue-950">
             <template #header>
-              <h4 class="font-semibold">Resumen del gasto</h4>
+              <h4 class="font-semibold">
+                Resumen del gasto
+              </h4>
             </template>
 
             <div class="grid md:grid-cols-3 gap-4">
               <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Monto</p>
-                <p class="text-2xl font-bold text-red-600">${{ formatCurrency(state.amount) }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Monto
+                </p>
+                <p class="text-2xl font-bold text-red-600">
+                  ${{ formatCurrency(state.amount) }}
+                </p>
               </div>
               <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Tipo de costo</p>
-                <p class="text-2xl font-bold">{{ getCostTypeLabel(state.category) }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Tipo de costo
+                </p>
+                <p class="text-2xl font-bold">
+                  {{ getCostTypeLabel(state.category) }}
+                </p>
               </div>
               <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Cuenta afectada</p>
-                <p class="text-2xl font-bold">{{ getAffectedAccount(state.payment_source) }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Cuenta afectada
+                </p>
+                <p class="text-2xl font-bold">
+                  {{ getAffectedAccount(state.payment_source) }}
+                </p>
               </div>
             </div>
           </UCard>

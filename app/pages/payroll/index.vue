@@ -227,21 +227,41 @@ const tabItems = computed(() => [
         </template>
 
         <template #right>
-          <UButton icon="i-lucide-user-plus" class="lg:hidden" color="primary" variant="soft"
-            @click="openAddEmployeeModal" />
-          <UButton label="Nuevo Empleado" icon="i-lucide-user-plus" color="primary" class="hidden lg:flex"
-            @click="openAddEmployeeModal" />
+          <UButton
+            icon="i-lucide-user-plus"
+            class="lg:hidden"
+            color="primary"
+            variant="soft"
+            @click="openAddEmployeeModal"
+          />
+          <UButton
+            label="Nuevo Empleado"
+            icon="i-lucide-user-plus"
+            color="primary"
+            class="hidden lg:flex"
+            @click="openAddEmployeeModal"
+          />
         </template>
       </UDashboardNavbar>
 
       <UDashboardToolbar>
         <template #left>
-          <UTabs v-model="activeTab" :items="tabItems" variant="link" size="sm">
+          <UTabs
+            v-model="activeTab"
+            :items="tabItems"
+            variant="link"
+            size="sm"
+          >
             <template #default="{ item }">
               <div class="flex items-center gap-2">
                 <UIcon :name="item.icon" class="size-4" />
                 <span>{{ item.label }}</span>
-                <UBadge v-if="item.badge" :color="item.badge.color" variant="subtle" size="xs">
+                <UBadge
+                  v-if="item.badge"
+                  :color="item.badge.color"
+                  variant="subtle"
+                  size="xs"
+                >
                   {{ item.badge.label }}
                 </UBadge>
               </div>
@@ -259,51 +279,84 @@ const tabItems = computed(() => [
 
     <template #body>
       <!-- PESTAÑA DE HORARIOS -->
-      <PayrollOrganismsSchedulesTab v-show="activeTab === 'schedules'" @add-employee="openAddEmployeeModal"
-        @delete-employee="handleDeleteEmployee" @create-week="handleCreateWeek" />
+      <PayrollOrganismsSchedulesTab
+        v-show="activeTab === 'schedules'"
+        @add-employee="openAddEmployeeModal"
+        @delete-employee="handleDeleteEmployee"
+        @create-week="handleCreateWeek"
+      />
 
       <!-- PESTAÑA MENSUAL -->
       <PayrollOrganismsMonthlyDashboard v-show="activeTab === 'monthly'" />
 
       <!-- PESTAÑA DE REPORTES -->
-      <PayrollOrganismsReportsTab v-show="activeTab === 'reports'" @export-all="handleExportAll"
-        @export-employee="handleExportEmployee" @view-employee="handleViewEmployee" />
+      <PayrollOrganismsReportsTab
+        v-show="activeTab === 'reports'"
+        @export-all="handleExportAll"
+        @export-employee="handleExportEmployee"
+        @view-employee="handleViewEmployee"
+      />
 
       <!-- PESTAÑA DE CONFIGURACIÓN -->
-      <PayrollOrganismsSettingsTab v-show="activeTab === 'settings'" @export-system="handleExportAll"
-        @import-data="handleImportData" @clear-all="handleClearAll" />
+      <PayrollOrganismsSettingsTab
+        v-show="activeTab === 'settings'"
+        @export-system="handleExportAll"
+        @import-data="handleImportData"
+        @clear-all="handleClearAll"
+      />
     </template>
   </UDashboardPanel>
 
   <!-- Modal Agregar Empleado -->
-  <UModal v-model:open="showAddEmployeeModal" title="Agregar Nuevo Empleado"
-    description="Ingresa los datos del nuevo empleado">
+  <UModal
+    v-model:open="showAddEmployeeModal"
+    title="Agregar Nuevo Empleado"
+    description="Ingresa los datos del nuevo empleado"
+  >
     <template #body>
       <div class="space-y-4">
         <UFormField label="Nombre del Empleado" required :error="employeeNameError">
-          <UInput v-model="newEmployeeName" placeholder="Ej. María García" @keyup.enter="handleAddEmployee" autofocus />
+          <UInput
+            v-model="newEmployeeName"
+            placeholder="Ej. María García"
+            autofocus
+            @keyup.enter="handleAddEmployee"
+          />
         </UFormField>
 
         <div class="grid grid-cols-2 gap-3">
           <UFormField label="Moneda" required>
-            <USelect v-model="newEmployeeCurrency" :items="[
-              { id: 'MXN', label: 'MXN' },
-              { id: 'USD', label: 'USD' },
-              { id: 'EUR', label: 'EUR' }
-            ]" value-key="id" />
+            <USelect
+              v-model="newEmployeeCurrency"
+              :items="[
+                { id: 'MXN', label: 'MXN' },
+                { id: 'USD', label: 'USD' },
+                { id: 'EUR', label: 'EUR' }
+              ]"
+              value-key="id"
+            />
           </UFormField>
 
           <UFormField label="Tipo de Tarifa" required>
-            <USelect v-model="rateType" :items="[
-              { id: 'hourly', label: 'Por Hora' },
-              { id: 'daily', label: 'Por Día' },
-              { id: 'weekly', label: 'Por Semana' }
-            ]" value-key="id" />
+            <USelect
+              v-model="rateType"
+              :items="[
+                { id: 'hourly', label: 'Por Hora' },
+                { id: 'daily', label: 'Por Día' },
+                { id: 'weekly', label: 'Por Semana' }
+              ]"
+              value-key="id"
+            />
           </UFormField>
         </div>
 
         <UFormField :label="rateLabel" required>
-          <UInput v-model.number="newEmployeeRate" type="number" step="0.01" placeholder="450" />
+          <UInput
+            v-model.number="newEmployeeRate"
+            type="number"
+            step="0.01"
+            placeholder="450"
+          />
         </UFormField>
 
         <!-- Equivalencias calculadas -->
@@ -313,19 +366,25 @@ const tabItems = computed(() => [
           </div>
           <div class="grid grid-cols-3 gap-3 text-sm">
             <div class="text-center">
-              <div class="text-xs text-muted">Por Hora</div>
+              <div class="text-xs text-muted">
+                Por Hora
+              </div>
               <div class="font-bold text-hours tabular-nums">
                 {{ rateEquivalences.hourly.toFixed(2) }}
               </div>
             </div>
             <div class="text-center">
-              <div class="text-xs text-muted">Por Día</div>
+              <div class="text-xs text-muted">
+                Por Día
+              </div>
               <div class="font-bold text-orange-600 dark:text-orange-400 tabular-nums">
                 {{ rateEquivalences.daily.toFixed(2) }}
               </div>
             </div>
             <div class="text-center">
-              <div class="text-xs text-muted">Por Semana</div>
+              <div class="text-xs text-muted">
+                Por Semana
+              </div>
               <div class="font-bold text-money tabular-nums">
                 {{ rateEquivalences.weekly.toFixed(2) }}
               </div>
@@ -340,13 +399,28 @@ const tabItems = computed(() => [
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <UButton label="Cancelar" color="neutral" variant="ghost" @click="closeAddEmployeeModal" />
-        <UButton label="Agregar" icon="i-lucide-check" color="primary" @click="handleAddEmployee" :loading="loading" />
+        <UButton
+          label="Cancelar"
+          color="neutral"
+          variant="ghost"
+          @click="closeAddEmployeeModal"
+        />
+        <UButton
+          label="Agregar"
+          icon="i-lucide-check"
+          color="primary"
+          :loading="loading"
+          @click="handleAddEmployee"
+        />
       </div>
     </template>
   </UModal>
 
   <!-- Modal: Crear Nueva Semana -->
-  <PayrollMoleculesCreateWeekModal v-model:open="showCreateWeekModal" :current-employee="currentEmployee"
-    :loading="loading" @created="onWeekCreated" />
+  <PayrollMoleculesCreateWeekModal
+    v-model:open="showCreateWeekModal"
+    :current-employee="currentEmployee"
+    :loading="loading"
+    @created="onWeekCreated"
+  />
 </template>

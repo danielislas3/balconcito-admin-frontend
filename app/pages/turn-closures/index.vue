@@ -172,8 +172,12 @@ onMounted(() => {
             placeholder="Cerrado por"
             class="w-40"
           />
-          <UButton @click="loadClosures" icon="i-lucide-filter">Filtrar</UButton>
-          <UButton color="neutral" variant="ghost" @click="clearFilters">Limpiar</UButton>
+          <UButton icon="i-lucide-filter" @click="loadClosures">
+            Filtrar
+          </UButton>
+          <UButton color="neutral" variant="ghost" @click="clearFilters">
+            Limpiar
+          </UButton>
         </template>
       </UDashboardToolbar>
     </template>
@@ -184,26 +188,42 @@ onMounted(() => {
         <div v-if="summary" class="grid gap-4 sm:grid-cols-4">
           <UCard>
             <div class="text-center">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Total Cierres</p>
-              <p class="text-3xl font-bold mt-1">{{ summary.total_closures || 0 }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Total Cierres
+              </p>
+              <p class="text-3xl font-bold mt-1">
+                {{ summary.total_closures || 0 }}
+              </p>
             </div>
           </UCard>
           <UCard>
             <div class="text-center">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Ingresos Totales</p>
-              <p class="text-3xl font-bold text-green-600 mt-1">${{ formatCurrency(summary.total_income || 0) }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Ingresos Totales
+              </p>
+              <p class="text-3xl font-bold text-green-600 mt-1">
+                ${{ formatCurrency(summary.total_income || 0) }}
+              </p>
             </div>
           </UCard>
           <UCard>
             <div class="text-center">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Efectivo</p>
-              <p class="text-3xl font-bold mt-1">${{ formatCurrency(summary.total_cash || 0) }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Efectivo
+              </p>
+              <p class="text-3xl font-bold mt-1">
+                ${{ formatCurrency(summary.total_cash || 0) }}
+              </p>
             </div>
           </UCard>
           <UCard>
             <div class="text-center">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Digital</p>
-              <p class="text-3xl font-bold mt-1">${{ formatCurrency((summary.total_transfers || 0) + (summary.total_cards || 0)) }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Digital
+              </p>
+              <p class="text-3xl font-bold mt-1">
+                ${{ formatCurrency((summary.total_transfers || 0) + (summary.total_cards || 0)) }}
+              </p>
             </div>
           </UCard>
         </div>
@@ -211,7 +231,9 @@ onMounted(() => {
         <!-- Tabla -->
         <UCard>
           <template #header>
-            <h3 class="text-lg font-semibold">Lista de Cierres</h3>
+            <h3 class="text-lg font-semibold">
+              Lista de Cierres
+            </h3>
           </template>
 
           <UTable
@@ -244,7 +266,9 @@ onMounted(() => {
             </template>
 
             <template #closed_by-data="{ row }">
-              <UBadge color="blue" variant="subtle">{{ row.closed_by }}</UBadge>
+              <UBadge color="blue" variant="subtle">
+                {{ row.closed_by }}
+              </UBadge>
             </template>
 
             <template #actions-data="{ row }">
@@ -254,19 +278,28 @@ onMounted(() => {
                   { label: 'Eliminar', icon: 'i-lucide-trash', click: () => deleteClosure(row.id) }
                 ]]"
               >
-                <UButton color="neutral" variant="ghost" icon="i-lucide-more-vertical" size="xs" />
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  icon="i-lucide-more-vertical"
+                  size="xs"
+                />
               </UDropdownMenu>
             </template>
           </UTable>
 
           <div v-else-if="loading" class="space-y-4 p-4">
-            <USkeleton class="h-12" v-for="i in 5" :key="i" />
+            <USkeleton v-for="i in 5" :key="i" class="h-12" />
           </div>
 
           <div v-else class="text-center py-12">
             <UIcon name="i-lucide-inbox" class="size-12 text-gray-400 mx-auto mb-4" />
-            <p class="text-gray-500">No hay cierres de turno registrados</p>
-            <UButton to="/turn-closures/new" class="mt-4">Registrar primer cierre</UButton>
+            <p class="text-gray-500">
+              No hay cierres de turno registrados
+            </p>
+            <UButton to="/turn-closures/new" class="mt-4">
+              Registrar primer cierre
+            </UButton>
           </div>
         </UCard>
       </div>

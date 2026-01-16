@@ -48,7 +48,14 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
-},], [{
+}, {
+  label: 'Recetas',
+  icon: 'i-lucide-book-open',
+  to: '/recipes',
+  onSelect: () => {
+    open.value = false
+  }
+}], [{
   label: 'Configuración',
   icon: 'i-lucide-settings',
   to: '/settings',
@@ -66,8 +73,14 @@ const groups = computed(() => [{
 
 <template>
   <UDashboardGroup unit="rem">
-    <UDashboardSidebar id="default" v-model:open="open" collapsible resizable class="bg-elevated/25"
-      :ui="{ footer: 'lg:border-t lg:border-default' }">
+    <UDashboardSidebar
+      id="default"
+      v-model:open="open"
+      collapsible
+      resizable
+      class="bg-elevated/25"
+      :ui="{ footer: 'lg:border-t lg:border-default' }"
+    >
       <template #header="{ collapsed }">
         <TeamsMenu :collapsed="collapsed" />
       </template>
@@ -75,9 +88,21 @@ const groups = computed(() => [{
       <template #default="{ collapsed }">
         <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" />
 
-        <UNavigationMenu :collapsed="collapsed" :items="links[0]" orientation="vertical" tooltip popover />
+        <UNavigationMenu
+          :collapsed="collapsed"
+          :items="links[0]"
+          orientation="vertical"
+          tooltip
+          popover
+        />
 
-        <UNavigationMenu :collapsed="collapsed" :items="links[1]" orientation="vertical" tooltip class="mt-auto" />
+        <UNavigationMenu
+          :collapsed="collapsed"
+          :items="links[1]"
+          orientation="vertical"
+          tooltip
+          class="mt-auto"
+        />
       </template>
 
       <template #footer="{ collapsed }">

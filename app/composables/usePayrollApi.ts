@@ -130,7 +130,7 @@ export const usePayrollApi = () => {
    */
   const createWeek = async (
     employeeId: string,
-    data: { start_date: string; weekly_tips?: number }
+    data: { start_date: string, weekly_tips?: number }
   ): Promise<PayrollWeek> => {
     const response = await api.post<{ week: PayrollWeek }>(
       `/payroll_employees/${employeeId}/weeks`,
@@ -170,7 +170,7 @@ export const usePayrollApi = () => {
   const updateWeek = async (
     employeeId: string,
     weekId: string,
-    data: { weekly_tips?: number; shift_rate?: number }
+    data: { weekly_tips?: number, shift_rate?: number }
   ): Promise<PayrollWeek> => {
     const response = await api.patch<{ week: PayrollWeek }>(
       `/payroll_employees/${employeeId}/weeks/${weekId}`,

@@ -19,9 +19,9 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.token && !!state.user,
-    currentUser: (state) => state.user,
-    userRole: (state) => state.user?.role
+    isAuthenticated: state => !!state.token && !!state.user,
+    currentUser: state => state.user,
+    userRole: state => state.user?.role
   },
 
   actions: {
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('auth_token')
         localStorage.removeItem('auth_user')
-       }
+      }
     },
 
     initializeAuth() {
@@ -64,7 +64,6 @@ export const useAuthStore = defineStore('auth', {
             this.token = token
             this.user = user
           } catch (error) {
-
             this.logout()
           }
         } else {

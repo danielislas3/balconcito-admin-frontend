@@ -8,23 +8,17 @@ export default defineNuxtConfig({
     'dayjs-nuxt'
   ],
 
-  // Dark mode como default
-  colorMode: {
-    preference: 'dark',
-    fallback: 'dark'
-  },
-
-  dayjs: {
-    locales: ['es'],
-    defaultLocale: 'es',
-    plugins: ['duration', 'isSameOrBefore', 'isSameOrAfter', 'customParseFormat']
-  },
-
   devtools: {
     enabled: true
   },
 
   css: ['~/assets/css/main.css'],
+
+  // Dark mode como default
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark'
+  },
 
   runtimeConfig: {
     public: {
@@ -33,6 +27,12 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-11-01',
+
+  dayjs: {
+    locales: ['es'],
+    defaultLocale: 'es',
+    plugins: ['duration', 'isSameOrBefore', 'isSameOrAfter', 'customParseFormat']
+  },
 
   eslint: {
     config: {
