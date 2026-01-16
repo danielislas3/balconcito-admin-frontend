@@ -44,17 +44,17 @@ const props = withDefaults(defineProps<Props>(), {
 // Color mappings usando la paleta Balconcito
 const colorClasses = computed(() => {
   const colorMap: Record<MetricColor, { bg: string, text: string, icon: string }> = {
-    primary: {
+    'primary': {
       bg: 'bg-orange-50 dark:bg-orange-950/30',
       text: 'text-orange-600 dark:text-orange-400',
       icon: 'text-orange-500 dark:text-orange-400'
     },
-    money: {
+    'money': {
       bg: 'bg-money',
       text: 'text-money',
       icon: 'text-money'
     },
-    hours: {
+    'hours': {
       bg: 'bg-hours',
       text: 'text-hours',
       icon: 'text-hours'
@@ -69,22 +69,22 @@ const colorClasses = computed(() => {
       text: 'text-overtime-2',
       icon: 'text-overtime-2'
     },
-    income: {
+    'income': {
       bg: 'bg-income',
       text: 'text-income',
       icon: 'text-income'
     },
-    expense: {
+    'expense': {
       bg: 'bg-expense',
       text: 'text-expense',
       icon: 'text-expense'
     },
-    accounts: {
+    'accounts': {
       bg: 'bg-accounts',
       text: 'text-accounts',
       icon: 'text-accounts'
     },
-    neutral: {
+    'neutral': {
       bg: 'bg-stone-50 dark:bg-stone-800/50',
       text: 'text-stone-700 dark:text-stone-300',
       icon: 'text-stone-500 dark:text-stone-400'

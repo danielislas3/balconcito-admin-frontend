@@ -55,7 +55,9 @@ watchEffect(() => {
             <UIcon name="i-lucide-calendar-range" class="size-5 text-violet-600 dark:text-violet-400" />
           </div>
           <div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Resumen Mensual</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+              Resumen Mensual
+            </h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">
               Selecciona un mes para ver las métricas
             </p>
@@ -67,13 +69,14 @@ watchEffect(() => {
         <button
           v-for="month in availableMonths"
           :key="`${month.year}-${month.month}`"
-          @click="() => { selectedYear = month.year; selectedMonth = month.month }"
           :class="[
             'px-4 py-2 rounded-lg text-sm font-medium transition-all',
             selectedYear === month.year && selectedMonth === month.month
               ? 'bg-violet-600 text-white shadow-md'
               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-          ]">
+          ]"
+          @click="() => { selectedYear = month.year; selectedMonth = month.month }"
+        >
           {{ month.label }}
         </button>
       </div>
@@ -120,7 +123,9 @@ watchEffect(() => {
             <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">
               {{ (monthlyStats.totalHours ?? 0).toFixed(1) }}
             </div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Horas</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Total Horas
+            </div>
           </div>
         </UCard>
 
@@ -133,7 +138,9 @@ watchEffect(() => {
             <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
               {{ monthlyStats.weeksCount ?? 0 }}
             </div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Semanas</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Semanas
+            </div>
           </div>
         </UCard>
 
@@ -146,7 +153,9 @@ watchEffect(() => {
             <div class="text-3xl font-bold text-amber-600 dark:text-amber-400 tabular-nums">
               {{ (monthlyStats.avgHoursPerWeek ?? 0).toFixed(1) }}
             </div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Hrs/Semana</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Hrs/Semana
+            </div>
           </div>
         </UCard>
 
@@ -159,7 +168,9 @@ watchEffect(() => {
             <div class="text-2xl font-bold text-violet-600 dark:text-violet-400 tabular-nums">
               {{ formatCurrency(monthlyStats.totalTips) }}
             </div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Propinas</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Propinas
+            </div>
           </div>
         </UCard>
       </div>
@@ -171,14 +182,18 @@ watchEffect(() => {
             <div class="p-2 bg-emerald-500/10 rounded-lg">
               <UIcon name="i-lucide-bar-chart-3" class="size-5 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Desglose de Horas</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+              Desglose de Horas
+            </h3>
           </div>
         </template>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <!-- Regular Hours -->
           <div class="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl">
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Horas Regulares</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Horas Regulares
+            </div>
             <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
               {{ (monthlyStats.regularHours ?? 0).toFixed(1) }}h
             </div>
@@ -189,7 +204,9 @@ watchEffect(() => {
 
           <!-- Overtime Tier 1 -->
           <div class="p-4 bg-amber-50 dark:bg-amber-950/20 rounded-xl">
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Horas Extra Tier 1</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Horas Extra Tier 1
+            </div>
             <div class="text-3xl font-bold text-amber-600 dark:text-amber-400 tabular-nums">
               {{ (monthlyStats.overtimeHours ?? 0).toFixed(1) }}h
             </div>
@@ -200,7 +217,9 @@ watchEffect(() => {
 
           <!-- Overtime Tier 2 -->
           <div class="p-4 bg-red-50 dark:bg-red-950/20 rounded-xl">
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Horas Extra Tier 2</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Horas Extra Tier 2
+            </div>
             <div class="text-3xl font-bold text-red-600 dark:text-red-400 tabular-nums">
               {{ (monthlyStats.extraHours ?? 0).toFixed(1) }}h
             </div>
@@ -218,7 +237,9 @@ watchEffect(() => {
             <div class="p-2 bg-blue-500/10 rounded-lg">
               <UIcon name="i-lucide-list" class="size-5 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Semanas del Mes</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+              Semanas del Mes
+            </h3>
           </div>
         </template>
 
@@ -226,7 +247,8 @@ watchEffect(() => {
           <div
             v-for="week in monthlyStats.weeks"
             :key="week.id"
-            class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-700 transition-colors">
+            class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
+          >
             <div class="flex items-center justify-between flex-wrap gap-3">
               <div class="flex items-center gap-3">
                 <div class="p-2 bg-violet-500/10 rounded-lg">
@@ -261,14 +283,18 @@ watchEffect(() => {
             <div class="p-2 bg-violet-500/10 rounded-lg">
               <UIcon name="i-lucide-receipt" class="size-5 text-violet-600 dark:text-violet-400" />
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Resumen de Pago Total</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+              Resumen de Pago Total
+            </h3>
           </div>
         </template>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Pago Base -->
           <div class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Pago por Horas</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Pago por Horas
+            </div>
             <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
               {{ formatCurrency(monthlyStats.totalBasePay) }}
             </div>
@@ -279,7 +305,9 @@ watchEffect(() => {
 
           <!-- Propinas -->
           <div class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Propinas del Mes</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Propinas del Mes
+            </div>
             <div class="text-2xl font-bold text-violet-600 dark:text-violet-400 tabular-nums">
               {{ formatCurrency(monthlyStats.totalTips) }}
             </div>
@@ -292,7 +320,9 @@ watchEffect(() => {
         <div class="pt-4 border-t-2 border-violet-200 dark:border-violet-700 mt-4">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">Pago Total del Mes</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                Pago Total del Mes
+              </div>
               <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">
                 {{ currentMonthLabel }}
               </div>

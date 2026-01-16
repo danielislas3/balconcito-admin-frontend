@@ -41,9 +41,13 @@ const weekTotals = computed(() => {
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-0">
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-receipt" class="size-4 text-muted flex-shrink-0" />
-          <h3 class="text-xs sm:text-sm font-semibold">Resumen Semanal</h3>
+          <h3 class="text-xs sm:text-sm font-semibold">
+            Resumen Semanal
+          </h3>
         </div>
-        <div class="text-xs text-muted truncate max-w-full sm:max-w-[150px]">{{ employeeName }}</div>
+        <div class="text-xs text-muted truncate max-w-full sm:max-w-[150px]">
+          {{ employeeName }}
+        </div>
       </div>
     </template>
 
@@ -51,10 +55,10 @@ const weekTotals = computed(() => {
     <div v-if="week && week.schedule" class="space-y-1">
       <div
         v-for="day in WEEK_DAYS"
-        :key="day.key"
         v-show="week.schedule[day.key]?.hoursWorked > 0"
-        class="flex items-center justify-between p-1.5 sm:p-2 rounded bg-default border border-default">
-
+        :key="day.key"
+        class="flex items-center justify-between p-1.5 sm:p-2 rounded bg-default border border-default"
+      >
         <div class="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
           <span class="text-xs sm:text-sm flex-shrink-0">{{ day.emoji }}</span>
           <span class="text-xs sm:text-sm font-medium w-14 sm:w-20 truncate">{{ day.name }}</span>
@@ -73,7 +77,9 @@ const weekTotals = computed(() => {
     <div v-if="week" class="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t-2 border-default">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-2 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-200 dark:border-orange-800">
         <div class="flex-1 min-w-0">
-          <div class="text-[10px] sm:text-xs text-muted truncate">Semana del {{ formatWeekDisplay(week.startDate) }}</div>
+          <div class="text-[10px] sm:text-xs text-muted truncate">
+            Semana del {{ formatWeekDisplay(week.startDate) }}
+          </div>
           <div class="text-xs sm:text-sm font-semibold">
             {{ weekTotals.totalHours.toFixed(1) }}h totales
             <span v-if="week.weeklyTips > 0" class="block sm:inline text-[10px] sm:text-xs text-amber-600 dark:text-amber-400">

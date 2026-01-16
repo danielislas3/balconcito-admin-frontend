@@ -31,13 +31,20 @@ const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
     <div class="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
       <div v-if="store.cart.length === 0" class="text-center py-12 text-muted">
         <p>Tu pedido está vacío</p>
-        <p class="text-sm mt-2">Busca productos y haz clic para agregarlos</p>
+        <p class="text-sm mt-2">
+          Busca productos y haz clic para agregarlos
+        </p>
       </div>
 
-      <div v-for="item in store.cart" :key="item.codigo"
-        class="flex items-center gap-3 p-3 bg-default/40 rounded-lg border border-default">
+      <div
+        v-for="item in store.cart"
+        :key="item.codigo"
+        class="flex items-center gap-3 p-3 bg-default/40 rounded-lg border border-default"
+      >
         <div class="flex-1 min-w-0">
-          <div class="text-xs font-bold text-primary">{{ item.codigo }}</div>
+          <div class="text-xs font-bold text-primary">
+            {{ item.codigo }}
+          </div>
           <div class="text-sm font-medium truncate mb-1" :title="item.descripcion">
             {{ item.descripcion }}
           </div>
@@ -50,21 +57,30 @@ const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
           <div class="flex items-center gap-1">
             <button
               class="w-7 h-7 flex items-center justify-center rounded bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors"
-              @click="store.updateQuantity(item.codigo, item.cantidad - 1)">
+              @click="store.updateQuantity(item.codigo, item.cantidad - 1)"
+            >
               -
             </button>
-            <input type="number" v-model.number="item.cantidad" min="1"
+            <input
+              v-model.number="item.cantidad"
+              type="number"
+              min="1"
               class="w-12 h-7 text-center bg-default border border-default rounded text-sm"
-              @change="store.updateQuantity(item.codigo, item.cantidad)">
+              @change="store.updateQuantity(item.codigo, item.cantidad)"
+            >
             <button
               class="w-7 h-7 flex items-center justify-center rounded bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors"
-              @click="store.updateQuantity(item.codigo, item.cantidad + 1)">
+              @click="store.updateQuantity(item.codigo, item.cantidad + 1)"
+            >
               +
             </button>
           </div>
 
-          <button class="p-1 text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors"
-            @click="store.removeFromCart(item.codigo)" title="Eliminar">
+          <button
+            class="p-1 text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors"
+            title="Eliminar"
+            @click="store.removeFromCart(item.codigo)"
+          >
             <UIcon name="i-lucide-trash-2" class="w-4 h-4" />
           </button>
         </div>
@@ -84,8 +100,14 @@ const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
         Recuerda: Pedidos deben enviarse antes del jueves a las 2pm
       </div>
 
-      <UButton block size="lg" color="primary" icon="i-lucide-download" label="Descargar Pedido XLSX"
-        @click="store.downloadOrder" />
+      <UButton
+        block
+        size="lg"
+        color="primary"
+        icon="i-lucide-download"
+        label="Descargar Pedido XLSX"
+        @click="store.downloadOrder"
+      />
     </div>
   </div>
 </template>
