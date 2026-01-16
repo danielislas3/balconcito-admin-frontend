@@ -3,7 +3,9 @@ import RecipeList from '~/components/recipes/RecipeList.vue'
 import RecipeDetail from '~/components/recipes/RecipeDetail.vue'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: ['auth'],
+  requiresAuth: true,
 })
 </script>
 
