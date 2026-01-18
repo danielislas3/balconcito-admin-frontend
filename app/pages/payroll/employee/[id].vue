@@ -51,16 +51,16 @@ const employeeStats = computed(() => {
 
   // Calculate additional metrics for HR
   let totalDaysWorked = 0
-  let totalDaysPossible = weeks.length * 7
+  const totalDaysPossible = weeks.length * 7
   let totalOvertimeHours = 0
   let weeksWithOvertime = 0
   let perfectWeeks = 0
 
-  weeks.forEach(week => {
+  weeks.forEach((week) => {
     let shiftsThisWeek = 0
     let hasOvertime = false
 
-    WEEK_DAYS.forEach(day => {
+    WEEK_DAYS.forEach((day) => {
       const dayData = week.schedule[day.key as keyof WeekSchedule]
       if (dayData.hoursWorked > 0) {
         totalDaysWorked++
@@ -104,7 +104,6 @@ const exportEmployeeData = () => {
 <template>
   <div class="min-h-screen w-full bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-950 overflow-y-auto">
     <div v-if="employee && employeeStats" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
       <!-- Header with back button -->
       <div class="flex items-center gap-4 flex-wrap">
         <UButton
@@ -112,10 +111,13 @@ const exportEmployeeData = () => {
           color="neutral"
           variant="ghost"
           size="lg"
+          label="Volver"
           @click="router.push('/payroll')"
-          label="Volver" />
+        />
         <div class="flex-1 min-w-0">
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white truncate">{{ employee.name }}</h1>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white truncate">
+            {{ employee.name }}
+          </h1>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Historial detallado de turnos y análisis de desempeño
           </p>
@@ -125,13 +127,15 @@ const exportEmployeeData = () => {
           icon="i-lucide-download"
           color="success"
           size="lg"
-          @click="exportEmployeeData" />
+          @click="exportEmployeeData"
+        />
       </div>
 
       <!-- HR-Focused Metrics Dashboard (using organism component) -->
       <PayrollOrganismsHRMetricsDashboard
         :metrics="employeeStats"
-        :currency="employee.settings.currency" />
+        :currency="employee.settings.currency"
+      />
 
       <!-- Detailed History by Week -->
       <div class="space-y-6">
@@ -141,8 +145,12 @@ const exportEmployeeData = () => {
               <UIcon name="i-lucide-history" class="size-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Historial Detallado de Turnos</h2>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Vista día por día de todos los turnos trabajados</p>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Historial Detallado de Turnos
+              </h2>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Vista día por día de todos los turnos trabajados
+              </p>
             </div>
           </div>
           <UBadge color="primary" variant="subtle" size="lg">
@@ -156,7 +164,9 @@ const exportEmployeeData = () => {
             <div class="p-6 bg-gray-100 dark:bg-gray-700 rounded-full">
               <UIcon name="i-lucide-calendar-x" class="size-16 text-gray-400" />
             </div>
-            <p class="text-lg text-gray-600 dark:text-gray-400">No hay semanas registradas para este empleado</p>
+            <p class="text-lg text-gray-600 dark:text-gray-400">
+              No hay semanas registradas para este empleado
+            </p>
             <UButton label="Volver a Nóminas" color="primary" @click="router.push('/payroll')" />
           </div>
         </div>
@@ -167,7 +177,8 @@ const exportEmployeeData = () => {
             v-for="week in sortedWeeks"
             :key="week.id"
             :week="week"
-            :currency="employee.settings.currency" />
+            :currency="employee.settings.currency"
+          />
         </div>
       </div>
     </div>
@@ -176,7 +187,9 @@ const exportEmployeeData = () => {
     <div v-else class="flex items-center justify-center min-h-screen">
       <div class="text-center">
         <UIcon name="i-lucide-loader-2" class="size-12 text-emerald-600 animate-spin mx-auto mb-4" />
-        <p class="text-gray-600 dark:text-gray-400">Cargando información del empleado...</p>
+        <p class="text-gray-600 dark:text-gray-400">
+          Cargando información del empleado...
+        </p>
       </div>
     </div>
   </div>

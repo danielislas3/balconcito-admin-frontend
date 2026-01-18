@@ -109,7 +109,7 @@ export const usePayrollStore = defineStore('payroll', () => {
     name: string,
     baseHourlyRate: number,
     currency: string = 'MXN'
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean, error?: string }> {
     loading.value = true
     error.value = undefined
 
@@ -139,7 +139,7 @@ export const usePayrollStore = defineStore('payroll', () => {
    */
   async function updateEmployeeSettings(
     settings: Partial<EmployeeSettings>
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value) {
       return { success: false, error: 'No hay empleado seleccionado' }
     }
@@ -169,7 +169,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   /**
    * Elimina el empleado actual
    */
-  async function deleteCurrentEmployee(): Promise<{ success: boolean; error?: string }> {
+  async function deleteCurrentEmployee(): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value) {
       return { success: false, error: 'No hay empleado seleccionado' }
     }
@@ -219,7 +219,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   async function createWeek(
     startDate: string,
     weeklyTips: number = 0
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value) {
       return { success: false, error: 'No hay empleado seleccionado' }
     }
@@ -256,7 +256,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   async function updateDaySchedule(
     dayKey: keyof WeekSchedule,
     schedule: Partial<DaySchedule>
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
     }
@@ -306,7 +306,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   /**
    * Actualiza las propinas semanales
    */
-  async function updateWeeklyTips(tips: number): Promise<{ success: boolean; error?: string }> {
+  async function updateWeeklyTips(tips: number): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
     }
@@ -343,7 +343,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   /**
    * Actualiza la tarifa por turno de una semana específica
    */
-  async function updateShiftRate(shiftRate: number | null): Promise<{ success: boolean; error?: string }> {
+  async function updateShiftRate(shiftRate: number | null): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
     }
@@ -380,7 +380,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   /**
    * Elimina la semana actual
    */
-  async function deleteCurrentWeek(): Promise<{ success: boolean; error?: string }> {
+  async function deleteCurrentWeek(): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
     }

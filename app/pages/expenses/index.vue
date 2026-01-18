@@ -219,8 +219,12 @@ onMounted(() => {
             placeholder="Fuente de pago"
             class="w-48"
           />
-          <UButton @click="loadExpenses" icon="i-lucide-filter">Filtrar</UButton>
-          <UButton color="neutral" variant="ghost" @click="clearFilters">Limpiar</UButton>
+          <UButton icon="i-lucide-filter" @click="loadExpenses">
+            Filtrar
+          </UButton>
+          <UButton color="neutral" variant="ghost" @click="clearFilters">
+            Limpiar
+          </UButton>
         </template>
       </UDashboardToolbar>
     </template>
@@ -231,14 +235,22 @@ onMounted(() => {
         <div v-if="summary" class="grid gap-4 sm:grid-cols-2">
           <UCard>
             <div class="text-center">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Total Gastos</p>
-              <p class="text-3xl font-bold text-red-600 mt-1">${{ formatCurrency(summary.total_expenses || 0) }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Total Gastos
+              </p>
+              <p class="text-3xl font-bold text-red-600 mt-1">
+                ${{ formatCurrency(summary.total_expenses || 0) }}
+              </p>
             </div>
           </UCard>
           <UCard>
             <div class="text-center">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Cantidad</p>
-              <p class="text-3xl font-bold mt-1">{{ summary.count || 0 }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Cantidad
+              </p>
+              <p class="text-3xl font-bold mt-1">
+                {{ summary.count || 0 }}
+              </p>
             </div>
           </UCard>
         </div>
@@ -246,7 +258,9 @@ onMounted(() => {
         <!-- Tabla -->
         <UCard>
           <template #header>
-            <h3 class="text-lg font-semibold">Lista de Gastos</h3>
+            <h3 class="text-lg font-semibold">
+              Lista de Gastos
+            </h3>
           </template>
 
           <UTable
@@ -288,19 +302,28 @@ onMounted(() => {
                   { label: 'Eliminar', icon: 'i-lucide-trash', click: () => deleteExpense(row.id) }
                 ]]"
               >
-                <UButton color="neutral" variant="ghost" icon="i-lucide-more-vertical" size="xs" />
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  icon="i-lucide-more-vertical"
+                  size="xs"
+                />
               </UDropdownMenu>
             </template>
           </UTable>
 
           <div v-else-if="loading" class="space-y-4 p-4">
-            <USkeleton class="h-12" v-for="i in 5" :key="i" />
+            <USkeleton v-for="i in 5" :key="i" class="h-12" />
           </div>
 
           <div v-else class="text-center py-12">
             <UIcon name="i-lucide-inbox" class="size-12 text-gray-400 mx-auto mb-4" />
-            <p class="text-gray-500">No hay gastos registrados</p>
-            <UButton to="/expenses/new" class="mt-4">Registrar primer gasto</UButton>
+            <p class="text-gray-500">
+              No hay gastos registrados
+            </p>
+            <UButton to="/expenses/new" class="mt-4">
+              Registrar primer gasto
+            </UButton>
           </div>
         </UCard>
       </div>

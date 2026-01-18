@@ -81,8 +81,8 @@ export const formatErrorMessage = (error: any): string => {
  */
 export const isApiError = (error: any): error is ApiError => {
   return (
-    error !== null &&
-    typeof error === 'object' &&
-    ('status' in error || 'message' in error)
+    error !== null
+    && typeof error === 'object'
+    && ('status' in error || 'message' in error)
   )
 }

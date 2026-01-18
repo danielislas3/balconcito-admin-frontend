@@ -24,6 +24,7 @@
     "dayjs-nuxt": "^2.1.11",
     "nuxt": "^4.2.1",
     "pinia": "^3.0.4",
+    "xlsx": "^0.18.5",
     "zod": "^4.1.12"
   },
   "devDependencies": {

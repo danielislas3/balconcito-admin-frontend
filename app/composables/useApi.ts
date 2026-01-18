@@ -38,7 +38,7 @@ export const useApi = () => {
   /**
    * Maneja diferentes códigos de estado HTTP
    */
-  const handleHttpErrors = (response: { status: any; _data: { error_message?: string } }): ApiError => {
+  const handleHttpErrors = (response: { status: any, _data: { error_message?: string } }): ApiError => {
     switch (response.status) {
       case 400:
         return {
@@ -89,7 +89,7 @@ export const useApi = () => {
    */
   const execute = async <T = any>(
     endpoint: string,
-    options: FetchOptions<'json'> & { expectBlob?: boolean; context?: string } = {}
+    options: FetchOptions<'json'> & { expectBlob?: boolean, context?: string } = {}
   ): Promise<T> => {
     const { expectBlob, context, ...fetchOptions } = options
 
@@ -155,9 +155,9 @@ export const useApi = () => {
         if (contentType.includes('application/json')) {
           return await fetchResponse.json()
         } else if (
-          contentType.includes('application/pdf') ||
-          contentType.includes('application/octet-stream') ||
-          contentType.startsWith('image/')
+          contentType.includes('application/pdf')
+          || contentType.includes('application/octet-stream')
+          || contentType.startsWith('image/')
         ) {
           return (await fetchResponse.blob()) as T
         } else {

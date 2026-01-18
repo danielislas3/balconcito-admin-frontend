@@ -88,8 +88,12 @@ const setQuickDate = (type: 'current' | 'next' | 'previous') => {
 </script>
 
 <template>
-  <UModal :open="open" @update:open="emit('update:open', $event)" title="Crear Nueva Semana"
-    description="Selecciona la fecha de inicio de la semana (se ajustará automáticamente al lunes)">
+  <UModal
+    :open="open"
+    title="Crear Nueva Semana"
+    description="Selecciona la fecha de inicio de la semana (se ajustará automáticamente al lunes)"
+    @update:open="emit('update:open', $event)"
+  >
     <template #body>
       <div class="space-y-4">
         <!-- Date Picker -->
@@ -97,10 +101,10 @@ const setQuickDate = (type: 'current' | 'next' | 'previous') => {
           <input
             v-model="newWeekStartDate"
             type="date"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-          />
+            class="w-full px-3 py-2 border border-stone-300 dark:border-stone-700 rounded-md bg-white dark:bg-stone-800 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+          >
           <template #hint>
-            <span class="text-xs text-gray-500">
+            <span class="text-xs text-muted">
               Se creará la semana del lunes más cercano a esta fecha
             </span>
           </template>
@@ -108,12 +112,14 @@ const setQuickDate = (type: 'current' | 'next' | 'previous') => {
 
         <!-- Semanas existentes -->
         <div v-if="currentEmployee && currentEmployee.weeks.length > 0" class="mt-4">
-          <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Semanas existentes:</p>
-          <div class="max-h-40 overflow-y-auto space-y-1 p-2 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
+          <p class="text-sm font-medium mb-2">
+            Semanas existentes:
+          </p>
+          <div class="max-h-40 overflow-y-auto space-y-1 p-2 bg-stone-50 dark:bg-stone-900 rounded border border-default">
             <div
               v-for="week in currentEmployee.weeks"
               :key="week.id"
-              class="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2"
+              class="text-xs text-muted flex items-center gap-2"
             >
               <UIcon name="i-lucide-calendar-check" class="size-3" />
               <span>Semana del {{ dayjs(week.startDate).format('DD/MM/YYYY') }}</span>
@@ -125,22 +131,22 @@ const setQuickDate = (type: 'current' | 'next' | 'previous') => {
         <div class="flex flex-wrap gap-2">
           <button
             type="button"
+            class="px-3 py-1.5 text-xs font-medium bg-orange-100 dark:bg-orange-900/30 hover:bg-orange-200 dark:hover:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded transition-colors"
             @click="setQuickDate('current')"
-            class="px-3 py-1.5 text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded transition-colors"
           >
             Esta semana
           </button>
           <button
             type="button"
+            class="px-3 py-1.5 text-xs font-medium bg-sky-100 dark:bg-sky-900/30 hover:bg-sky-200 dark:hover:bg-sky-900/50 text-sky-700 dark:text-sky-300 rounded transition-colors"
             @click="setQuickDate('next')"
-            class="px-3 py-1.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded transition-colors"
           >
             Próxima semana
           </button>
           <button
             type="button"
-            @click="setQuickDate('previous')"
             class="px-3 py-1.5 text-xs font-medium bg-amber-100 dark:bg-amber-900/30 hover:bg-amber-200 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded transition-colors"
+            @click="setQuickDate('previous')"
           >
             Semana pasada
           </button>
@@ -150,9 +156,19 @@ const setQuickDate = (type: 'current' | 'next' | 'previous') => {
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <UButton label="Cancelar" color="gray" variant="ghost" @click="emit('update:open', false)" />
-        <UButton label="Crear Semana" icon="i-lucide-calendar-plus" color="success" @click="confirmCreateWeek"
-          :loading="loading" />
+        <UButton
+          label="Cancelar"
+          color="neutral"
+          variant="ghost"
+          @click="emit('update:open', false)"
+        />
+        <UButton
+          label="Crear Semana"
+          icon="i-lucide-calendar-plus"
+          color="primary"
+          :loading="loading"
+          @click="confirmCreateWeek"
+        />
       </div>
     </template>
   </UModal>

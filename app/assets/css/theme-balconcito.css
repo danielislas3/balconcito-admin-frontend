@@ -1,0 +1,131 @@
+/**
+ * BALCONCITO THEME
+ *
+ * Estilo: Cálido/Acogedor
+ * Tema base: Oscuro
+ * Color primario: Naranja/Terracota (orange de Tailwind)
+ *
+ * Los colores base usan la paleta de Tailwind CSS:
+ * - primary → orange
+ * - secondary → teal
+ * - success → lime
+ * - info → sky
+ * - warning → amber
+ * - error → red
+ * - neutral → stone
+ *
+ * Para cambiar colores, modifica app.config.ts
+ * Para overrides específicos, agrega @theme aquí
+ */
+
+/* ========================================
+   CUSTOM COLOR OVERRIDES (Opcional)
+   Descomenta y modifica para customizar
+   ======================================== */
+
+/*
+@theme static {
+  --color-orange-500: #F97316;
+  --color-orange-600: #EA580C;
+}
+*/
+
+/* ========================================
+   SEMANTIC BUSINESS COLORS
+   Variables CSS para contextos específicos de Balconcito
+   ======================================== */
+
+@layer base {
+  :root {
+    /* Dinero/Pagos - Violeta */
+    --balconcito-money: theme('colors.violet.600');
+    --balconcito-money-bg: theme('colors.violet.50');
+
+    /* Horas/Tiempo - Sky Blue */
+    --balconcito-hours: theme('colors.sky.600');
+    --balconcito-hours-bg: theme('colors.sky.50');
+
+    /* Overtime Tier 1 (1.5x) - Ámbar */
+    --balconcito-overtime-1: theme('colors.amber.600');
+    --balconcito-overtime-1-bg: theme('colors.amber.50');
+
+    /* Overtime Tier 2 (2x) - Rojo */
+    --balconcito-overtime-2: theme('colors.red.600');
+    --balconcito-overtime-2-bg: theme('colors.red.50');
+
+    /* Ingresos - Lime (Verde cálido) */
+    --balconcito-income: theme('colors.lime.600');
+    --balconcito-income-bg: theme('colors.lime.50');
+
+    /* Gastos - Rojo */
+    --balconcito-expense: theme('colors.red.600');
+    --balconcito-expense-bg: theme('colors.red.50');
+
+    /* Cuentas/Saldos - Teal */
+    --balconcito-accounts: theme('colors.teal.600');
+    --balconcito-accounts-bg: theme('colors.teal.50');
+  }
+
+  .dark {
+    /* Dinero/Pagos - Violeta (más brillante en dark) */
+    --balconcito-money: theme('colors.violet.400');
+    --balconcito-money-bg: theme('colors.violet.950 / 30%');
+
+    /* Horas/Tiempo */
+    --balconcito-hours: theme('colors.sky.400');
+    --balconcito-hours-bg: theme('colors.sky.950 / 30%');
+
+    /* Overtime Tier 1 */
+    --balconcito-overtime-1: theme('colors.amber.400');
+    --balconcito-overtime-1-bg: theme('colors.amber.950 / 30%');
+
+    /* Overtime Tier 2 */
+    --balconcito-overtime-2: theme('colors.red.400');
+    --balconcito-overtime-2-bg: theme('colors.red.950 / 30%');
+
+    /* Ingresos */
+    --balconcito-income: theme('colors.lime.400');
+    --balconcito-income-bg: theme('colors.lime.950 / 30%');
+
+    /* Gastos */
+    --balconcito-expense: theme('colors.red.400');
+    --balconcito-expense-bg: theme('colors.red.950 / 30%');
+
+    /* Cuentas/Saldos */
+    --balconcito-accounts: theme('colors.teal.400');
+    --balconcito-accounts-bg: theme('colors.teal.950 / 30%');
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES FOR BUSINESS CONTEXTS
+   Clases helper para usar en componentes
+   ======================================== */
+
+@layer utilities {
+  /* Money/Payments context */
+  .text-money { color: var(--balconcito-money); }
+  .bg-money { background-color: var(--balconcito-money-bg); }
+
+  /* Hours/Time context */
+  .text-hours { color: var(--balconcito-hours); }
+  .bg-hours { background-color: var(--balconcito-hours-bg); }
+
+  /* Overtime contexts */
+  .text-overtime-1 { color: var(--balconcito-overtime-1); }
+  .bg-overtime-1 { background-color: var(--balconcito-overtime-1-bg); }
+  .text-overtime-2 { color: var(--balconcito-overtime-2); }
+  .bg-overtime-2 { background-color: var(--balconcito-overtime-2-bg); }
+
+  /* Income context */
+  .text-income { color: var(--balconcito-income); }
+  .bg-income { background-color: var(--balconcito-income-bg); }
+
+  /* Expense context */
+  .text-expense { color: var(--balconcito-expense); }
+  .bg-expense { background-color: var(--balconcito-expense-bg); }
+
+  /* Accounts context */
+  .text-accounts { color: var(--balconcito-accounts); }
+  .bg-accounts { background-color: var(--balconcito-accounts-bg); }
+}

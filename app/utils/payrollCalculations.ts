@@ -19,8 +19,8 @@ export interface WeekTotals {
   extraHours: number
   totalBasePay: number
   totalPay: number
-  totalShifts: number  // Número de días trabajados
-  totalOvertimeHours: number  // Suma de tier 1 + tier 2
+  totalShifts: number // Número de días trabajados
+  totalOvertimeHours: number // Suma de tier 1 + tier 2
 }
 
 /**
@@ -73,11 +73,11 @@ export const calculateWeekTotals = (week: PayrollWeek): WeekTotals => {
  */
 export interface EmployeeStats {
   totalWeeks: number
-  totalShifts: number  // Total de días trabajados
+  totalShifts: number // Total de días trabajados
   totalHours: number
   totalPay: number
   avgHoursPerWeek: number
-  avgHoursPerShift: number  // Promedio de horas por turno
+  avgHoursPerShift: number // Promedio de horas por turno
 }
 
 /**
@@ -90,18 +90,18 @@ export const calculateEmployeeStats = (employee: PayrollEmployee): EmployeeStats
   const totalWeeks = employee.weeks.length
   let totalHours = 0
   let totalPay = 0
-  let totalShifts = 0  // Turnos completos (8+ horas)
+  let totalShifts = 0 // Turnos completos (8+ horas)
 
-  employee.weeks.forEach(week => {
+  employee.weeks.forEach((week) => {
     const weekTotals = calculateWeekTotals(week)
     totalHours += weekTotals.totalHours
     totalPay += weekTotals.totalPay
-    totalShifts += weekTotals.totalShifts  // Ya cuenta solo turnos de 8+ horas
+    totalShifts += weekTotals.totalShifts // Ya cuenta solo turnos de 8+ horas
   })
 
   return {
     totalWeeks,
-    totalShifts,  // Total de turnos completos (8+ horas)
+    totalShifts, // Total de turnos completos (8+ horas)
     totalHours,
     totalPay,
     avgHoursPerWeek: totalWeeks > 0 ? (totalHours / totalWeeks) : 0,
@@ -143,7 +143,7 @@ export const calculateMonthlyStats = (
 ): MonthlyStats | null => {
   const dayjs = useDayjs()
 
-  const weeksInMonth = employee.weeks.filter(week => {
+  const weeksInMonth = employee.weeks.filter((week) => {
     const weekDate = dayjs(week.startDate)
     return weekDate.year() === year && weekDate.month() === month
   })
@@ -204,13 +204,13 @@ export const getAvailableMonths = (employee: PayrollEmployee): AvailableMonth[] 
   const dayjs = useDayjs()
   const monthsSet = new Set<string>()
 
-  employee.weeks.forEach(week => {
+  employee.weeks.forEach((week) => {
     const date = dayjs(week.startDate)
     const key = `${date.year()}-${date.month()}`
     monthsSet.add(key)
   })
 
-  const months = Array.from(monthsSet).map(key => {
+  const months = Array.from(monthsSet).map((key) => {
     const [year, month] = key.split('-').map(Number)
     const date = dayjs().year(year).month(month)
     const label = date.format('MMMM YYYY')

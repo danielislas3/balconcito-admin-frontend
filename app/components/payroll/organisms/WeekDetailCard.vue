@@ -40,7 +40,9 @@ const formatCurrency = (amount: number = 0) => {
           </div>
         </div>
         <div class="text-right">
-          <div class="text-sm text-gray-500 dark:text-gray-400">Total Semanal</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Total Semanal
+          </div>
           <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
             {{ formatCurrency(weekTotals.totalPay) }}
           </div>
@@ -56,7 +58,8 @@ const formatCurrency = (amount: number = 0) => {
       :extra-hours="weekTotals.extraHours"
       :total-tips="week.weeklyTips || 0"
       :currency="currency"
-      class="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700" />
+      class="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700"
+    />
 
     <!-- Detailed Day-by-Day Breakdown -->
     <div class="space-y-3 mb-6">
@@ -71,7 +74,8 @@ const formatCurrency = (amount: number = 0) => {
         :day-name="day.name"
         :day-emoji="day.emoji"
         :schedule="week.schedule[day.key as keyof WeekSchedule]"
-        :currency="currency" />
+        :currency="currency"
+      />
     </div>
 
     <!-- Resumen de Pago Semanal (Screenshot-friendly) -->
@@ -80,7 +84,9 @@ const formatCurrency = (amount: number = 0) => {
         <div class="p-2 bg-violet-500/10 rounded-lg">
           <UIcon name="i-lucide-receipt" class="size-6 text-violet-600 dark:text-violet-400" />
         </div>
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Resumen de Pago Semanal</h3>
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+          Resumen de Pago Semanal
+        </h3>
       </div>
 
       <!-- Desglose de Pagos -->
@@ -89,7 +95,9 @@ const formatCurrency = (amount: number = 0) => {
         <div class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Horas Regulares</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Horas Regulares
+              </div>
               <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
                 {{ weekTotals.regularHours.toFixed(1) }}h × 100%
               </div>
@@ -101,7 +109,9 @@ const formatCurrency = (amount: number = 0) => {
         <div v-if="weekTotals.overtimeHours > 0" class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Horas Extra (Tier 1)</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Horas Extra (Tier 1)
+              </div>
               <div class="text-sm font-semibold text-amber-600 dark:text-amber-400">
                 {{ weekTotals.overtimeHours.toFixed(1) }}h
               </div>
@@ -113,7 +123,9 @@ const formatCurrency = (amount: number = 0) => {
         <div v-if="weekTotals.extraHours > 0" class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Horas Extra (Tier 2)</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Horas Extra (Tier 2)
+              </div>
               <div class="text-sm font-semibold text-red-600 dark:text-red-400">
                 {{ weekTotals.extraHours.toFixed(1) }}h
               </div>
@@ -125,7 +137,9 @@ const formatCurrency = (amount: number = 0) => {
         <div class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Pago Base</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Pago Base
+              </div>
               <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
                 Total de horas trabajadas
               </div>
@@ -142,7 +156,9 @@ const formatCurrency = (amount: number = 0) => {
         <div class="p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Propinas</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Propinas
+              </div>
               <div class="text-sm font-semibold text-violet-600 dark:text-violet-400">
                 Semana completa
               </div>
@@ -160,7 +176,9 @@ const formatCurrency = (amount: number = 0) => {
       <div class="pt-5 border-t-2 border-violet-200 dark:border-violet-700">
         <div class="flex items-center justify-between">
           <div>
-            <div class="text-sm text-gray-600 dark:text-gray-400">Total a Pagar</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+              Total a Pagar
+            </div>
             <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">
               Semana del {{ formatWeekDisplay(week.startDate) }}
             </div>

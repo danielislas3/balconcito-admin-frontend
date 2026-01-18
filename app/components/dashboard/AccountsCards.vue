@@ -48,10 +48,12 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2 class="text-lg font-semibold mb-4">Saldos de Cuentas</h2>
+    <h2 class="text-lg font-semibold mb-4">
+      Saldos de Cuentas
+    </h2>
 
     <div v-if="loading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <USkeleton class="h-32" v-for="i in 4" :key="i" />
+      <USkeleton v-for="i in 4" :key="i" class="h-32" />
     </div>
 
     <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

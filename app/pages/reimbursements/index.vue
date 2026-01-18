@@ -207,10 +207,12 @@ onMounted(() => {
       <div class="space-y-8">
         <!-- Gastos pendientes de reembolso -->
         <div>
-          <h2 class="text-lg font-semibold mb-4">Gastos Pendientes de Reembolso</h2>
+          <h2 class="text-lg font-semibold mb-4">
+            Gastos Pendientes de Reembolso
+          </h2>
 
           <div v-if="loadingPending" class="grid md:grid-cols-2 gap-4">
-            <USkeleton class="h-48" v-for="i in 2" :key="i" />
+            <USkeleton v-for="i in 2" :key="i" class="h-48" />
           </div>
 
           <div v-else class="grid md:grid-cols-2 gap-4">
@@ -218,7 +220,9 @@ onMounted(() => {
             <UCard>
               <template #header>
                 <div class="flex items-center justify-between">
-                  <h3 class="font-semibold text-lg">Daniel</h3>
+                  <h3 class="font-semibold text-lg">
+                    Daniel
+                  </h3>
                   <UBadge
                     v-if="pendingReimbursements?.daniel?.total_amount > 0"
                     color="amber"
@@ -226,7 +230,9 @@ onMounted(() => {
                   >
                     ${{ formatCurrency(pendingReimbursements.daniel.total_amount) }}
                   </UBadge>
-                  <UBadge v-else color="green">Al corriente</UBadge>
+                  <UBadge v-else color="green">
+                    Al corriente
+                  </UBadge>
                 </div>
               </template>
 
@@ -246,9 +252,9 @@ onMounted(() => {
                 </div>
 
                 <UButton
-                  @click="startReimbursement('daniel')"
                   block
                   color="amber"
+                  @click="startReimbursement('daniel')"
                 >
                   Crear Reembolso
                 </UButton>
@@ -262,7 +268,9 @@ onMounted(() => {
             <UCard>
               <template #header>
                 <div class="flex items-center justify-between">
-                  <h3 class="font-semibold text-lg">Raúl</h3>
+                  <h3 class="font-semibold text-lg">
+                    Raúl
+                  </h3>
                   <UBadge
                     v-if="pendingReimbursements?.raul?.total_amount > 0"
                     color="amber"
@@ -270,7 +278,9 @@ onMounted(() => {
                   >
                     ${{ formatCurrency(pendingReimbursements.raul.total_amount) }}
                   </UBadge>
-                  <UBadge v-else color="green">Al corriente</UBadge>
+                  <UBadge v-else color="green">
+                    Al corriente
+                  </UBadge>
                 </div>
               </template>
 
@@ -290,9 +300,9 @@ onMounted(() => {
                 </div>
 
                 <UButton
-                  @click="startReimbursement('raul')"
                   block
                   color="amber"
+                  @click="startReimbursement('raul')"
                 >
                   Crear Reembolso
                 </UButton>
@@ -306,7 +316,9 @@ onMounted(() => {
 
         <!-- Historial de reembolsos -->
         <div>
-          <h2 class="text-lg font-semibold mb-4">Historial de Reembolsos</h2>
+          <h2 class="text-lg font-semibold mb-4">
+            Historial de Reembolsos
+          </h2>
 
           <UCard>
             <UTable
@@ -319,7 +331,9 @@ onMounted(() => {
               </template>
 
               <template #to_user-data="{ row }">
-                <UBadge color="blue" variant="subtle">{{ row.to_user?.name || '-' }}</UBadge>
+                <UBadge color="blue" variant="subtle">
+                  {{ row.to_user?.name || '-' }}
+                </UBadge>
               </template>
 
               <template #amount-data="{ row }">
@@ -332,11 +346,13 @@ onMounted(() => {
             </UTable>
 
             <div v-else-if="loadingHistory" class="space-y-4 p-4">
-              <USkeleton class="h-12" v-for="i in 3" :key="i" />
+              <USkeleton v-for="i in 3" :key="i" class="h-12" />
             </div>
 
             <div v-else class="text-center py-12">
-              <p class="text-gray-500">No hay reembolsos registrados</p>
+              <p class="text-gray-500">
+                No hay reembolsos registrados
+              </p>
             </div>
           </UCard>
         </div>
@@ -348,10 +364,17 @@ onMounted(() => {
   <UModal v-model="showReimbursementModal">
     <UCard>
       <template #header>
-        <h3 class="text-lg font-semibold">Crear Reembolso para {{ selectedPerson }}</h3>
+        <h3 class="text-lg font-semibold">
+          Crear Reembolso para {{ selectedPerson }}
+        </h3>
       </template>
 
-      <UForm :schema="schema" :state="reimbursementForm" @submit="submitReimbursement" class="space-y-4">
+      <UForm
+        :schema="schema"
+        :state="reimbursementForm"
+        class="space-y-4"
+        @submit="submitReimbursement"
+      >
         <UFormField label="Fecha del reembolso" name="reimbursement_date" required>
           <UInput v-model="reimbursementForm.reimbursement_date" type="date" />
         </UFormField>
