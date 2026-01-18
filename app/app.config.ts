@@ -8,13 +8,13 @@ export default defineAppConfig({
     // Aquí mapeamos los nombres de Tailwind a nuestros colores
     // ========================================
     colors: {
-      primary: 'orange',     // Naranja/Terracota
-      secondary: 'teal',     // Teal oscuro
-      success: 'lime',       // Verde cálido
-      info: 'sky',           // Azul cálido
-      warning: 'amber',      // Ámbar/Dorado
-      error: 'red',          // Rojo cálido
-      neutral: 'stone'       // Gris cálido
+      primary: 'orange', // Naranja/Terracota
+      secondary: 'teal', // Teal oscuro
+      success: 'lime', // Verde cálido
+      info: 'sky', // Azul cálido
+      warning: 'amber', // Ámbar/Dorado
+      error: 'red', // Rojo cálido
+      neutral: 'stone' // Gris cálido
     },
     // Card styling
     card: {

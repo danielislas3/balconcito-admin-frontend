@@ -171,7 +171,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
 
     const comparisons: PriceComparison[] = []
 
-    current.products.forEach(currentProduct => {
+    current.products.forEach((currentProduct) => {
       const previousProduct = previous.products.find(p => p.codigo === currentProduct.codigo)
 
       if (previousProduct) {

@@ -59,19 +59,30 @@ onBeforeUnmount(() => {
                 Buscar Productos
               </h2>
               <div class="flex items-center gap-3">
-                <UBadge color="primary" variant="subtle" v-if="store.currentPriceList">
+                <UBadge v-if="store.currentPriceList" color="primary" variant="subtle">
                   {{ store.currentPriceList.supplierType === 'apys'
                     ? `APYS - ${store.currentPriceList.month} ${store.currentPriceList.year}`
                     : store.currentPriceList.fileName }}
                 </UBadge>
-                <UButton color="neutral" variant="ghost" size="sm" icon="i-lucide-list" label="Ver listas"
-                  @click="store.isLoading = false" />
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                  icon="i-lucide-list"
+                  label="Ver listas"
+                  @click="store.isLoading = false"
+                />
               </div>
             </div>
 
             <div class="relative mb-4">
-              <UInput v-model="store.searchTerm" icon="i-lucide-search"
-                placeholder="Busca por código, nombre o marca..." size="xl" autofocus>
+              <UInput
+                v-model="store.searchTerm"
+                icon="i-lucide-search"
+                placeholder="Busca por código, nombre o marca..."
+                size="xl"
+                autofocus
+              >
                 <template #trailing>
                   <div v-if="store.searchTerm" class="flex items-center gap-1 text-xs text-muted">
                     <span class="px-1.5 py-0.5 border border-default rounded">ESC</span> para limpiar
@@ -83,14 +94,20 @@ onBeforeUnmount(() => {
             <div class="flex-1 overflow-y-auto min-h-0 pr-2 pb-4">
               <!-- Mensaje solo cuando hay 1 carácter -->
               <div v-if="store.searchTerm.length === 1" class="text-center py-12 text-muted">
-                <p class="text-sm">Escribe al menos 2 caracteres para buscar</p>
+                <p class="text-sm">
+                  Escribe al menos 2 caracteres para buscar
+                </p>
               </div>
 
               <!-- Sin resultados después de buscar -->
-              <div v-else-if="store.filteredProducts.length === 0 && store.searchTerm.length >= 2"
-                class="text-center py-12 text-muted">
+              <div
+                v-else-if="store.filteredProducts.length === 0 && store.searchTerm.length >= 2"
+                class="text-center py-12 text-muted"
+              >
                 <p>No se encontraron productos para "{{ store.searchTerm }}"</p>
-                <p class="text-sm mt-2">Intenta con otro término de búsqueda</p>
+                <p class="text-sm mt-2">
+                  Intenta con otro término de búsqueda
+                </p>
               </div>
 
               <!-- Mostrar productos -->
@@ -101,8 +118,13 @@ onBeforeUnmount(() => {
                     Mostrando los 50 productos más económicos. Usa el buscador para encontrar productos específicos.
                   </p>
                 </div>
-                <ProductCard v-for="(product, idx) in store.filteredProducts" :key="product.codigo" :product="product"
-                  :is-cheapest="idx === 0" :cheapest-price="store.filteredProducts[0]?.precioMayoreo" />
+                <ProductCard
+                  v-for="(product, idx) in store.filteredProducts"
+                  :key="product.codigo"
+                  :product="product"
+                  :is-cheapest="idx === 0"
+                  :cheapest-price="store.filteredProducts[0]?.precioMayoreo"
+                />
               </div>
             </div>
           </div>

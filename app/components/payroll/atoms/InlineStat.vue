@@ -69,12 +69,14 @@ const sizeClasses = {
 </script>
 
 <template>
-  <div :class="[
-    'flex items-center rounded-lg font-bold tabular-nums',
-    colorClasses[color].bg,
-    colorClasses[color].text,
-    sizeClasses[size].container
-  ]">
+  <div
+    :class="[
+      'flex items-center rounded-lg font-bold tabular-nums',
+      colorClasses[color].bg,
+      colorClasses[color].text,
+      sizeClasses[size].container
+    ]"
+  >
     <UIcon :name="icon" :class="[sizeClasses[size].icon, colorClasses[color].icon]" />
     <span v-if="label" :class="['font-medium', sizeClasses[size].text]">
       {{ label }}:

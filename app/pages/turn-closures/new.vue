@@ -127,11 +127,20 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     <template #body>
       <UCard>
         <template #header>
-          <h3 class="text-lg font-semibold">Datos del Cierre</h3>
-          <p class="text-sm text-gray-500 mt-1">Registra el cierre de caja del ticket de Loyverse</p>
+          <h3 class="text-lg font-semibold">
+            Datos del Cierre
+          </h3>
+          <p class="text-sm text-gray-500 mt-1">
+            Registra el cierre de caja del ticket de Loyverse
+          </p>
         </template>
 
-        <UForm :schema="schema" :state="state" @submit="onSubmit" class="space-y-6">
+        <UForm
+          :schema="schema"
+          :state="state"
+          class="space-y-6"
+          @submit="onSubmit"
+        >
           <div class="grid md:grid-cols-2 gap-6">
             <!-- Número de cierre -->
             <UFormField label="Número de cierre de caja" name="closure_number" required>
@@ -261,21 +270,35 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <!-- Resumen calculado -->
           <UCard class="bg-green-50 dark:bg-green-950">
             <template #header>
-              <h4 class="font-semibold">Resumen</h4>
+              <h4 class="font-semibold">
+                Resumen
+              </h4>
             </template>
 
             <div class="grid md:grid-cols-3 gap-4">
               <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Total de ingresos</p>
-                <p class="text-2xl font-bold text-green-600">${{ formatCurrency(totalIncome) }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Total de ingresos
+                </p>
+                <p class="text-2xl font-bold text-green-600">
+                  ${{ formatCurrency(totalIncome) }}
+                </p>
               </div>
               <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Efectivo final (Caja Chica)</p>
-                <p class="text-2xl font-bold">${{ formatCurrency(finalCash) }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Efectivo final (Caja Chica)
+                </p>
+                <p class="text-2xl font-bold">
+                  ${{ formatCurrency(finalCash) }}
+                </p>
               </div>
               <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Ingresos digitales</p>
-                <p class="text-2xl font-bold">${{ formatCurrency(digitalIncome) }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Ingresos digitales
+                </p>
+                <p class="text-2xl font-bold">
+                  ${{ formatCurrency(digitalIncome) }}
+                </p>
               </div>
             </div>
           </UCard>

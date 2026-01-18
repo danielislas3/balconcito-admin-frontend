@@ -19,7 +19,7 @@ const formatPrice = (amount: number) => {
 
 <template>
   <div
-    class="relative p-4 transition-all border rounded-xl cursor-pointer group bg-default/40 border-default hover:bg-primary/5 hover:border-primary/50"
+    class="relative p-4 transition-all border rounded-lg cursor-pointer group bg-default/40 border-default hover:bg-primary/5 hover:border-primary/50"
     @click="store.addToCart(product)"
   >
     <div class="flex items-start justify-between gap-4">

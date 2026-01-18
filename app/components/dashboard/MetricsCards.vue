@@ -73,10 +73,12 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2 class="text-lg font-semibold mb-4">Métricas del Período</h2>
+    <h2 class="text-lg font-semibold mb-4">
+      Métricas del Período
+    </h2>
 
     <div v-if="loading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <USkeleton class="h-40" v-for="i in 6" :key="i" />
+      <USkeleton v-for="i in 6" :key="i" class="h-40" />
     </div>
 
     <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -84,14 +86,18 @@ onMounted(() => {
       <UCard>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Ingresos Totales</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Ingresos Totales
+            </h3>
             <UTooltip text="Todo el dinero que entró por ventas en el período seleccionado">
               <UIcon name="i-lucide-info" class="size-4 text-gray-400 cursor-help" />
             </UTooltip>
           </div>
           <UIcon name="i-lucide-trending-up" class="size-5 text-green-500" />
         </div>
-        <p class="text-3xl font-bold text-green-600">${{ formatCurrency(summary?.income?.total || 0) }}</p>
+        <p class="text-3xl font-bold text-green-600">
+          ${{ formatCurrency(summary?.income?.total || 0) }}
+        </p>
         <div class="mt-3 space-y-1 text-xs text-gray-500">
           <div class="flex justify-between">
             <span>Efectivo:</span>
@@ -112,14 +118,18 @@ onMounted(() => {
       <UCard>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Gastos Totales</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Gastos Totales
+            </h3>
             <UTooltip text="Todo lo que gastaste en el período (insumos, nómina, servicios, etc.)">
               <UIcon name="i-lucide-info" class="size-4 text-gray-400 cursor-help" />
             </UTooltip>
           </div>
           <UIcon name="i-lucide-trending-down" class="size-5 text-red-500" />
         </div>
-        <p class="text-3xl font-bold text-red-600">${{ formatCurrency(summary?.expenses?.total || 0) }}</p>
+        <p class="text-3xl font-bold text-red-600">
+          ${{ formatCurrency(summary?.expenses?.total || 0) }}
+        </p>
         <div class="mt-3 space-y-1 text-xs text-gray-500">
           <div class="flex justify-between">
             <span>COGS:</span>
@@ -140,7 +150,9 @@ onMounted(() => {
       <UCard>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Utilidad Neta</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Utilidad Neta
+            </h3>
             <UTooltip text="Tu ganancia real después de pagar TODO (Ingresos - Gastos)">
               <UIcon name="i-lucide-info" class="size-4 text-gray-400 cursor-help" />
             </UTooltip>
@@ -169,7 +181,9 @@ onMounted(() => {
       <UCard>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">COGS %</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              COGS %
+            </h3>
             <UTooltip text="Cuánto te cuestan los productos que vendes (cerveza, comida, hielo, etc.) como % de tus ventas. Ideal: 25-35%">
               <UIcon name="i-lucide-info" class="size-4 text-gray-400 cursor-help" />
             </UTooltip>
@@ -199,7 +213,9 @@ onMounted(() => {
       <UCard>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Punto de Equilibrio</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Punto de Equilibrio
+            </h3>
             <UTooltip text="Lo mínimo que necesitas vender para NO perder dinero (ni ganar ni perder)">
               <UIcon name="i-lucide-info" class="size-4 text-gray-400 cursor-help" />
             </UTooltip>
@@ -230,7 +246,9 @@ onMounted(() => {
       <UCard>
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Cash Runway</h3>
+            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Cash Runway
+            </h3>
             <UTooltip text="Días que podrías operar si tus ventas bajaran a cero mañana. Es tu colchón de seguridad">
               <UIcon name="i-lucide-info" class="size-4 text-gray-400 cursor-help" />
             </UTooltip>

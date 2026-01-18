@@ -27,9 +27,13 @@ const formatPercentage = (value: number) => {
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-trending-up" class="size-5 text-primary" />
-          <h3 class="text-lg font-semibold">Comparación de Precios</h3>
+          <h3 class="text-lg font-semibold">
+            Comparación de Precios
+          </h3>
         </div>
-        <UBadge color="primary" variant="subtle">{{ priceChanges.length }} cambios</UBadge>
+        <UBadge color="primary" variant="subtle">
+          {{ priceChanges.length }} cambios
+        </UBadge>
       </div>
       <p class="text-sm text-muted mt-1">
         Comparando con lista anterior
@@ -41,10 +45,15 @@ const formatPercentage = (value: number) => {
     </div>
 
     <div v-else class="space-y-2">
-      <div v-for="change in displayedChanges" :key="change.codigo"
-        class="flex items-center justify-between p-3 rounded-lg bg-default/40 border border-default">
+      <div
+        v-for="change in displayedChanges"
+        :key="change.codigo"
+        class="flex items-center justify-between p-3 rounded-lg bg-default/40 border border-default"
+      >
         <div class="flex-1 min-w-0">
-          <div class="text-xs font-bold text-primary">{{ change.codigo }}</div>
+          <div class="text-xs font-bold text-primary">
+            {{ change.codigo }}
+          </div>
           <div class="text-sm font-medium truncate" :title="change.descripcion">
             {{ change.descripcion }}
           </div>
@@ -63,7 +72,8 @@ const formatPercentage = (value: number) => {
           <UBadge
             :color="change.difference > 0 ? 'error' : 'success'"
             variant="subtle"
-            class="font-bold min-w-[70px] justify-center">
+            class="font-bold min-w-[70px] justify-center"
+          >
             {{ formatPercentage(change.percentageChange) }}
           </UBadge>
         </div>
@@ -74,7 +84,8 @@ const formatPercentage = (value: number) => {
         block
         variant="ghost"
         color="neutral"
-        @click="showAll = !showAll">
+        @click="showAll = !showAll"
+      >
         {{ showAll ? 'Ver menos' : `Ver todos (${priceChanges.length})` }}
       </UButton>
     </div>

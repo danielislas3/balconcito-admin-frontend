@@ -20,8 +20,8 @@ const formatTime = (hour: string, minute: string) => {
 }
 
 const hasDayData = computed(() => {
-  return props.schedule.hoursWorked > 0 ||
-         (props.schedule.entryHour && props.schedule.exitHour)
+  return props.schedule.hoursWorked > 0
+    || (props.schedule.entryHour && props.schedule.exitHour)
 })
 
 const formatCurrency = (amount: number) => {
@@ -31,22 +31,27 @@ const formatCurrency = (amount: number) => {
 </script>
 
 <template>
-  <div :class="[
-    'p-5 rounded-xl border-2 transition-all',
-    hasDayData
-      ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
-      : 'bg-stone-50 dark:bg-stone-900/30 border-stone-200 dark:border-stone-700',
-    isActive && 'ring-2 ring-orange-500'
-  ]">
+  <div
+    :class="[
+      'p-5 rounded-xl border-2 transition-all',
+      hasDayData
+        ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
+        : 'bg-stone-50 dark:bg-stone-900/30 border-stone-200 dark:border-stone-700',
+      isActive && 'ring-2 ring-orange-500'
+    ]"
+  >
     <!-- Encabezado: Día y horario -->
     <div class="flex items-center justify-between mb-3">
       <PayrollAtomsDayLabel
         :emoji="dayEmoji"
         :name="dayName"
-        :subtitle="formatTime(schedule.entryHour, schedule.entryMinute) + ' → ' + formatTime(schedule.exitHour, schedule.exitMinute)" />
+        :subtitle="formatTime(schedule.entryHour, schedule.entryMinute) + ' → ' + formatTime(schedule.exitHour, schedule.exitMinute)"
+      />
 
       <div class="text-right">
-        <div class="text-xs text-muted">Total del día</div>
+        <div class="text-xs text-muted">
+          Total del día
+        </div>
         <div class="text-xl font-bold text-violet-600 dark:text-violet-400 tabular-nums">
           {{ formatCurrency(schedule.dailyPay) }}
         </div>
@@ -60,7 +65,9 @@ const formatCurrency = (amount: number) => {
         <div class="text-sm font-bold text-sky-600 dark:text-sky-400 tabular-nums">
           {{ schedule.hoursWorked.toFixed(1) }}h
         </div>
-        <div class="text-xs text-muted mt-0.5">Total</div>
+        <div class="text-xs text-muted mt-0.5">
+          Total
+        </div>
       </div>
 
       <!-- Regular Hours -->
@@ -68,7 +75,9 @@ const formatCurrency = (amount: number) => {
         <div class="text-sm font-bold text-orange-600 dark:text-orange-400 tabular-nums">
           {{ schedule.regularHours.toFixed(1) }}h
         </div>
-        <div class="text-xs text-muted mt-0.5">Regular</div>
+        <div class="text-xs text-muted mt-0.5">
+          Regular
+        </div>
       </div>
 
       <!-- Overtime Tier 1 -->
@@ -76,7 +85,9 @@ const formatCurrency = (amount: number) => {
         <div class="text-sm font-bold text-amber-600 dark:text-amber-400 tabular-nums">
           {{ schedule.overtimeHours.toFixed(1) }}h
         </div>
-        <div class="text-xs text-muted mt-0.5">Extra 1.5x</div>
+        <div class="text-xs text-muted mt-0.5">
+          Extra 1.5x
+        </div>
       </div>
 
       <!-- Overtime Tier 2 -->
@@ -84,7 +95,9 @@ const formatCurrency = (amount: number) => {
         <div class="text-sm font-bold text-red-600 dark:text-red-400 tabular-nums">
           {{ schedule.extraHours.toFixed(1) }}h
         </div>
-        <div class="text-xs text-muted mt-0.5">Extra 2x</div>
+        <div class="text-xs text-muted mt-0.5">
+          Extra 2x
+        </div>
       </div>
     </div>
 

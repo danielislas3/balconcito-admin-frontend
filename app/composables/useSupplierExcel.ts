@@ -154,7 +154,7 @@ export const useSupplierExcel = () => {
           reject(error)
         }
       }
-      reader.onerror = (error) => reject(error)
+      reader.onerror = error => reject(error)
       reader.readAsArrayBuffer(file)
     })
   }
@@ -169,7 +169,7 @@ export const useSupplierExcel = () => {
       ['CÓDIGO', 'DESCRIPCIÓN', 'EMPAQUE', 'CANTIDAD', 'PRECIO', 'SUBTOTAL']
     ]
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const subtotal = item.cantidad * item.precioMayoreo
       data.push([
         item.codigo,
@@ -186,12 +186,12 @@ export const useSupplierExcel = () => {
 
     const worksheet = XLSX.utils.aoa_to_sheet(data)
     worksheet['!cols'] = [
-      { wch: 12 },  // CÓDIGO
-      { wch: 40 },  // DESCRIPCIÓN
-      { wch: 20 },  // EMPAQUE
-      { wch: 10 },  // CANTIDAD
-      { wch: 12 },  // PRECIO
-      { wch: 12 }   // SUBTOTAL
+      { wch: 12 }, // CÓDIGO
+      { wch: 40 }, // DESCRIPCIÓN
+      { wch: 20 }, // EMPAQUE
+      { wch: 10 }, // CANTIDAD
+      { wch: 12 }, // PRECIO
+      { wch: 12 } // SUBTOTAL
     ]
 
     const workbook = XLSX.utils.book_new()
@@ -222,10 +222,10 @@ export const useSupplierExcel = () => {
       ['', 'para llenar el formato de pedidos solo COPIA Y PEGA toda la fila de la lista de precios', '', '', '', '', '', '', '', '', '', ''],
       ['', 'El monto puede variar si el producto contiene impuestos IEPS O IVA', '', '', '', '', '', '', '', '', '', ''],
       ['', '', '', '', '', '', '', '', '', '', '', ''],
-      ['CÓDIGO', 'DESCRIPCIÓN', 'EMPAQUE', 'MARCA', 'MENUDEO', 'porción (solo informativo', '', 'MAYOREO', 'porción (solo informativo', '', 'CANTIDAD', 'TOTAL'],
+      ['CÓDIGO', 'DESCRIPCIÓN', 'EMPAQUE', 'MARCA', 'MENUDEO', 'porción (solo informativo', '', 'MAYOREO', 'porción (solo informativo', '', 'CANTIDAD', 'TOTAL']
     ]
 
-    items.forEach(item => {
+    items.forEach((item) => {
       orderData.push([
         item.codigo,
         item.descripcion,
@@ -262,7 +262,7 @@ export const useSupplierExcel = () => {
       { wch: 10 },
       { wch: 5 },
       { wch: 10 }, // CANTIDAD
-      { wch: 12 }, // TOTAL
+      { wch: 12 } // TOTAL
     ]
 
     XLSX.utils.book_append_sheet(wb, ws, 'PEDIDO')

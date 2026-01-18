@@ -95,7 +95,9 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2 class="text-lg font-semibold mb-4">Desglose de Gastos</h2>
+    <h2 class="text-lg font-semibold mb-4">
+      Desglose de Gastos
+    </h2>
 
     <div v-if="loading">
       <USkeleton class="h-96" />
@@ -105,7 +107,9 @@ onMounted(() => {
       <!-- Por tipo de costo -->
       <UCard>
         <template #header>
-          <h3 class="font-semibold">Por Tipo de Costo</h3>
+          <h3 class="font-semibold">
+            Por Tipo de Costo
+          </h3>
         </template>
 
         <div v-if="breakdown?.by_cost_type" class="space-y-4">
@@ -154,7 +158,9 @@ onMounted(() => {
       <UCard>
         <template #header>
           <div class="flex items-center justify-between">
-            <h3 class="font-semibold">Top 5 Categorías</h3>
+            <h3 class="font-semibold">
+              Top 5 Categorías
+            </h3>
             <span class="text-sm text-gray-500">
               Total: ${{ formatCurrency(breakdown?.total_expenses || 0) }}
             </span>

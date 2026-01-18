@@ -72,7 +72,9 @@ const onFileChange = (e: Event) => {
   >
     <div v-if="loading" class="flex flex-col items-center gap-4">
       <UIcon name="i-lucide-loader-2" class="w-12 h-12 animate-spin text-primary" />
-      <p class="text-lg font-medium text-muted">Procesando archivo...</p>
+      <p class="text-lg font-medium text-muted">
+        Procesando archivo...
+      </p>
     </div>
 
     <div v-else class="flex flex-col items-center gap-4 text-center">
@@ -80,12 +82,16 @@ const onFileChange = (e: Event) => {
         <UIcon name="i-lucide-upload-cloud" class="w-10 h-10 text-primary" />
       </div>
       <div>
-        <h3 class="text-xl font-semibold">Cargar lista de precios</h3>
+        <h3 class="text-xl font-semibold">
+          Cargar lista de precios
+        </h3>
         <p class="mt-2 text-muted">
           Arrastra tu archivo Excel aquí o haz clic para buscarlo
         </p>
       </div>
-      <p class="text-sm text-muted">Soporta .xlsx y .xls</p>
+      <p class="text-sm text-muted">
+        Soporta .xlsx y .xls
+      </p>
     </div>
 
     <input

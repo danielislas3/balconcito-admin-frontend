@@ -24,8 +24,8 @@ const formatCurrency = (value: number) => {
 
 const totalPending = computed(() => {
   if (!pendingReimbursements.value) return 0
-  return (pendingReimbursements.value.daniel?.total_amount || 0) +
-         (pendingReimbursements.value.raul?.total_amount || 0)
+  return (pendingReimbursements.value.daniel?.total_amount || 0)
+    + (pendingReimbursements.value.raul?.total_amount || 0)
 })
 
 onMounted(() => {

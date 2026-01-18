@@ -34,7 +34,7 @@ const monthlyStats = computed(() => {
   const currentMonth = dayjs().month()
   const currentYear = dayjs().year()
 
-  const weeksThisMonth = currentEmployee.value.weeks.filter(week => {
+  const weeksThisMonth = currentEmployee.value.weeks.filter((week) => {
     const weekDate = dayjs(week.startDate)
     return weekDate.year() === currentYear && weekDate.month() === currentMonth
   })
@@ -99,8 +99,12 @@ const cancelEdit = () => {
             <UIcon name="i-lucide-user-cog" class="size-16 text-gray-400 dark:text-gray-500" />
           </div>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white">No hay empleado seleccionado</h3>
-        <p class="text-gray-600 dark:text-gray-400 max-w-md mx-auto">Selecciona un empleado para ver y editar su configuración</p>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+          No hay empleado seleccionado
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+          Selecciona un empleado para ver y editar su configuración
+        </p>
       </div>
     </UCard>
 
@@ -111,7 +115,9 @@ const cancelEdit = () => {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-user-cog" class="size-5 text-emerald-600" />
-              <h2 class="text-lg font-semibold">Configuración de {{ currentEmployee.name }}</h2>
+              <h2 class="text-lg font-semibold">
+                Configuración de {{ currentEmployee.name }}
+              </h2>
             </div>
             <UButton
               v-if="!editingSettings"
@@ -126,24 +132,43 @@ const cancelEdit = () => {
         </template>
 
         <div class="space-y-6">
-        <!-- Gestión de Datos -->
-        <div
-          class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-6 rounded-2xl border-2 border-blue-200 dark:border-blue-800">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="p-2 bg-blue-500/10 rounded-lg">
-              <UIcon name="i-lucide-database" class="size-6 text-blue-600 dark:text-blue-400" />
+          <!-- Gestión de Datos -->
+          <div
+            class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-6 rounded-2xl border-2 border-blue-200 dark:border-blue-800"
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <div class="p-2 bg-blue-500/10 rounded-lg">
+                <UIcon name="i-lucide-database" class="size-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Gestión de Datos
+              </h3>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Gestión de Datos</h3>
+            <div class="flex flex-wrap gap-3">
+              <UButton
+                label="Exportar Sistema Completo"
+                icon="i-lucide-download"
+                color="primary"
+                size="lg"
+                @click="emit('export-system')"
+              />
+              <UButton
+                label="Importar Datos"
+                icon="i-lucide-upload"
+                color="success"
+                size="lg"
+                @click="emit('import-data')"
+              />
+              <UButton
+                label="Limpiar Todo"
+                icon="i-lucide-trash-2"
+                color="error"
+                variant="outline"
+                size="lg"
+                @click="emit('clear-all')"
+              />
+            </div>
           </div>
-          <div class="flex flex-wrap gap-3">
-            <UButton label="Exportar Sistema Completo" icon="i-lucide-download" color="primary" size="lg"
-              @click="emit('export-system')" />
-            <UButton label="Importar Datos" icon="i-lucide-upload" color="success" size="lg"
-              @click="emit('import-data')" />
-            <UButton label="Limpiar Todo" icon="i-lucide-trash-2" color="error" variant="outline" size="lg"
-              @click="emit('clear-all')" />
-          </div>
-        </div>
 
           <!-- Configuración de Tarifas y Horarios -->
           <div class="bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 p-6 rounded-2xl border-2 border-violet-200 dark:border-violet-800">
@@ -151,7 +176,9 @@ const cancelEdit = () => {
               <div class="p-2 bg-violet-500/10 rounded-lg">
                 <UIcon name="i-lucide-dollar-sign" class="size-6 text-violet-600 dark:text-violet-400" />
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Tarifas y Horarios</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Tarifas y Horarios
+              </h3>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <UFormField label="Tarifa base por hora" :disabled="!editingSettings">
@@ -169,9 +196,15 @@ const cancelEdit = () => {
                   :disabled="!editingSettings"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <option value="MXN">MXN</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
+                  <option value="MXN">
+                    MXN
+                  </option>
+                  <option value="USD">
+                    USD
+                  </option>
+                  <option value="EUR">
+                    EUR
+                  </option>
                 </select>
               </UFormField>
               <UFormField label="Horas por turno" hint="Horas de trabajo normales por día" :disabled="!editingSettings">
@@ -210,19 +243,23 @@ const cancelEdit = () => {
               <div class="p-2 bg-amber-500/10 rounded-lg">
                 <UIcon name="i-lucide-zap" class="size-6 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Configuración de Horas Extra</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Configuración de Horas Extra
+              </h3>
             </div>
             <div class="space-y-4">
               <div class="flex items-center gap-3 p-4 bg-white/60 dark:bg-gray-800/60 rounded-xl">
                 <input
-                  type="checkbox"
                   v-model="localSettings.usesOvertime"
+                  type="checkbox"
                   :disabled="!editingSettings"
                   class="w-4 h-4 text-amber-600 rounded focus:ring-amber-500 disabled:opacity-50"
-                />
+                >
                 <div class="flex-1">
                   <span class="text-sm font-medium text-gray-900 dark:text-white">Usar horas extra</span>
-                  <p class="text-xs text-gray-500">Activar pago de overtime después de las horas regulares</p>
+                  <p class="text-xs text-gray-500">
+                    Activar pago de overtime después de las horas regulares
+                  </p>
                 </div>
               </div>
               <div v-if="localSettings.usesOvertime" class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4 border-l-4 border-amber-300 dark:border-amber-700">
@@ -255,9 +292,15 @@ const cancelEdit = () => {
                 </UFormField>
                 <div class="flex items-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
                   <div class="flex-1">
-                    <p class="text-xs font-medium text-amber-700 dark:text-amber-300">Umbral mínimo</p>
-                    <p class="text-lg font-bold text-amber-900 dark:text-amber-100">20 minutos</p>
-                    <p class="text-xs text-amber-600 dark:text-amber-400">Solo cuenta overtime si supera 20 min</p>
+                    <p class="text-xs font-medium text-amber-700 dark:text-amber-300">
+                      Umbral mínimo
+                    </p>
+                    <p class="text-lg font-bold text-amber-900 dark:text-amber-100">
+                      20 minutos
+                    </p>
+                    <p class="text-xs text-amber-600 dark:text-amber-400">
+                      Solo cuenta overtime si supera 20 min
+                    </p>
                   </div>
                 </div>
               </div>
@@ -270,28 +313,52 @@ const cancelEdit = () => {
               <div class="p-2 bg-emerald-500/10 rounded-lg">
                 <UIcon name="i-lucide-bar-chart" class="size-6 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Estadísticas</h3>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Estadísticas
+              </h3>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div class="p-4 bg-white/60 dark:bg-gray-800/60 rounded-xl text-center">
-                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Semanas totales</p>
-                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ currentEmployee.weeks.length }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                  Semanas totales
+                </p>
+                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {{ currentEmployee.weeks.length }}
+                </p>
               </div>
               <div v-if="monthlyStats" class="p-4 bg-white/60 dark:bg-gray-800/60 rounded-xl text-center">
-                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Semanas este mes</p>
-                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ monthlyStats.weeksThisMonth }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                  Semanas este mes
+                </p>
+                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {{ monthlyStats.weeksThisMonth }}
+                </p>
               </div>
               <div v-if="monthlyStats" class="p-4 bg-white/60 dark:bg-gray-800/60 rounded-xl text-center col-span-2">
-                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Pago acumulado este mes</p>
-                <p class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ formatCurrency(monthlyStats.totalPayThisMonth, localSettings.currency || 'MXN') }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                  Pago acumulado este mes
+                </p>
+                <p class="text-2xl font-bold text-violet-600 dark:text-violet-400">
+                  {{ formatCurrency(monthlyStats.totalPayThisMonth, localSettings.currency || 'MXN') }}
+                </p>
               </div>
             </div>
           </div>
 
           <!-- Botones de acción si está editando -->
           <div v-if="editingSettings" class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <UButton label="Cancelar" color="gray" variant="ghost" @click="cancelEdit" />
-            <UButton label="Guardar Cambios" icon="i-lucide-save" color="success" @click="saveSettings" />
+            <UButton
+              label="Cancelar"
+              color="gray"
+              variant="ghost"
+              @click="cancelEdit"
+            />
+            <UButton
+              label="Guardar Cambios"
+              icon="i-lucide-save"
+              color="success"
+              @click="saveSettings"
+            />
           </div>
         </div>
       </UCard>

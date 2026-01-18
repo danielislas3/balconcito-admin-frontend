@@ -49,7 +49,8 @@ const overtimeBadge = computed(() => {
       :badge="attendanceBadge"
       :gradient="{ from: 'from-blue-50', to: 'to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30' }"
       icon-color="text-blue-600 dark:text-blue-400"
-      text-color="text-blue-900 dark:text-blue-100" />
+      text-color="text-blue-900 dark:text-blue-100"
+    />
 
     <!-- Perfect Weeks -->
     <PayrollAtomsStatCard
@@ -60,7 +61,8 @@ const overtimeBadge = computed(() => {
       :badge="{ label: 'Top Performer', color: 'success' }"
       :gradient="{ from: 'from-emerald-50', to: 'to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30' }"
       icon-color="text-emerald-600 dark:text-emerald-400"
-      text-color="text-emerald-900 dark:text-emerald-100" />
+      text-color="text-emerald-900 dark:text-emerald-100"
+    />
 
     <!-- Overtime Analysis -->
     <PayrollAtomsStatCard
@@ -71,7 +73,8 @@ const overtimeBadge = computed(() => {
       :badge="overtimeBadge"
       :gradient="{ from: 'from-amber-50', to: 'to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30' }"
       icon-color="text-amber-600 dark:text-amber-400"
-      text-color="text-amber-900 dark:text-amber-100" />
+      text-color="text-amber-900 dark:text-amber-100"
+    />
 
     <!-- Average Pay Per Day -->
     <PayrollAtomsStatCard
@@ -82,6 +85,7 @@ const overtimeBadge = computed(() => {
       :badge="{ label: 'Promedio', color: 'primary' }"
       :gradient="{ from: 'from-violet-50', to: 'to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30' }"
       icon-color="text-violet-600 dark:text-violet-400"
-      text-color="text-violet-900 dark:text-violet-100" />
+      text-color="text-violet-900 dark:text-violet-100"
+    />
   </div>
 </template>
