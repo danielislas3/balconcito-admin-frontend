@@ -5,7 +5,7 @@ import RecipeDetail from '~/components/recipes/RecipeDetail.vue'
 definePageMeta({
   layout: 'default',
   middleware: ['auth'],
-  requiresAuth: true,
+  requiresAuth: true
 })
 </script>
 
