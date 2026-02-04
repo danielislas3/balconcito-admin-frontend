@@ -96,7 +96,7 @@ const generateId = (name: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full border-r border-default bg-default">
+  <div class="flex flex-col h-full bg-default">
     <div class="p-4 border-b border-default">
       <div class="flex items-center gap-3">
         <div class="flex-1">
