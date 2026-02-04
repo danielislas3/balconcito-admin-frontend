@@ -6,7 +6,9 @@ import PriceListManager from '~/components/suppliers/PriceListManager.vue'
 import PriceComparison from '~/components/suppliers/PriceComparison.vue'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: ['auth'],
+  requiresAuth: true
 })
 
 const store = useSuppliersStore()
