@@ -14,27 +14,6 @@ const links = [[{
     open.value = false
   }
 }, {
-  label: 'Cierres de Turno',
-  icon: 'i-lucide-receipt',
-  to: '/turn-closures',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
-  label: 'Gastos',
-  icon: 'i-lucide-shopping-cart',
-  to: '/expenses',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
-  label: 'Reembolsos',
-  icon: 'i-lucide-wallet',
-  to: '/reimbursements',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
   label: 'Nóminas',
   icon: 'i-lucide-calculator',
   to: '/payroll',
@@ -113,7 +92,5 @@ const groups = computed(() => [{
     <UDashboardSearch :groups="groups" />
 
     <slot />
-
-    <NotificationsSlideover />
   </UDashboardGroup>
 </template>
