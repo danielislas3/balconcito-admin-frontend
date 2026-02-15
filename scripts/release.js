@@ -70,6 +70,8 @@ function getCurrentVersion() {
   return packageJson.version
 }
 
+
+
 function parseArguments() {
   const { values } = parseArgs({
     options: {
@@ -146,7 +148,7 @@ async function main() {
   logger.info(`Versión actual: ${currentVersion}`)
 
   // 5. Crear rama de release/hotfix
-  // La versión final la determinará standard-version, usamos current como placeholder
+  // La versión final la determinará changelogen, usamos current como placeholder
   const releaseBranchName = `${branchPrefix}/v${currentVersion}`
 
   // Verificar si la rama ya existe localmente o remotamente
@@ -169,21 +171,21 @@ async function main() {
     }
   }
 
-  // 6. Ejecutar standard-version
-  logger.info('Ejecutando standard-version...')
-  const standardVersionArgs = []
+  // 6. Ejecutar changelogen
+  logger.info('Ejecutando changelogen...')
+  const changelogenArgs = ['--release']
   if (version) {
-    standardVersionArgs.push(`--release-as ${version}`)
+    changelogenArgs.push(`-r ${version}`)
   }
   if (dryRun) {
-    standardVersionArgs.push('--dry-run')
+    changelogenArgs.push('--dry-run')
   }
 
-  const standardVersionCommand = `npx standard-version ${standardVersionArgs.join(' ')}`
+  const changelogenCommand = `npx changelogen ${changelogenArgs.join(' ')}`
   if (!dryRun) {
-    runCommand(standardVersionCommand)
+    runCommand(changelogenCommand)
   } else {
-    logger.info(`[DRY RUN] ${standardVersionCommand}`)
+    logger.info(`[DRY RUN] ${changelogenCommand}`)
   }
 
   // 7. Obtener nueva versión

@@ -13,7 +13,7 @@
     "release": "node scripts/release.js",
     "hotfix": "node scripts/release.js --hotfix",
     "release:dry-run": "node scripts/release.js --dry-run",
-    "changelog": "standard-version --dry-run"
+    "changelog": "changelogen"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.73",
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.10.0",
+    "changelogen": "^0.6.2",
     "consola": "^3.4.2",
     "eslint": "^9.39.1",
     "standard-version": "^9.5.0",
