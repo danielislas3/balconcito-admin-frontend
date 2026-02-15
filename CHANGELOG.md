@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.2.1
+
+[compare changes](https://github.com/danielislas3/balconcito-admin-frontend/compare/v0.1.1...v0.2.1)
+
+### ✨ Nuevas funcionalidades
+
+- Migrate from standard-version to changelogen ([1bb06d0](https://github.com/danielislas3/balconcito-admin-frontend/commit/1bb06d0))
+
+### 🐛 Correcciones de errores
+
+- Handle existing release branch gracefully ([62ee79b](https://github.com/danielislas3/balconcito-admin-frontend/commit/62ee79b))
+
+### 📚 Documentación
+
+- Update AGENTS.md with release automation commands ([b51a3dd](https://github.com/danielislas3/balconcito-admin-frontend/commit/b51a3dd))
+
+### 🧹 Tareas de mantenimiento
+
+- Add changelog.config.json ([64b8afd](https://github.com/danielislas3/balconcito-admin-frontend/commit/64b8afd))
+- Remove old .changelogrc file ([4649c83](https://github.com/danielislas3/balconcito-admin-frontend/commit/4649c83))
+- **release:** V0.1.2 ([b8af3ab](https://github.com/danielislas3/balconcito-admin-frontend/commit/b8af3ab))
+- Update lockfile ([5a00ecd](https://github.com/danielislas3/balconcito-admin-frontend/commit/5a00ecd))
+- **release:** V0.1.2" ([4408b9f](https://github.com/danielislas3/balconcito-admin-frontend/commit/4408b9f))
+- Update package version and regenerate changelog ([b28d724](https://github.com/danielislas3/balconcito-admin-frontend/commit/b28d724))
+
+### 👷 Integración continua
+
+- Add functionality to ensure 'release' label exists before creating PR ([05ef139](https://github.com/danielislas3/balconcito-admin-frontend/commit/05ef139))
+
+### ❤️ Contributors
+
+- Danielislas3 ([@danielislas3](https://github.com/danielislas3))
+
 ## v0.1.0...develop
 
 [compare changes](https://github.com/danielislas3/balconcito-admin-frontend/compare/v0.1.0...develop)
