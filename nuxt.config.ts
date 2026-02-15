@@ -21,6 +21,8 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    databaseUrl: process.env.DATABASE_URL || '',
+    railsApiUrl: process.env.NUXT_RAILS_API_URL || 'http://localhost:3001/api/v1',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000/api/v1'
     }
