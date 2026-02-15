@@ -30,7 +30,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
     // Si no hay búsqueda, mostrar los primeros 50 productos por defecto
     if (searchTerm.value.length === 0) {
       return currentPriceList.value.products
-        .sort((a, b) => a.precioMayoreo - b.precioMayoreo)
+        .sort((a, b) => a.precioPublico - b.precioPublico)
         .slice(0, 50)
     }
 
@@ -42,12 +42,12 @@ export const useSuppliersStore = defineStore('suppliers', () => {
 
     return currentPriceList.value.products
       .filter(p => terms.every(term => p.searchText.includes(term)))
-      .sort((a, b) => a.precioMayoreo - b.precioMayoreo)
+      .sort((a, b) => a.precioPublico - b.precioPublico)
       .slice(0, 50)
   })
 
   const cartTotal = computed(() => {
-    return cart.value.reduce((sum, item) => sum + (item.precioMayoreo * item.cantidad), 0)
+    return cart.value.reduce((sum, item) => sum + (item.precioPublico * item.cantidad), 0)
   })
 
   const cartItemCount = computed(() => {
