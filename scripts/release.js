@@ -40,14 +40,14 @@ function tryRunCommand(command) {
 
 function ensureReleaseLabel() {
   logger.debug('Verificando label "release"...')
-  
+
   // Verificar si el label ya existe
-  const checkLabelCommand = 'gh label list --json name --jq ".[] | select(.name == \"release\")"'
+  const checkLabelCommand = `gh label list --json name --jq '.[] | select(.name == "release")'`
   if (tryRunCommand(checkLabelCommand)) {
     logger.debug('Label "release" ya existe')
     return true
   }
-  
+
   // Crear el label si no existe
   logger.info('Creando label "release" en GitHub...')
   const createLabelCommand = 'gh label create "release" --description "Releases y versiones" --color "0E8A16"'
@@ -55,7 +55,7 @@ function ensureReleaseLabel() {
     logger.debug('Label "release" creado exitosamente')
     return true
   }
-  
+
   logger.warn('No se pudo crear el label "release", continuando sin él')
   return false
 }
@@ -148,11 +148,25 @@ async function main() {
   // 5. Crear rama de release/hotfix
   // La versión final la determinará standard-version, usamos current como placeholder
   const releaseBranchName = `${branchPrefix}/v${currentVersion}`
-  logger.info(`Creando rama: ${releaseBranchName}`)
-  if (!dryRun) {
-    runCommand(`git checkout -b ${releaseBranchName}`)
+
+  // Verificar si la rama ya existe localmente o remotamente
+  const branchExistsLocally = tryRunCommand(`git show-ref --verify --quiet refs/heads/${releaseBranchName}`)
+  const branchExistsRemotely = tryRunCommand(`git ls-remote --exit-code --heads origin ${releaseBranchName}`)
+
+  if (branchExistsLocally || branchExistsRemotely) {
+    logger.info(`La rama ${releaseBranchName} ya existe, haciendo checkout...`)
+    if (!dryRun) {
+      runCommand(`git checkout ${releaseBranchName}`)
+    } else {
+      logger.info(`[DRY RUN] git checkout ${releaseBranchName}`)
+    }
   } else {
-    logger.info(`[DRY RUN] git checkout -b ${releaseBranchName}`)
+    logger.info(`Creando rama: ${releaseBranchName}`)
+    if (!dryRun) {
+      runCommand(`git checkout -b ${releaseBranchName}`)
+    } else {
+      logger.info(`[DRY RUN] git checkout -b ${releaseBranchName}`)
+    }
   }
 
   // 6. Ejecutar standard-version
