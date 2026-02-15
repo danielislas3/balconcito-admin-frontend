@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.3.0
+
+[compare changes](https://github.com/danielislas3/balconcito-admin-frontend/compare/v0.2.1...v0.3.0)
+
 ## v0.2.1
 
 [compare changes](https://github.com/danielislas3/balconcito-admin-frontend/compare/v0.1.1...v0.2.1)
