@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "private": true,
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "build": "nuxt build",
@@ -8,7 +9,11 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "release": "node scripts/release.js",
+    "hotfix": "node scripts/release.js --hotfix",
+    "release:dry-run": "node scripts/release.js --dry-run",
+    "changelog": "standard-version --dry-run"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.73",
@@ -29,7 +34,9 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.10.0",
+    "consola": "^3.4.2",
     "eslint": "^9.39.1",
+    "standard-version": "^9.5.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.3"
   },

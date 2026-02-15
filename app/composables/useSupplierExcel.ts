@@ -2,6 +2,13 @@ import * as XLSX from 'xlsx'
 import type { SupplierProduct, OrderItem, PriceList, SupplierType } from '~/types/suppliers'
 
 export const useSupplierExcel = () => {
+  // Parse price from cell: handles numbers and strings like "$ 160.65"
+  const parsePrice = (val: any): number => {
+    if (typeof val === 'number') return val
+    if (typeof val === 'string') return parseFloat(val.replace(/[$,\s]/g, '')) || 0
+    return 0
+  }
+
   // Detect supplier type based on file content
   const detectSupplierType = (workbook: XLSX.WorkBook, fileName: string): SupplierType => {
     // Check for APYS indicators
@@ -38,8 +45,14 @@ export const useSupplierExcel = () => {
         continue
       }
 
-      // Parse product row
-      const [codigo, descripcion, empaque, marca, precioPublico, precioMayoreo, precioDistribuidor, precioEspecial] = row
+      // APYS column layout:
+      // 0: CÓDIGO | 1: DESCRIPCIÓN | 2: EMPAQUE | 3: MARCA
+      // 4: PRECIO PÚBLICO | 5: porción (info) | 6: etiqueta
+      // 7: SOLO MAYOREO  | 8: porción (info) | 9: etiqueta
+      const codigo = row[0]
+      const descripcion = row[1]
+      const empaque = row[2]
+      const marca = row[3]
 
       if (codigo && descripcion) {
         products.push({
@@ -47,10 +60,8 @@ export const useSupplierExcel = () => {
           descripcion: String(descripcion).trim(),
           empaque: empaque ? String(empaque).trim() : '',
           marca: marca ? String(marca).trim() : '',
-          precioPublico: Number(precioPublico) || 0,
-          precioMayoreo: Number(precioMayoreo) || 0,
-          precioDistribuidor: Number(precioDistribuidor) || 0,
-          precioEspecial: Number(precioEspecial) || 0,
+          precioPublico: parsePrice(row[4]),
+          precioMayoreo: parsePrice(row[7]),
           category: currentCategory,
           searchText: `${codigo} ${descripcion} ${marca} ${empaque} ${currentCategory}`.toLowerCase()
         })
@@ -104,8 +115,8 @@ export const useSupplierExcel = () => {
         const descripcion = row[1] || ''
         const empaque = row[2] || ''
         const marca = row[3] || ''
-        const precioPublico = parseFloat(row[4]) || 0
-        const precioMayoreo = parseFloat(row[7]) || parseFloat(row[4]) || 0
+        const precioPublico = parsePrice(row[4])
+        const precioMayoreo = parsePrice(row[7]) || parsePrice(row[4])
 
         if (descripcion && precioMayoreo > 0) {
           products.push({
@@ -170,13 +181,13 @@ export const useSupplierExcel = () => {
     ]
 
     items.forEach((item) => {
-      const subtotal = item.cantidad * item.precioMayoreo
+      const subtotal = item.cantidad * item.precioPublico
       data.push([
         item.codigo,
         item.descripcion,
         item.empaque,
         item.cantidad,
-        item.precioMayoreo,
+        item.precioPublico,
         subtotal
       ])
     })
@@ -234,11 +245,11 @@ export const useSupplierExcel = () => {
         item.precioPublico,
         '',
         '',
-        item.precioMayoreo,
+        item.precioPublico,
         '',
         '',
         item.cantidad,
-        item.precioMayoreo * item.cantidad
+        item.precioPublico * item.cantidad
       ])
     })
 

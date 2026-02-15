@@ -47,15 +47,15 @@ const formatPrice = (amount: number) => {
         </div>
 
         <div v-if="!isCheapest && cheapestPrice" class="mt-2 text-xs font-medium text-amber-600 dark:text-amber-400">
-          +{{ formatPrice(product.precioMayoreo - cheapestPrice) }} vs opción más barata
+          +{{ formatPrice(product.precioPublico - cheapestPrice) }} vs opción más barata
         </div>
       </div>
 
       <div class="flex flex-col items-end shrink-0">
         <span class="text-xl font-bold text-primary tabular-nums">
-          {{ formatPrice(product.precioMayoreo) }}
+          {{ formatPrice(product.precioPublico) }}
         </span>
-        <span class="text-xs text-muted">Mayoreo</span>
+        <span class="text-xs text-muted">Público</span>
       </div>
     </div>
   </div>
