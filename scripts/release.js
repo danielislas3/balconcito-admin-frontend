@@ -28,6 +28,38 @@ function runCommandWithOutput(command) {
   }
 }
 
+function tryRunCommand(command) {
+  logger.debug(`Intentando: ${command}`)
+  try {
+    execSync(command, { stdio: 'pipe' })
+    return true
+  } catch {
+    return false
+  }
+}
+
+function ensureReleaseLabel() {
+  logger.debug('Verificando label "release"...')
+  
+  // Verificar si el label ya existe
+  const checkLabelCommand = 'gh label list --json name --jq ".[] | select(.name == \"release\")"'
+  if (tryRunCommand(checkLabelCommand)) {
+    logger.debug('Label "release" ya existe')
+    return true
+  }
+  
+  // Crear el label si no existe
+  logger.info('Creando label "release" en GitHub...')
+  const createLabelCommand = 'gh label create "release" --description "Releases y versiones" --color "0E8A16"'
+  if (tryRunCommand(createLabelCommand)) {
+    logger.debug('Label "release" creado exitosamente')
+    return true
+  }
+  
+  logger.warn('No se pudo crear el label "release", continuando sin él')
+  return false
+}
+
 function isWorkingDirectoryClean() {
   const output = runCommandWithOutput('git status --porcelain')
   return output === ''
@@ -167,9 +199,13 @@ async function main() {
     const prTitle = `${isHotfix ? 'Hotfix' : 'Release'} v${newVersion}`
     const prBody = `Automáticamente generado por el script de release`
 
+    // Asegurar que el label 'release' existe
+    const hasReleaseLabel = ensureReleaseLabel()
+    const labelFlag = hasReleaseLabel ? '--label release' : ''
+
     // PR a main
     logger.info('Creando PR hacia main...')
-    runCommand(`gh pr create --base main --head ${actualReleaseBranchName} --title "${prTitle}" --body "${prBody}" --label release`)
+    runCommand(`gh pr create --base main --head ${actualReleaseBranchName} --title "${prTitle}" --body "${prBody}" ${labelFlag}`.trim())
 
     // PR a develop (solo para releases, hotfixes ya están en main)
     if (!isHotfix) {
