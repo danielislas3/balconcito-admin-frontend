@@ -1,0 +1,26 @@
+{
+  "types": {
+    "feat": { "title": "✨ Nuevas funcionalidades", "semver": "minor" },
+    "fix": { "title": "🐛 Correcciones de errores", "semver": "patch" },
+    "docs": { "title": "📚 Documentación", "semver": "patch" },
+    "style": { "title": "💄 Estilos", "semver": "patch" },
+    "refactor": { "title": "♻️ Refactorización", "semver": "patch" },
+    "perf": { "title": "⚡ Mejoras de rendimiento", "semver": "patch" },
+    "test": { "title": "🧪 Pruebas", "semver": "patch" },
+    "build": { "title": "🔧 Construcción", "semver": "patch" },
+    "ci": { "title": "👷 Integración continua", "semver": "patch" },
+    "chore": { "title": "🧹 Tareas de mantenimiento" },
+    "revert": { "title": "⏪ Revertir cambios" },
+    "types": { "title": "🌊 Tipos", "semver": "patch" },
+    "examples": { "title": "🏀 Ejemplos" }
+  },
+  "repo": "danielislas3/balconcito-admin-frontend",
+  "output": "CHANGELOG.md",
+  "templates": {
+    "commitMessage": "chore(release): v{{newVersion}}",
+    "tagMessage": "v{{newVersion}}",
+    "tagBody": "v{{newVersion}}"
+  },
+  "excludeAuthors": [],
+  "noAuthors": false
+}
