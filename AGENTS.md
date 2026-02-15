@@ -19,6 +19,27 @@ pnpm typecheck    # Run TypeScript type checking
 
 **IMPORTANT**: Always run `pnpm lint` and `pnpm typecheck` after making changes to ensure code quality.
 
+### Release Automation
+```bash
+pnpm release                 # Create release from develop branch
+pnpm hotfix                 # Create hotfix from main branch  
+pnpm release:dry-run        # Dry-run release process
+pnpm changelog              # Preview changelog between last tag and HEAD
+```
+
+**Release Process**:
+1. `pnpm release` creates `release/vX.X.X` branch from `develop`
+2. Runs `changelogen --release` to:
+   - Determine semantic version based on conventional commits
+   - Update `package.json` version
+   - Generate `CHANGELOG.md` with Spanish categories
+   - Create commit and Git tag
+3. Pushes branch and tags
+4. Creates PRs to `main` and `develop` (optional, use `--skip-pr` to skip)
+5. Manual merge of PRs required
+
+**Configuration**: `changelog.config.json` with Spanish type titles and repo settings.
+
 ## Code Style Guidelines
 
 ### ESLint Configuration
