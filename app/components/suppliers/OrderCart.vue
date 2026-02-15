@@ -49,7 +49,7 @@ const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
             {{ item.descripcion }}
           </div>
           <div class="text-sm font-bold text-primary tabular-nums">
-            {{ formatPrice(item.precioMayoreo * item.cantidad) }}
+            {{ formatPrice(item.precioPublico * item.cantidad) }}
           </div>
         </div>
 
