@@ -28,6 +28,9 @@ export const usePayrollRouteSync = () => {
     if (employeeId && employees.value.find(e => e.id === employeeId)) {
       payrollStore.currentEmployeeId = employeeId
 
+      // Cargar datos completos del empleado seleccionado
+      await payrollStore.fetchCurrentEmployee()
+
       // Esperar a que se actualice el DOM
       await nextTick()
 

@@ -265,7 +265,7 @@ const applyPresetToAll = async (preset: typeof schedulePresets[0]) => {
     )
 
     // Actualizar el store para refrescar los datos
-    await payrollStore.fetchEmployees()
+    await payrollStore.fetchCurrentEmployee()
 
     toast.add({
       title: 'Horarios aplicados',
@@ -324,7 +324,7 @@ const applyCopy = async () => {
     )
 
     // Actualizar el store para refrescar los datos
-    await payrollStore.fetchEmployees()
+    await payrollStore.fetchCurrentEmployee()
 
     toast.add({
       title: 'Horarios copiados',

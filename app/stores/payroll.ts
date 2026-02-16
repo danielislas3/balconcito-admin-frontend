@@ -80,7 +80,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   // --- CRUD: EMPLEADOS ---
 
   /**
-   * Obtiene todos los empleados desde el backend
+   * Obtiene la lista de empleados (sin semanas ni horarios)
    */
   async function fetchEmployees() {
     loading.value = true
@@ -88,17 +88,47 @@ export const usePayrollStore = defineStore('payroll', () => {
 
     try {
       const api = usePayrollApi()
-      employees.value = await api.fetchEmployees()
+      const list = await api.fetchEmployees()
+
+      // Preservar weeks del empleado que ya tiene datos cargados
+      employees.value = list.map((emp) => {
+        const existing = employees.value.find(e => e.id === emp.id)
+        return existing ? { ...emp, weeks: existing.weeks } : emp
+      })
 
       // Seleccionar primer empleado si no hay ninguno seleccionado
       if (!currentEmployeeId.value || !employees.value.find(e => e.id === currentEmployeeId.value)) {
         currentEmployeeId.value = employees.value.length > 0 ? employees.value[0]?.id || '' : ''
+      }
+
+      // Cargar datos completos del empleado seleccionado
+      if (currentEmployeeId.value) {
+        await fetchCurrentEmployee()
       }
     } catch (err: any) {
       error.value = err?.message || 'Error al cargar empleados'
       console.error('Error fetching employees:', err)
     } finally {
       loading.value = false
+    }
+  }
+
+  /**
+   * Carga los datos completos (semanas + horarios) del empleado seleccionado
+   */
+  async function fetchCurrentEmployee() {
+    if (!currentEmployeeId.value) return
+
+    try {
+      const api = usePayrollApi()
+      const fullEmployee = await api.fetchEmployee(currentEmployeeId.value)
+
+      const index = employees.value.findIndex(e => e.id === currentEmployeeId.value)
+      if (index !== -1) {
+        employees.value[index] = fullEmployee
+      }
+    } catch (err: any) {
+      console.error('Error fetching employee details:', err)
     }
   }
 
@@ -207,8 +237,9 @@ export const usePayrollStore = defineStore('payroll', () => {
   /**
    * Maneja el cambio de empleado seleccionado
    */
-  function onEmployeeChange(): void {
+  async function onEmployeeChange(): Promise<void> {
     currentWeekId.value = ''
+    await fetchCurrentEmployee()
   }
 
   // --- CRUD: SEMANAS ---
@@ -429,6 +460,7 @@ export const usePayrollStore = defineStore('payroll', () => {
     totalWeeks,
     // Actions
     fetchEmployees,
+    fetchCurrentEmployee,
     createEmployee,
     updateEmployeeSettings,
     deleteCurrentEmployee,
