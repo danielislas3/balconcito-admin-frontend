@@ -46,7 +46,7 @@ export const usePayrollRouteSync = () => {
    * Sincroniza cambios de empleado con la URL
    */
   const syncEmployeeToRoute = () => {
-    watch(currentEmployeeId, (newId, oldId) => {
+    watch(currentEmployeeId, (newId, _oldId) => {
       // No actualizar URL durante restauración inicial
       if (isRestoringFromRoute) return
 

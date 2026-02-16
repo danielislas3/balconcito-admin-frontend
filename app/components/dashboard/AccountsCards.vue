@@ -1,13 +1,26 @@
 <script setup lang="ts">
 const api = useApi()
 
-const accounts = ref<any>(null)
+interface Account {
+  id: number
+  name: string
+  account_type: string
+  current_balance: number
+  description?: string
+}
+
+interface AccountsData {
+  accounts: Account[]
+  total_balance: number
+}
+
+const accounts = ref<AccountsData | null>(null)
 const loading = ref(true)
 
 const loadAccounts = async () => {
   loading.value = true
   try {
-    const data: any = await api.get('/accounts')
+    const data = await api.get<AccountsData>('/accounts')
     accounts.value = data
   } catch (error) {
     console.error('Error loading accounts:', error)

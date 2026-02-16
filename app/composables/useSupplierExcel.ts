@@ -3,7 +3,7 @@ import type { SupplierProduct, OrderItem, PriceList, SupplierType } from '~/type
 
 export const useSupplierExcel = () => {
   // Parse price from cell: handles numbers and strings like "$ 160.65"
-  const parsePrice = (val: any): number => {
+  const parsePrice = (val: unknown): number => {
     if (typeof val === 'number') return val
     if (typeof val === 'string') return parseFloat(val.replace(/[$,\s]/g, '')) || 0
     return 0
@@ -28,7 +28,7 @@ export const useSupplierExcel = () => {
     }
 
     const worksheet = workbook.Sheets[sheetName]
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][]
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as unknown[][]
 
     const products: SupplierProduct[] = []
     let currentCategory = ''
@@ -91,7 +91,7 @@ export const useSupplierExcel = () => {
   const parseGenericExcel = (workbook: XLSX.WorkBook, file: File): PriceList => {
     const sheetName = workbook.SheetNames.find(s => s.toLowerCase().includes('lista de precios')) || workbook.SheetNames[0]
     const worksheet = workbook.Sheets[sheetName!]
-    const jsonData = XLSX.utils.sheet_to_json(worksheet!, { header: 1 }) as any[][]
+    const jsonData = XLSX.utils.sheet_to_json(worksheet!, { header: 1 }) as unknown[][]
 
     const products: SupplierProduct[] = []
     let headerFound = false
@@ -172,7 +172,7 @@ export const useSupplierExcel = () => {
 
   // Generate APYS-specific order Excel
   const generateApysOrderExcel = (items: OrderItem[], total: number, month?: string, weekNumber?: number) => {
-    const data: any[][] = [
+    const data: (string | number)[][] = [
       ['PEDIDO APYS'],
       ['Mes:', month || '', '', 'Semana:', weekNumber || ''],
       ['Fecha:', new Date().toLocaleDateString('es-MX')],
@@ -223,7 +223,7 @@ export const useSupplierExcel = () => {
     const businessName = options?.businessName || process.env.NUXT_PUBLIC_BUSINESS_NAME || 'El Balconcito'
     const orderPerson = options?.orderPerson || process.env.NUXT_PUBLIC_ORDER_PERSON || ''
 
-    const orderData: any[][] = [
+    const orderData: (string | number)[][] = [
       ['', '', '', '', '', '', '', '', '', '', '', ''],
       ['Formato de pedidos _____', '', '', '', '', '', '', '', '', '', '', ''],
       ['', '', '', '', '', '', '', '', '', '', '', ''],

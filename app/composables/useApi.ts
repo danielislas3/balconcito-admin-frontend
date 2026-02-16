@@ -38,7 +38,7 @@ export const useApi = () => {
   /**
    * Maneja diferentes códigos de estado HTTP
    */
-  const handleHttpErrors = (response: { status: any, _data: { error_message?: string } }): ApiError => {
+  const handleHttpErrors = (response: { status: number, _data: { error_message?: string } }): ApiError => {
     switch (response.status) {
       case 400:
         return {
@@ -87,7 +87,7 @@ export const useApi = () => {
   /**
    * Ejecuta una petición HTTP con manejo robusto de errores
    */
-  const execute = async <T = any>(
+  const execute = async <T = unknown>(
     endpoint: string,
     options: FetchOptions<'json'> & { expectBlob?: boolean, context?: string } = {}
   ): Promise<T> => {
@@ -181,9 +181,11 @@ export const useApi = () => {
 
         return response as T
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errObj = err as Record<string, unknown>
+      const errMessage = (errObj as { message?: string }).message
       // Manejar timeout
-      if (err.message === 'Request timed out') {
+      if (errMessage === 'Request timed out') {
         const timeoutError: ApiError = {
           status: null,
           message: 'La solicitud tardó demasiado. Por favor intenta de nuevo.'
@@ -193,8 +195,8 @@ export const useApi = () => {
       }
 
       // Manejar errores de fetch
-      if (err.response && err.name === 'FetchError') {
-        const apiError = handleHttpErrors(err.response)
+      if (errObj.response && errObj.name === 'FetchError') {
+        const apiError = handleHttpErrors(errObj.response as { status: number, _data: { error_message?: string } })
         handleApiError(apiError, context)
         throw apiError
       }
@@ -202,7 +204,7 @@ export const useApi = () => {
       // Manejar otros errores
       const genericError: ApiError = {
         status: null,
-        message: err.message || 'Error desconocido'
+        message: errMessage || 'Error desconocido'
       }
       handleApiError(genericError, context)
       throw genericError
@@ -216,40 +218,40 @@ export const useApi = () => {
     /**
      * Realiza una petición GET
      */
-    get: <T = any>(endpoint: string, options: Omit<FetchOptions<'json'>, 'method'> & { context?: string } = {}) =>
+    get: <T = unknown>(endpoint: string, options: Omit<FetchOptions<'json'>, 'method'> & { context?: string } = {}) =>
       execute<T>(endpoint, { ...options, method: 'GET' }),
 
     /**
      * Realiza una petición POST
      */
-    post: <T = any>(
+    post: <T = unknown>(
       endpoint: string,
-      body?: any,
+      body?: unknown,
       options: Omit<FetchOptions<'json'>, 'method' | 'body'> & { context?: string } = {}
     ) => execute<T>(endpoint, { ...options, method: 'POST', body }),
 
     /**
      * Realiza una petición PATCH
      */
-    patch: <T = any>(
+    patch: <T = unknown>(
       endpoint: string,
-      body?: any,
+      body?: unknown,
       options: Omit<FetchOptions<'json'>, 'method' | 'body'> & { context?: string } = {}
     ) => execute<T>(endpoint, { ...options, method: 'PATCH', body }),
 
     /**
      * Realiza una petición PUT
      */
-    put: <T = any>(
+    put: <T = unknown>(
       endpoint: string,
-      body?: any,
+      body?: unknown,
       options: Omit<FetchOptions<'json'>, 'method' | 'body'> & { context?: string } = {}
     ) => execute<T>(endpoint, { ...options, method: 'PUT', body }),
 
     /**
      * Realiza una petición DELETE
      */
-    delete: <T = any>(endpoint: string, options: Omit<FetchOptions<'json'>, 'method'> & { context?: string } = {}) =>
+    delete: <T = unknown>(endpoint: string, options: Omit<FetchOptions<'json'>, 'method'> & { context?: string } = {}) =>
       execute<T>(endpoint, { ...options, method: 'DELETE' })
   }
 }

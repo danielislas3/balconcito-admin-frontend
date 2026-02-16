@@ -9,7 +9,7 @@
 export interface ApiError {
   status: number | null
   message: string | null
-  data?: any
+  data?: unknown
 }
 
 /**
@@ -66,12 +66,15 @@ function getErrorTitle(status: number | null): string {
  * Formatea mensajes de error para mostrar al usuario
  * Útil para transformar errores técnicos en mensajes amigables
  */
-export const formatErrorMessage = (error: any): string => {
+export const formatErrorMessage = (error: unknown): string => {
   if (typeof error === 'string') return error
 
-  if (error.message) return error.message
+  if (error && typeof error === 'object' && 'message' in error) return String((error as { message: unknown }).message)
 
-  if (error._data?.error_message) return error._data.error_message
+  if (error && typeof error === 'object' && '_data' in error) {
+    const data = (error as { _data?: { error_message?: string } })._data
+    if (data?.error_message) return data.error_message
+  }
 
   return 'Ocurrió un error inesperado'
 }
@@ -79,7 +82,7 @@ export const formatErrorMessage = (error: any): string => {
 /**
  * Verifica si un error es de tipo ApiError
  */
-export const isApiError = (error: any): error is ApiError => {
+export const isApiError = (error: unknown): error is ApiError => {
   return (
     error !== null
     && typeof error === 'object'

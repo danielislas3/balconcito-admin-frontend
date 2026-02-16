@@ -14,9 +14,48 @@ const toast = useToast()
 const loadingPending = ref(true)
 const loadingHistory = ref(true)
 const submitting = ref(false)
-const pendingReimbursements = ref<any>(null)
-const reimbursements = ref<any[]>([])
-const accountOptions = ref<any[]>([])
+interface PendingExpense {
+  id: number
+  description: string
+  amount: number
+  expense_date: string
+  category: string
+  user_id: number
+}
+
+interface PersonPending {
+  total_amount: number
+  expenses: PendingExpense[]
+}
+
+interface PendingData {
+  daniel?: PersonPending
+  raul?: PersonPending
+}
+
+interface Reimbursement {
+  id: number
+  reimbursement_date: string
+  amount: number
+  notes: string
+  to_user?: { name: string }
+  from_account?: { name: string }
+}
+
+interface AccountOption {
+  label: string
+  value: number
+}
+
+interface AccountItem {
+  id: number
+  name: string
+  current_balance: number
+}
+
+const pendingReimbursements = ref<PendingData | null>(null)
+const reimbursements = ref<Reimbursement[]>([])
+const accountOptions = ref<AccountOption[]>([])
 const showReimbursementModal = ref(false)
 const selectedPerson = ref('')
 
@@ -58,9 +97,9 @@ const columns = [{
 const loadPendingReimbursements = async () => {
   loadingPending.value = true
   try {
-    const data: any = await api.get('/expenses/pending_reimbursement')
+    const data = await api.get<{ pending_reimbursements: PendingData }>('/expenses/pending_reimbursement')
     pendingReimbursements.value = data.pending_reimbursements
-  } catch (error: any) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'No se pudieron cargar los reembolsos pendientes',
@@ -74,9 +113,9 @@ const loadPendingReimbursements = async () => {
 const loadReimbursements = async () => {
   loadingHistory.value = true
   try {
-    const data: any = await api.get('/reimbursements')
+    const data = await api.get<{ reimbursements: Reimbursement[] }>('/reimbursements')
     reimbursements.value = data.reimbursements || []
-  } catch (error: any) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'No se pudieron cargar los reembolsos',
@@ -89,23 +128,23 @@ const loadReimbursements = async () => {
 
 const loadAccounts = async () => {
   try {
-    const data: any = await api.get('/accounts')
-    accountOptions.value = (data.accounts || []).map((acc: any) => ({
+    const data = await api.get<{ accounts: AccountItem[] }>('/accounts')
+    accountOptions.value = (data.accounts || []).map((acc: AccountItem) => ({
       label: `${acc.name} ($${formatCurrency(acc.current_balance)})`,
       value: acc.id
     }))
-  } catch (error) {
-    // Silent error
+  } catch {
+    // silently ignore
   }
 }
 
 const startReimbursement = (person: string) => {
   selectedPerson.value = person.charAt(0).toUpperCase() + person.slice(1)
 
-  const expenses = pendingReimbursements.value[person].expenses
-  const total = pendingReimbursements.value[person].total_amount
+  const expenses = pendingReimbursements.value[person as keyof PendingData]!.expenses
+  const total = pendingReimbursements.value[person as keyof PendingData]!.total_amount
 
-  reimbursementForm.expense_ids = expenses.map((e: any) => e.id)
+  reimbursementForm.expense_ids = expenses.map((e: PendingExpense) => e.id)
   reimbursementForm.amount = total
   reimbursementForm.to_user_id = expenses[0].user_id
   reimbursementForm.reimbursement_date = new Date().toISOString().split('T')[0]
@@ -130,10 +169,11 @@ const submitReimbursement = async (event: FormSubmitEvent<Schema>) => {
     showReimbursementModal.value = false
     loadPendingReimbursements()
     loadReimbursements()
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errData = error as { data?: { message?: string } }
     toast.add({
       title: 'Error',
-      description: error.data?.message || 'No se pudo crear el reembolso',
+      description: errData.data?.message || 'No se pudo crear el reembolso',
       color: 'red'
     })
   } finally {

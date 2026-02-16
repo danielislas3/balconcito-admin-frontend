@@ -77,10 +77,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       color: 'green'
     })
     router.push('/turn-closures')
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errData = error as { data?: { message?: string } }
     toast.add({
       title: 'Error',
-      description: error.data?.message || 'No se pudo guardar el cierre',
+      description: errData.data?.message || 'No se pudo guardar el cierre',
       color: 'red'
     })
   } finally {

@@ -21,7 +21,7 @@ const formatDate = (date: Date) => {
   })
 }
 
-const getListTitle = (list: any) => {
+const getListTitle = (list: { supplierType: string, month?: string, year?: number, fileName: string }) => {
   if (list.supplierType === 'apys') {
     return `APYS - ${list.month} ${list.year}`
   }

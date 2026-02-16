@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SupplierProduct } from '~/types/suppliers'
 
-const props = defineProps<{
+defineProps<{
   product: SupplierProduct
   isCheapest: boolean
   cheapestPrice?: number

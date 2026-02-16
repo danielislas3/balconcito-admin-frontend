@@ -5,7 +5,7 @@ export const useAuth = () => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response: any = await api.post('/auth/login', { email, password })
+      const response = await api.post<{ token: string, user: { id: number, email: string, name: string, role: string } }>('/auth/login', { email, password })
 
       // Guardar token y usuario en el store (que los persiste en localStorage)
       authStore.setAuth(response.token, response.user)
@@ -18,10 +18,11 @@ export const useAuth = () => {
       })
 
       return response
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errData = error as { data?: { message?: string } }
       toast.add({
         title: 'Error al iniciar sesión',
-        description: error.data?.message || 'Credenciales incorrectas',
+        description: errData.data?.message || 'Credenciales incorrectas',
         color: 'red',
         icon: 'i-lucide-alert-circle'
       })
@@ -48,10 +49,10 @@ export const useAuth = () => {
     }
 
     try {
-      const user: any = await api.get('/auth/me')
+      const user = await api.get<{ id: number, email: string, name: string, role: string }>('/auth/me')
       authStore.setUser(user)
       return true
-    } catch (error) {
+    } catch {
       authStore.logout()
       return false
     }

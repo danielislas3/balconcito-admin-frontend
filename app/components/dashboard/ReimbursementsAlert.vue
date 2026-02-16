@@ -1,12 +1,22 @@
 <script setup lang="ts">
 const api = useApi()
 
-const pendingReimbursements = ref<any>(null)
+interface PersonReimbursement {
+  total_amount: number
+  expenses?: { id: number, amount: number }[]
+}
+
+interface PendingReimbursementsData {
+  daniel?: PersonReimbursement
+  raul?: PersonReimbursement
+}
+
+const pendingReimbursements = ref<PendingReimbursementsData | null>(null)
 const loading = ref(true)
 
 const loadPendingReimbursements = async () => {
   try {
-    const data: any = await api.get('/expenses/pending_reimbursement')
+    const data = await api.get<{ pending_reimbursements: PendingReimbursementsData }>('/expenses/pending_reimbursement')
     pendingReimbursements.value = data.pending_reimbursements
   } catch (error) {
     console.error('Error loading pending reimbursements:', error)

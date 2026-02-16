@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PayrollEmployee, PayrollWeek, WeekSchedule } from '~/types/payroll'
+import type { WeekSchedule } from '~/types/payroll'
 import { usePayrollStore } from '~/stores/payroll'
 import { calculateEmployeeStats } from '~/utils/payrollCalculations'
 import { WEEK_DAYS } from '~/utils/payrollConstants'

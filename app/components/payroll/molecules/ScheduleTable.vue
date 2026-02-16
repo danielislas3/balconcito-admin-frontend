@@ -69,8 +69,10 @@ const debouncedSave = async (dayKey: string, updates: Partial<DaySchedule>, dela
     })
 
     savingDays.value.delete(dayKey)
-    delete localSchedules.value[dayKey]
-    delete saveTimers.value[dayKey]
+    const { [dayKey]: _schedule, ...restSchedules } = localSchedules.value
+    localSchedules.value = restSchedules
+    const { [dayKey]: _timer, ...restTimers } = saveTimers.value
+    saveTimers.value = restTimers
   }, delay)
 }
 
@@ -239,7 +241,7 @@ const applyPresetToAll = async (preset: typeof schedulePresets[0]) => {
   bulkSaving.value = true
 
   // Construir objeto con todos los días para un solo PATCH
-  const scheduleUpdates: Record<string, any> = {}
+  const scheduleUpdates: Record<string, Partial<DaySchedule>> = {}
   for (const day of WEEK_DAYS) {
     scheduleUpdates[day.key] = {
       entryHour: preset.entry.hour,
@@ -272,10 +274,11 @@ const applyPresetToAll = async (preset: typeof schedulePresets[0]) => {
       description: `${preset.label} aplicado a toda la semana`,
       color: 'success'
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'No se pudieron aplicar los horarios'
     toast.add({
       title: 'Error',
-      description: error?.message || 'No se pudieron aplicar los horarios',
+      description: message,
       color: 'error'
     })
   } finally {
@@ -298,7 +301,7 @@ const applyCopy = async () => {
   const sourceSchedule = props.week.schedule[sourceDayForCopy.value as keyof WeekSchedule]
 
   // Construir objeto con los días seleccionados para un solo PATCH
-  const scheduleUpdates: Record<string, any> = {}
+  const scheduleUpdates: Record<string, Partial<DaySchedule>> = {}
   for (const targetDay of Array.from(selectedDays.value)) {
     scheduleUpdates[targetDay] = {
       entryHour: sourceSchedule.entryHour,
@@ -331,10 +334,11 @@ const applyCopy = async () => {
       description: `Horario copiado a ${selectedDays.value.size} día(s)`,
       color: 'success'
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'No se pudieron copiar los horarios'
     toast.add({
       title: 'Error',
-      description: error?.message || 'No se pudieron copiar los horarios',
+      description: message,
       color: 'error'
     })
   } finally {
@@ -746,26 +750,26 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
   <UModal v-model:open="showCopyDialog" title="Copiar Horario" description="Selecciona los días destino">
     <template #body>
       <div class="space-y-2">
-        <label
-          v-for="day in WEEK_DAYS"
-          v-if="day.key !== sourceDayForCopy"
-          :key="day.key"
-          :class="[
-            'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all',
-            selectedDays.has(day.key)
-              ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500 dark:border-orange-500'
-              : 'bg-default border-default hover:border-orange-300'
-          ]"
-        >
-          <input
-            type="checkbox"
-            :checked="selectedDays.has(day.key)"
-            class="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
-            @change="toggleDaySelection(day.key)"
+        <template v-for="day in WEEK_DAYS" :key="day.key">
+          <label
+            v-if="day.key !== sourceDayForCopy"
+            :class="[
+              'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all',
+              selectedDays.has(day.key)
+                ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-500 dark:border-orange-500'
+                : 'bg-default border-default hover:border-orange-300'
+            ]"
           >
-          <span class="text-xl">{{ day.emoji }}</span>
-          <span class="font-medium">{{ day.name }}</span>
-        </label>
+            <input
+              type="checkbox"
+              :checked="selectedDays.has(day.key)"
+              class="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
+              @change="toggleDaySelection(day.key)"
+            >
+            <span class="text-xl">{{ day.emoji }}</span>
+            <span class="font-medium">{{ day.name }}</span>
+          </label>
+        </template>
       </div>
     </template>
 

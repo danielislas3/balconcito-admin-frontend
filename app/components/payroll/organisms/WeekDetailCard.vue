@@ -2,7 +2,7 @@
 import type { PayrollWeek, WeekSchedule } from '~/types/payroll'
 import { calculateWeekTotals } from '~/utils/payrollCalculations'
 import { formatCurrency as formatCurrencyUtil, formatWeekDisplay, formatMonthDisplay } from '~/utils/payrollFormatters'
-import { WEEK_DAYS } from '~/utils/payrollConstants'
+import { WEEK_DAYS, type Currency } from '~/utils/payrollConstants'
 
 export interface WeekDetailCardProps {
   week: PayrollWeek
@@ -18,7 +18,7 @@ const formatMonth = (dateStr: string) => {
 }
 
 const formatCurrency = (amount: number = 0) => {
-  return formatCurrencyUtil(amount, (props.currency || 'MXN') as any)
+  return formatCurrencyUtil(amount, (props.currency || 'MXN') as Currency)
 }
 </script>
 

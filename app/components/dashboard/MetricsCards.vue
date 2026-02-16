@@ -9,10 +9,46 @@ const props = withDefaults(defineProps<Props>(), {
 
 const api = useApi()
 
-const summary = ref<any>(null)
-const profitability = ref<any>(null)
-const breakEven = ref<any>(null)
-const cashFlow = ref<any>(null)
+interface DashboardSummary {
+  income?: { total: number, cash: number, transfers: number, cards: number }
+  expenses?: { total: number, cogs: number, fixed: number, variable: number }
+  balance?: number
+}
+
+interface MetricValue {
+  value: number
+  amount?: number
+}
+
+interface ProfitabilityData {
+  metrics?: {
+    net_margin?: MetricValue
+    cogs_percentage?: MetricValue
+  }
+}
+
+interface BreakEvenData {
+  metrics?: {
+    break_even_point?: MetricValue
+    current_sales?: number
+    safety_margin?: MetricValue
+    days_to_break_even?: number
+  }
+}
+
+interface CashFlowData {
+  metrics?: {
+    cash_runway_days?: MetricValue
+    average_daily_expenses?: number
+  }
+  cash_accounts?: { total_cash: number }
+  explanation?: string
+}
+
+const summary = ref<DashboardSummary | null>(null)
+const profitability = ref<ProfitabilityData | null>(null)
+const breakEven = ref<BreakEvenData | null>(null)
+const cashFlow = ref<CashFlowData | null>(null)
 const loading = ref(true)
 
 const loadMetrics = async () => {

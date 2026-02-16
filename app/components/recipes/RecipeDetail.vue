@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Recipe } from '~/types/recipes'
-
 const store = useRecipesStore()
 const toast = useToast()
 

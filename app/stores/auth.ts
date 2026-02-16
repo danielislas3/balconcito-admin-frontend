@@ -63,10 +63,9 @@ export const useAuthStore = defineStore('auth', {
             const user = JSON.parse(userStr)
             this.token = token
             this.user = user
-          } catch (error) {
+          } catch {
             this.logout()
           }
-        } else {
         }
       }
     }

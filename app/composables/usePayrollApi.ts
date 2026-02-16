@@ -150,7 +150,7 @@ export const usePayrollApi = () => {
   const updateWeekSchedule = async (
     employeeId: string,
     weekId: string,
-    schedule: Record<string, any>
+    schedule: Record<string, unknown>
   ): Promise<PayrollWeek> => {
     const response = await api.patch<{ week: PayrollWeek }>(
       `/payroll_employees/${employeeId}/weeks/${weekId}/update_schedule`,

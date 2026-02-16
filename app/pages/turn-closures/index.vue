@@ -9,8 +9,32 @@ const api = useApi()
 const toast = useToast()
 
 const loading = ref(true)
-const closures = ref<any[]>([])
-const summary = ref<any>(null)
+interface TurnClosure {
+  id: number
+  closure_number: number
+  report_date: string
+  total_income: number
+  cash_collected: number
+  transfer_income: number
+  card_income: number
+  closed_by: string
+}
+
+interface ClosureSummary {
+  total_closures: number
+  total_income: number
+  total_cash: number
+  total_transfers: number
+  total_cards: number
+}
+
+interface ClosuresResponse {
+  turn_closures: TurnClosure[]
+  summary: ClosureSummary
+}
+
+const closures = ref<TurnClosure[]>([])
+const summary = ref<ClosureSummary | null>(null)
 
 const filters = reactive({
   dateFrom: '',
@@ -63,10 +87,10 @@ const loadClosures = async () => {
     if (filters.dateTo) params.append('date_to', filters.dateTo)
     if (filters.closedBy) params.append('closed_by', filters.closedBy)
 
-    const data: any = await api.get(`/turn_closures?${params.toString()}`)
+    const data = await api.get<ClosuresResponse>(`/turn_closures?${params.toString()}`)
     closures.value = data.turn_closures || []
     summary.value = data.summary
-  } catch (error: any) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'No se pudieron cargar los cierres',
@@ -95,7 +119,7 @@ const deleteClosure = async (id: number) => {
       color: 'green'
     })
     loadClosures()
-  } catch (error: any) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'No se pudo eliminar el cierre',

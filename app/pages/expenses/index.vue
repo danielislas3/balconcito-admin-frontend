@@ -9,8 +9,30 @@ const api = useApi()
 const toast = useToast()
 
 const loading = ref(true)
-const expenses = ref<any[]>([])
-const summary = ref<any>(null)
+interface Expense {
+  id: number
+  expense_date: string
+  description: string
+  amount: number
+  category: string
+  cost_type: string
+  payment_source: string
+  requires_reimbursement: boolean
+  reimbursed: boolean
+}
+
+interface ExpenseSummary {
+  total_expenses: number
+  count: number
+}
+
+interface ExpensesResponse {
+  expenses: Expense[]
+  summary: ExpenseSummary
+}
+
+const expenses = ref<Expense[]>([])
+const summary = ref<ExpenseSummary | null>(null)
 
 const filters = reactive({
   dateFrom: '',
@@ -83,10 +105,10 @@ const loadExpenses = async () => {
     if (filters.paymentSource) params.append('payment_source', filters.paymentSource)
     if (filters.requiresReimbursement) params.append('requires_reimbursement', filters.requiresReimbursement)
 
-    const data: any = await api.get(`/expenses?${params.toString()}`)
+    const data = await api.get<ExpensesResponse>(`/expenses?${params.toString()}`)
     expenses.value = data.expenses || []
     summary.value = data.summary
-  } catch (error: any) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'No se pudieron cargar los gastos',
@@ -117,7 +139,7 @@ const deleteExpense = async (id: number) => {
       color: 'green'
     })
     loadExpenses()
-  } catch (error: any) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'No se pudo eliminar el gasto',

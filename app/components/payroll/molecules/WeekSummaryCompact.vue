@@ -2,7 +2,7 @@
 import type { PayrollWeek } from '~/types/payroll'
 import { calculateWeekTotals } from '~/utils/payrollCalculations'
 import { formatCurrency as formatCurrencyUtil, formatWeekDisplay } from '~/utils/payrollFormatters'
-import { WEEK_DAYS } from '~/utils/payrollConstants'
+import { WEEK_DAYS, type Currency } from '~/utils/payrollConstants'
 
 export interface WeekSummaryCompactProps {
   week: PayrollWeek
@@ -13,7 +13,7 @@ export interface WeekSummaryCompactProps {
 const props = defineProps<WeekSummaryCompactProps>()
 
 const formatCurrency = (amount: number) => {
-  return formatCurrencyUtil(amount, (props.currency || 'MXN') as any)
+  return formatCurrencyUtil(amount, (props.currency || 'MXN') as Currency)
 }
 
 // Calcular totales de la semana (reactivo)

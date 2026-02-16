@@ -107,10 +107,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       color: 'green'
     })
     router.push('/expenses')
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errData = error as { data?: { message?: string } }
     toast.add({
       title: 'Error',
-      description: error.data?.message || 'No se pudo guardar el gasto',
+      description: errData.data?.message || 'No se pudo guardar el gasto',
       color: 'red'
     })
   } finally {

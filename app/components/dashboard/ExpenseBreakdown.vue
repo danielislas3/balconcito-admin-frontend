@@ -9,7 +9,27 @@ const props = withDefaults(defineProps<Props>(), {
 
 const api = useApi()
 
-const breakdown = ref<any>(null)
+interface CategoryBreakdown {
+  category: string
+  amount: number
+  percentage: number
+  count: number
+  cost_type: string
+}
+
+interface CostTypeData {
+  amount: number
+  percentage: number
+  description: string
+}
+
+interface BreakdownData {
+  by_cost_type: Record<string, CostTypeData>
+  by_category: CategoryBreakdown[]
+  total_expenses: number
+}
+
+const breakdown = ref<BreakdownData | null>(null)
 const loading = ref(true)
 
 const loadBreakdown = async () => {
