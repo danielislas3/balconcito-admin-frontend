@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm/relations'
-import { users, jwtDenylists, payrollEmployees, payrollWeeks, payrollDays } from './index'
+import { users, payrollEmployees, payrollWeeks, payrollDays } from './index'
 
 export const usersRelations = relations(users, ({ many }) => ({
   payrollEmployees: many(payrollEmployees)

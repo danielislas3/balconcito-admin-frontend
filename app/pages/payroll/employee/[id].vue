@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { PayrollEmployee, PayrollWeek, WeekSchedule } from '~/types/payroll'
-import { usePayrollStore } from '~/stores/payroll'
+import type { PayrollEmployee, WeekSchedule } from '~/types/payroll'
 import { calculateEmployeeStats } from '~/utils/payrollCalculations'
 import { WEEK_DAYS } from '~/utils/payrollConstants'
 
@@ -11,7 +10,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const payrollStore = usePayrollStore()
 const toast = useToast()
 const dayjs = useDayjs()
 const { exportEmployeeData: exportEmployeeDataUtil } = usePayrollExport()

@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Semana no encontrada' })
   }
 
-  const updates: Record<string, any> = { updatedAt: now }
+  const updates: Record<string, unknown> = { updatedAt: now }
 
   if (body.weekly_tips !== undefined) {
     updates.weeklyTips = String(body.weekly_tips)

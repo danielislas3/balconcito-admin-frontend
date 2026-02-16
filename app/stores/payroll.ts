@@ -85,8 +85,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       if (currentEmployeeId.value) {
         await fetchCurrentEmployee()
       }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al cargar empleados'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al cargar empleados'
       console.error('Error fetching employees:', err)
     } finally {
       loading.value = false
@@ -103,7 +103,7 @@ export const usePayrollStore = defineStore('payroll', () => {
     try {
       const api = usePayrollApi()
       currentEmployee.value = await api.fetchEmployee(currentEmployeeId.value)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching employee details:', err)
     } finally {
       loadingEmployee.value = false
@@ -135,8 +135,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       currentWeekId.value = ''
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al crear empleado'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al crear empleado'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -162,8 +162,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       currentEmployee.value = updatedEmployee
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar configuración'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al actualizar configuración'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -201,8 +201,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       await fetchCurrentEmployee()
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al eliminar empleado'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al eliminar empleado'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -247,8 +247,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al crear semana'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al crear semana'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -299,8 +299,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar horario'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al actualizar horario'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -335,8 +335,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar propinas'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al actualizar propinas'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -371,8 +371,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar tarifa por turno'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al actualizar tarifa por turno'
       return { success: false, error: error.value }
     } finally {
       loading.value = false
@@ -405,8 +405,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       currentWeekId.value = ''
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al eliminar semana'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al eliminar semana'
       return { success: false, error: error.value }
     } finally {
       loading.value = false

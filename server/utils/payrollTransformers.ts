@@ -61,7 +61,7 @@ export function transformEmployee(emp: DbEmployee, weeks: ReturnType<typeof tran
 }
 
 export function transformWeek(week: DbWeek, days: DbDay[] = []) {
-  const schedule: Record<string, any> = {}
+  const schedule: Record<string, Record<string, unknown>> = {}
 
   for (const key of DAY_KEYS) {
     const day = days.find(d => d.dayKey === key)

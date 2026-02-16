@@ -34,7 +34,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     await login(event.data.email, event.data.password)
     router.push('/')
-  } catch (error: any) {
+  } catch {
     // El error ya se maneja en el composable useAuth
   }
 }

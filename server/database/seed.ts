@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import pg from 'pg'
 import { eq } from 'drizzle-orm'
-import { recipes, recipeIngredients, recipeSteps, suppliers,payrollEmployees } from './schema'
+import { recipes, recipeIngredients, recipeSteps, suppliers, payrollEmployees } from './schema'
 
 import type { StorageInstructions } from './schema/recipes'
 import type { SupplierConfig } from './schema/suppliers'

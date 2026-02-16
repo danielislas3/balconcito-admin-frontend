@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Recipe } from '~/types/recipes'
-
 const store = useRecipesStore()
 const toast = useToast()
 
@@ -182,20 +180,36 @@ const copyIngredients = () => {
               </h3>
               <dl class="space-y-1 text-sm">
                 <div v-if="recipe.storageInstructions?.temperatura" class="flex gap-2">
-                  <dt class="text-muted font-medium">Temperatura:</dt>
-                  <dd class="text-gray-700 dark:text-gray-300">{{ recipe.storageInstructions.temperatura }}</dd>
+                  <dt class="text-muted font-medium">
+                    Temperatura:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.temperatura }}
+                  </dd>
                 </div>
                 <div v-if="recipe.storageInstructions?.vidaUtil" class="flex gap-2">
-                  <dt class="text-muted font-medium">Vida útil:</dt>
-                  <dd class="text-gray-700 dark:text-gray-300">{{ recipe.storageInstructions.vidaUtil }}</dd>
+                  <dt class="text-muted font-medium">
+                    Vida útil:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.vidaUtil }}
+                  </dd>
                 </div>
                 <div v-if="recipe.storageInstructions?.condiciones" class="flex gap-2">
-                  <dt class="text-muted font-medium">Condiciones:</dt>
-                  <dd class="text-gray-700 dark:text-gray-300">{{ recipe.storageInstructions.condiciones }}</dd>
+                  <dt class="text-muted font-medium">
+                    Condiciones:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.condiciones }}
+                  </dd>
                 </div>
                 <div v-if="recipe.storageInstructions?.notas" class="flex gap-2">
-                  <dt class="text-muted font-medium">Notas:</dt>
-                  <dd class="text-gray-700 dark:text-gray-300">{{ recipe.storageInstructions.notas }}</dd>
+                  <dt class="text-muted font-medium">
+                    Notas:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.notas }}
+                  </dd>
                 </div>
               </dl>
             </div>

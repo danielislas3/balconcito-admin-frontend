@@ -87,8 +87,10 @@ const debouncedSave = async (dayKey: string, updates: Partial<DaySchedule>, dela
     })
 
     savingDays.value.delete(dayKey)
-    delete localSchedules.value[dayKey]
-    delete saveTimers.value[dayKey]
+    const { [dayKey]: _removedSchedule, ...restSchedules } = localSchedules.value
+    localSchedules.value = restSchedules
+    const { [dayKey]: _removedTimer, ...restTimers } = saveTimers.value
+    saveTimers.value = restTimers
   }, delay)
 }
 
@@ -257,7 +259,7 @@ const applyPresetToAll = async (preset: typeof schedulePresets[0]) => {
   bulkSaving.value = true
 
   // Construir objeto con todos los días para un solo PATCH
-  const scheduleUpdates: Record<string, any> = {}
+  const scheduleUpdates: Record<string, Record<string, unknown>> = {}
   for (const day of WEEK_DAYS) {
     scheduleUpdates[day.key] = {
       entryHour: preset.entry.hour,
@@ -290,10 +292,10 @@ const applyPresetToAll = async (preset: typeof schedulePresets[0]) => {
       description: `${preset.label} aplicado a toda la semana`,
       color: 'success'
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     toast.add({
       title: 'Error',
-      description: error?.message || 'No se pudieron aplicar los horarios',
+      description: error instanceof Error ? error.message : 'No se pudieron aplicar los horarios',
       color: 'error'
     })
   } finally {
@@ -316,7 +318,7 @@ const applyCopy = async () => {
   const sourceSchedule = props.week.schedule[sourceDayForCopy.value as keyof WeekSchedule]
 
   // Construir objeto con los días seleccionados para un solo PATCH
-  const scheduleUpdates: Record<string, any> = {}
+  const scheduleUpdates: Record<string, Record<string, unknown>> = {}
   for (const targetDay of Array.from(selectedDays.value)) {
     scheduleUpdates[targetDay] = {
       entryHour: sourceSchedule.entryHour,
@@ -349,10 +351,10 @@ const applyCopy = async () => {
       description: `Horario copiado a ${selectedDays.value.size} día(s)`,
       color: 'success'
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     toast.add({
       title: 'Error',
-      description: error?.message || 'No se pudieron copiar los horarios',
+      description: error instanceof Error ? error.message : 'No se pudieron copiar los horarios',
       color: 'error'
     })
   } finally {
@@ -392,6 +394,11 @@ const toggleDaySelection = (dayKey: string) => {
     selectedDays.value.add(dayKey)
   }
 }
+
+// Días disponibles para copiar (excluye el día origen)
+const copyTargetDays = computed(() =>
+  WEEK_DAYS.filter(day => day.key !== sourceDayForCopy.value)
+)
 
 // Verificar si un día tiene datos
 const hasDayData = (dayKey: string) => {
@@ -765,8 +772,7 @@ const getDaySchedule = (dayKey: string): DaySchedule => {
     <template #body>
       <div class="space-y-2">
         <label
-          v-for="day in WEEK_DAYS"
-          v-if="day.key !== sourceDayForCopy"
+          v-for="day in copyTargetDays"
           :key="day.key"
           :class="[
             'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all',

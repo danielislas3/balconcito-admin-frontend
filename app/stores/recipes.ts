@@ -26,8 +26,8 @@ export const useRecipesStore = defineStore('recipes', () => {
     error.value = null
     try {
       recipes.value = await $fetch<Recipe[]>('/api/recipes')
-    } catch (err: any) {
-      error.value = err.message || 'Error al cargar recetas'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al cargar recetas'
       console.error('Error fetching recipes:', err)
     } finally {
       loading.value = false
@@ -44,8 +44,8 @@ export const useRecipesStore = defineStore('recipes', () => {
       })
       recipes.value.push(created)
       return created
-    } catch (err: any) {
-      error.value = err.message || 'Error al crear receta'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al crear receta'
       console.error('Error creating recipe:', err)
       throw err
     } finally {
@@ -64,8 +64,8 @@ export const useRecipesStore = defineStore('recipes', () => {
       const index = recipes.value.findIndex(r => r.id === id)
       if (index !== -1) recipes.value[index] = updated
       return updated
-    } catch (err: any) {
-      error.value = err.message || 'Error al actualizar receta'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al actualizar receta'
       console.error('Error updating recipe:', err)
       throw err
     } finally {
@@ -80,8 +80,8 @@ export const useRecipesStore = defineStore('recipes', () => {
       await $fetch(`/api/recipes/${id}`, { method: 'DELETE' })
       recipes.value = recipes.value.filter(r => r.id !== id)
       if (activeRecipeId.value === id) activeRecipeId.value = null
-    } catch (err: any) {
-      error.value = err.message || 'Error al eliminar receta'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al eliminar receta'
       console.error('Error deleting recipe:', err)
       throw err
     } finally {

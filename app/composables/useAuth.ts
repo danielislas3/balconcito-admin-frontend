@@ -21,10 +21,11 @@ export const useAuth = () => {
       })
 
       return response
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } }
       toast.add({
         title: 'Error al iniciar sesión',
-        description: error.data?.message || 'Credenciales incorrectas',
+        description: err.data?.message || 'Credenciales incorrectas',
         color: 'error',
         icon: 'i-lucide-alert-circle'
       })

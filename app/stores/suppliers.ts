@@ -41,8 +41,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
       if (supplier.value) {
         await fetchPriceLists()
       }
-    } catch (err: any) {
-      error.value = err.message || 'Error al cargar proveedor'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al cargar proveedor'
       console.error('Error fetching supplier:', err)
     } finally {
       loading.value = false
@@ -57,7 +57,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
       if (priceLists.value.length > 0 && !currentPriceListId.value) {
         currentPriceListId.value = priceLists.value[0]!.id
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching price lists:', err)
     }
   }
@@ -82,8 +82,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
       cart.value = []
 
       return result
-    } catch (err: any) {
-      error.value = err.message || 'Error al subir lista de precios'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al subir lista de precios'
       throw err
     } finally {
       loading.value = false
@@ -100,7 +100,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         cart.value = []
         products.value = []
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting price list:', err)
       throw err
     }
@@ -129,7 +129,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         `/api/suppliers/${supplier.value.id}/price-lists/${currentPriceListId.value}/products?${params}`
       )
       products.value = result
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error searching products:', err)
     }
   }
@@ -149,7 +149,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         `/api/suppliers/${supplier.value.id}/price-comparison`
       )
       priceComparisons.value = result.comparisons
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching price comparison:', err)
     }
   }
@@ -208,8 +208,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
       orders.value.unshift(order)
       clearCart()
       return order
-    } catch (err: any) {
-      error.value = err.message || 'Error al guardar pedido'
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : 'Error al guardar pedido'
       throw err
     } finally {
       loading.value = false
