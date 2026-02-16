@@ -13,9 +13,12 @@ const emit = defineEmits<{
 
 const payrollStore = usePayrollStore()
 const {
+  employeeList,
   currentEmployee,
   currentWeek,
-  weekTotals
+  weekTotals,
+  loading,
+  loadingEmployee
 } = storeToRefs(payrollStore)
 
 // Breakpoints para responsive design
@@ -139,9 +142,21 @@ const formatEmployeeCurrency = (amount: number) => {
       </div>
     </div>
 
-    <!-- Estados vacíos -->
+    <!-- Estado: Cargando empleado -->
+    <UCard v-if="loadingEmployee" class="border-2 border-default">
+      <div class="py-12 text-center space-y-4">
+        <div class="flex justify-center">
+          <UIcon name="i-lucide-loader-2" class="size-12 text-primary animate-spin" />
+        </div>
+        <p class="text-muted">
+          Cargando datos del empleado...
+        </p>
+      </div>
+    </UCard>
+
+    <!-- Estado: Sin empleados registrados -->
     <UCard
-      v-if="!currentEmployee"
+      v-else-if="!loading && employeeList.length === 0"
       class="border-2 border-dashed border-default"
     >
       <div class="py-12 text-center space-y-4">
@@ -151,11 +166,10 @@ const formatEmployeeCurrency = (amount: number) => {
           </div>
         </div>
         <h3 class="text-xl font-bold">
-          No hay empleado seleccionado
+          Sin empleados registrados
         </h3>
         <p class="text-muted max-w-md mx-auto">
-          Selecciona un empleado existente o crea uno
-          nuevo para comenzar.
+          Agrega tu primer empleado para comenzar a gestionar la nómina.
         </p>
         <UButton
           label="Agregar Primer Empleado"
@@ -168,8 +182,9 @@ const formatEmployeeCurrency = (amount: number) => {
       </div>
     </UCard>
 
+    <!-- Estado: Empleado seleccionado pero sin semana -->
     <UCard
-      v-else-if="!currentWeek"
+      v-else-if="currentEmployee && !currentWeek"
       class="border-2 border-dashed border-default"
     >
       <div class="py-12 text-center space-y-4">

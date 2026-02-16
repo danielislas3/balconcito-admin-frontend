@@ -21,6 +21,7 @@ export const usePayrollStore = defineStore('payroll', () => {
   const currentWeekId = ref('')
   const activeTab = ref('schedules')
   const loading = ref(false)
+  const loadingEmployee = ref(false)
   const error = ref<string | undefined>(undefined)
 
   // ===== GETTERS (Computed) =====
@@ -98,11 +99,14 @@ export const usePayrollStore = defineStore('payroll', () => {
   async function fetchCurrentEmployee() {
     if (!currentEmployeeId.value) return
 
+    loadingEmployee.value = true
     try {
       const api = usePayrollApi()
       currentEmployee.value = await api.fetchEmployee(currentEmployeeId.value)
     } catch (err: any) {
       console.error('Error fetching employee details:', err)
+    } finally {
+      loadingEmployee.value = false
     }
   }
 
@@ -418,6 +422,7 @@ export const usePayrollStore = defineStore('payroll', () => {
     currentWeekId,
     activeTab,
     loading,
+    loadingEmployee,
     error,
     // Getters
     currentEmployeeWeeks,
