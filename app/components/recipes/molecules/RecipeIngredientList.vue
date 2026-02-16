@@ -62,7 +62,7 @@ const updateIngredient = (index: number, ingredient: Ingredient) => {
       />
     </div>
 
-     <div v-if="ingredients.length === 0" class="text-center py-8 text-muted border-2 border-dashed border-default rounded-lg">
+    <div v-if="ingredients.length === 0" class="text-center py-8 text-muted border-2 border-dashed border-default rounded-lg">
       <UIcon name="i-lucide-flask-conical" class="w-12 h-12 mx-auto opacity-20 mb-2" />
       <p>No hay ingredientes aún</p>
       <UButton
@@ -77,13 +77,13 @@ const updateIngredient = (index: number, ingredient: Ingredient) => {
     </div>
 
     <div v-else class="space-y-3">
-       <IngredientForm
-        v-for="(ingredient, index) in localIngredients"
+      <IngredientForm
+        v-for="(ingredient, index) in ingredients"
         :key="index"
         :ingredient="ingredient"
         :index="index"
         :can-move-up="index > 0"
-        :can-move-down="index < localIngredients.length - 1"
+        :can-move-down="index < ingredients.length - 1"
         @update:ingredient="(updated) => updateIngredient(index, updated)"
         @move-up="moveIngredientUp(index)"
         @move-down="moveIngredientDown(index)"

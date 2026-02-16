@@ -12,7 +12,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   click: [recipe: Recipe]
   edit: [recipe: Recipe]
-  delete: [id: string]
+  delete: [id: number]
 }>()
 
 const handleClick = () => {

@@ -8,7 +8,7 @@
 import type { PayrollEmployee, WeekSchedule } from '~/types/payroll'
 import { CURRENCY_SYMBOLS, WEEK_DAYS } from '~/utils/payrollConstants'
 import { formatWeekDisplay } from '~/utils/payrollFormatters'
-import { calculateEmployeeStats, calculateWeekTotals } from '~/utils/payrollCalculations'
+import { calculateEmployeeStats } from '~/utils/payrollCalculations'
 
 export const usePayrollExport = () => {
   const dayjs = useDayjs()

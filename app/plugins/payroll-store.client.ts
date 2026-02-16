@@ -8,8 +8,6 @@
  * El sufijo .client.ts asegura que solo se ejecute en el navegador.
  */
 
-import { usePayrollStore } from '~/stores/payroll'
-
 export default defineNuxtPlugin(async () => {
   // NO cargar datos automáticamente en el plugin
   // Los datos se cargarán cuando el usuario navegue a /payroll

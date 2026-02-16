@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { PayrollEmployee, PayrollWeek, WeekSchedule } from '~/types/payroll'
-import { usePayrollStore } from '~/stores/payroll'
+import type { PayrollEmployee, WeekSchedule } from '~/types/payroll'
 import { calculateEmployeeStats } from '~/utils/payrollCalculations'
 import { WEEK_DAYS } from '~/utils/payrollConstants'
 
@@ -11,28 +10,30 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const payrollStore = usePayrollStore()
 const toast = useToast()
 const dayjs = useDayjs()
 const { exportEmployeeData: exportEmployeeDataUtil } = usePayrollExport()
 
 // Get employee from route params
 const employeeId = route.params.id as string
-const employee = computed(() =>
-  payrollStore.employees.find(emp => emp.id === employeeId) || null
-)
+const employee = ref<PayrollEmployee | null>(null)
 
-// Redirect if employee not found
-watch(employee, (emp) => {
-  if (!emp && import.meta.client) {
-    toast.add({
-      title: 'Error',
-      description: 'Empleado no encontrado',
-      color: 'error'
-    })
-    router.push('/payroll')
+// Load employee data
+onMounted(async () => {
+  try {
+    const api = usePayrollApi()
+    employee.value = await api.fetchEmployee(employeeId)
+  } catch {
+    if (import.meta.client) {
+      toast.add({
+        title: 'Error',
+        description: 'Empleado no encontrado',
+        color: 'error'
+      })
+      router.push('/payroll')
+    }
   }
-}, { immediate: true })
+})
 
 // Sort weeks by date (newest first)
 const sortedWeeks = computed(() => {
@@ -65,7 +66,7 @@ const employeeStats = computed(() => {
       if (dayData.hoursWorked > 0) {
         totalDaysWorked++
       }
-      shiftsThisWeek += dayData.completeShifts
+      if (dayData.hoursWorked >= 8) shiftsThisWeek++
       if (dayData.extraHours > 0) {
         totalOvertimeHours += dayData.extraHours
         hasOvertime = true

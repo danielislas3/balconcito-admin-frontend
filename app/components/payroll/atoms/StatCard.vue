@@ -92,7 +92,7 @@ const colorConfig: Record<StatColor, { bg: string, border: string, iconBg: strin
     </div>
 
     <!-- Value -->
-    <div :class="['text-3xl font-bold mb-1 tabular-nums', colorConfig[color].text]">
+    <div :class="['text-2xl font-bold mb-1 tabular-nums', colorConfig[color].text]">
       {{ value }}
     </div>
 

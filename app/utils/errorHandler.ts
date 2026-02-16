@@ -9,45 +9,40 @@
 export interface ApiError {
   status: number | null
   message: string | null
-  data?: any
+  data?: unknown
 }
 
 /**
  * Maneja errores de API de manera centralizada
  *
- * @param error - El error capturado
+ * @param error - El error capturado (unknown del catch, se normaliza internamente)
  * @param context - Contexto opcional para logging (ej. "fetchEmployees", "createWeek")
+ * @returns Mensaje de error normalizado
  */
-export const handleApiError = (error: ApiError, context?: string) => {
+export const handleApiError = (error: unknown, context?: string): string => {
+  const message = formatErrorMessage(error)
+  const status = isApiError(error) ? error.status : null
   // 1. Log detallado para desarrollo
   if (import.meta.env.DEV) {
     console.group(`🔴 [API Error]${context ? ` ${context}` : ''}`)
-    console.error('Status:', error.status)
-    console.error('Message:', error.message)
-    if (error.data) {
-      console.error('Data:', error.data)
-    }
+    console.error('Status:', status)
+    console.error('Message:', message)
     console.groupEnd()
   }
 
   // 2. Notificación al usuario mediante toast
   // Solo mostramos toast si no es un 401 (ya que ese redirige a login)
-  if (error.status !== 401) {
+  if (status !== 401) {
     const toast = useToast()
 
     toast.add({
-      title: getErrorTitle(error.status),
-      description: error.message || 'Ocurrió un error inesperado. Por favor intenta de nuevo.',
+      title: getErrorTitle(status),
+      description: message,
       color: 'error'
     })
   }
 
-  // 3. Preparado para futura integración con sistema de reportes
-  // Descomenta cuando implementes useErrorReporting
-  // if (import.meta.env.PROD && error.status && error.status >= 500) {
-  //   const errorReporting = useErrorReporting()
-  //   errorReporting.report(error, { context })
-  // }
+  return message
 }
 
 /**
@@ -66,12 +61,20 @@ function getErrorTitle(status: number | null): string {
  * Formatea mensajes de error para mostrar al usuario
  * Útil para transformar errores técnicos en mensajes amigables
  */
-export const formatErrorMessage = (error: any): string => {
+export const formatErrorMessage = (error: unknown): string => {
   if (typeof error === 'string') return error
 
-  if (error.message) return error.message
+  if (error instanceof Error) return error.message
 
-  if (error._data?.error_message) return error._data.error_message
+  if (typeof error === 'object' && error !== null) {
+    if ('message' in error && typeof (error as { message: unknown }).message === 'string') {
+      return (error as { message: string }).message
+    }
+    if ('_data' in error) {
+      const data = (error as { _data?: { error_message?: string } })._data
+      if (data?.error_message) return data.error_message
+    }
+  }
 
   return 'Ocurrió un error inesperado'
 }
@@ -79,7 +82,7 @@ export const formatErrorMessage = (error: any): string => {
 /**
  * Verifica si un error es de tipo ApiError
  */
-export const isApiError = (error: any): error is ApiError => {
+export const isApiError = (error: unknown): error is ApiError => {
   return (
     error !== null
     && typeof error === 'object'

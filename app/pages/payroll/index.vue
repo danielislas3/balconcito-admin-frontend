@@ -13,11 +13,11 @@ definePageMeta({
 const router = useRouter()
 const payrollStore = usePayrollStore()
 const toast = useToast()
-const { exportAllEmployees, exportEmployeeData } = usePayrollExport()
+const { exportEmployeeData } = usePayrollExport()
 
 // Store refs
 const {
-  employees,
+  employeeList,
   currentEmployee,
   currentWeek,
   activeTab,
@@ -27,6 +27,7 @@ const {
 // Modales
 const showAddEmployeeModal = ref(false)
 const showCreateWeekModal = ref(false)
+const showDeleteEmployeeModal = ref(false)
 const newEmployeeName = ref('')
 const newEmployeeRate = ref(450)
 const newEmployeeCurrency = ref<'MXN' | 'USD' | 'EUR'>('MXN')
@@ -122,15 +123,18 @@ const handleAddEmployee = async () => {
   }
 }
 
-const handleDeleteEmployee = async () => {
+const handleDeleteEmployee = () => {
+  if (!currentEmployee.value) return
+  showDeleteEmployeeModal.value = true
+}
+
+const confirmDeleteEmployee = async () => {
   if (!currentEmployee.value) return
 
   const name = currentEmployee.value.name
-  if (!confirm(`¿Estás seguro de que quieres eliminar a ${name}?\n\nSe perderán todos sus horarios y no se puede deshacer.`)) {
-    return
-  }
-
   const result = await payrollStore.deleteCurrentEmployee()
+
+  showDeleteEmployeeModal.value = false
 
   if (result.success) {
     toast.add({
@@ -162,8 +166,9 @@ const onWeekCreated = () => {
 
 // Funciones de exportación e importación
 const handleExportAll = () => {
-  exportAllEmployees(employees.value)
-  toast.add({ title: 'Exportado', description: 'Reporte general exportado', color: 'success' })
+  if (!currentEmployee.value) return
+  exportEmployeeData(currentEmployee.value)
+  toast.add({ title: 'Exportado', description: `Datos de ${currentEmployee.value.name} exportados`, color: 'success' })
 }
 
 const handleExportEmployee = (employee: PayrollEmployee) => {
@@ -208,7 +213,7 @@ const tabItems = computed(() => [
     label: 'Reportes',
     icon: 'i-lucide-bar-chart-3',
     value: 'reports',
-    badge: employees.value.length ? { color: 'primary' as const, label: String(employees.value.length) } : undefined
+    badge: employeeList.value.length ? { color: 'primary' as const, label: String(employeeList.value.length) } : undefined
   },
   {
     label: 'Configuración',
@@ -422,5 +427,15 @@ const tabItems = computed(() => [
     :current-employee="currentEmployee"
     :loading="loading"
     @created="onWeekCreated"
+  />
+
+  <!-- Modal: Confirmar Eliminar Empleado -->
+  <UiConfirmModal
+    v-model:open="showDeleteEmployeeModal"
+    :title="`Eliminar a ${currentEmployee?.name || 'empleado'}`"
+    description="Se eliminarán todos sus horarios y semanas registradas. Esta acción no se puede deshacer."
+    confirm-label="Eliminar empleado"
+    :loading="loading"
+    @confirm="confirmDeleteEmployee"
   />
 </template>

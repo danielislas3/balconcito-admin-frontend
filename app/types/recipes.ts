@@ -12,8 +12,15 @@ export interface RecipeStep {
 
 export type RecipeCategory = 'Salsas' | 'Jarabes' | 'Sazonadores' | 'Bebidas' | 'Preparados'
 
+export interface StorageInstructions {
+  temperatura?: string
+  vidaUtil?: string
+  condiciones?: string
+  notas?: string
+}
+
 export interface Recipe {
-  id: string
+  id: number
   name: string
   description?: string
   baseYield: number
@@ -21,6 +28,7 @@ export interface Recipe {
   category: RecipeCategory
   ingredients: Ingredient[]
   steps: RecipeStep[]
-  storageInstructions?: string
-  lastUpdated: Date
+  storageInstructions?: StorageInstructions
+  createdAt?: string
+  updatedAt?: string
 }

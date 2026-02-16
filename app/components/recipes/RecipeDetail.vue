@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Recipe } from '~/types/recipes'
-
 const store = useRecipesStore()
 const toast = useToast()
 
@@ -22,6 +20,12 @@ const scaledIngredients = computed(() => {
 const factor = computed(() => {
   if (!recipe.value || !targetYield.value) return 1
   return targetYield.value / recipe.value.baseYield
+})
+
+const hasStorageInstructions = computed(() => {
+  if (!recipe.value?.storageInstructions) return false
+  const si = recipe.value.storageInstructions
+  return si.temperatura || si.vidaUtil || si.condiciones || si.notas
 })
 
 const copyIngredients = () => {
@@ -167,16 +171,47 @@ const copyIngredients = () => {
         </div>
 
         <!-- Storage Info -->
-        <UCard v-if="recipe.storageInstructions">
+        <UCard v-if="hasStorageInstructions">
           <div class="flex gap-3">
             <UIcon name="i-lucide-snowflake" class="w-5 h-5 text-info shrink-0 mt-0.5" />
             <div>
-              <h3 class="font-medium text-gray-900 dark:text-white mb-1">
+              <h3 class="font-medium text-gray-900 dark:text-white mb-2">
                 Conservación
               </h3>
-              <p class="text-muted text-sm">
-                {{ recipe.storageInstructions }}
-              </p>
+              <dl class="space-y-1 text-sm">
+                <div v-if="recipe.storageInstructions?.temperatura" class="flex gap-2">
+                  <dt class="text-muted font-medium">
+                    Temperatura:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.temperatura }}
+                  </dd>
+                </div>
+                <div v-if="recipe.storageInstructions?.vidaUtil" class="flex gap-2">
+                  <dt class="text-muted font-medium">
+                    Vida útil:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.vidaUtil }}
+                  </dd>
+                </div>
+                <div v-if="recipe.storageInstructions?.condiciones" class="flex gap-2">
+                  <dt class="text-muted font-medium">
+                    Condiciones:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.condiciones }}
+                  </dd>
+                </div>
+                <div v-if="recipe.storageInstructions?.notas" class="flex gap-2">
+                  <dt class="text-muted font-medium">
+                    Notas:
+                  </dt>
+                  <dd class="text-gray-700 dark:text-gray-300">
+                    {{ recipe.storageInstructions.notas }}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </div>
         </UCard>

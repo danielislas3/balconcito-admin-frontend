@@ -211,7 +211,9 @@ export const getAvailableMonths = (employee: PayrollEmployee): AvailableMonth[] 
   })
 
   const months = Array.from(monthsSet).map((key) => {
-    const [year, month] = key.split('-').map(Number)
+    const parts = key.split('-').map(Number)
+    const year = parts[0]!
+    const month = parts[1]!
     const date = dayjs().year(year).month(month)
     const label = date.format('MMMM YYYY')
     return { year, month, label }

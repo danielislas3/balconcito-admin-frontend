@@ -10,7 +10,6 @@ const appConfig = useAppConfig()
 const { user: currentUser, logout } = useAuth()
 
 const colors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
-const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 
 // Crear avatar con iniciales del nombre
 const userAvatar = computed(() => {

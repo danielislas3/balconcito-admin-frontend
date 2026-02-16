@@ -1,74 +1,33 @@
 import { defineStore } from 'pinia'
 
-interface User {
-  id: number
+export interface AuthUser {
+  id: string
   email: string
   name: string
   role: string
 }
 
-interface AuthState {
-  token: string | null
-  user: User | null
-}
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<AuthUser | null>(null)
 
-export const useAuthStore = defineStore('auth', {
-  state: (): AuthState => ({
-    token: null,
-    user: null
-  }),
+  const isAuthenticated = computed(() => !!user.value)
+  const currentUser = computed(() => user.value)
+  const userRole = computed(() => user.value?.role)
 
-  getters: {
-    isAuthenticated: state => !!state.token && !!state.user,
-    currentUser: state => state.user,
-    userRole: state => state.user?.role
-  },
+  function setUser(newUser: AuthUser) {
+    user.value = newUser
+  }
 
-  actions: {
-    setToken(token: string) {
-      this.token = token
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_token', token)
-      }
-    },
+  function clearUser() {
+    user.value = null
+  }
 
-    setUser(user: User) {
-      this.user = user
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_user', JSON.stringify(user))
-      }
-    },
-
-    setAuth(token: string, user: User) {
-      this.setToken(token)
-      this.setUser(user)
-    },
-
-    logout() {
-      this.token = null
-      this.user = null
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('auth_user')
-      }
-    },
-
-    initializeAuth() {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('auth_token')
-        const userStr = localStorage.getItem('auth_user')
-
-        if (token && userStr) {
-          try {
-            const user = JSON.parse(userStr)
-            this.token = token
-            this.user = user
-          } catch (error) {
-            this.logout()
-          }
-        } else {
-        }
-      }
-    }
+  return {
+    user,
+    isAuthenticated,
+    currentUser,
+    userRole,
+    setUser,
+    clearUser
   }
 })

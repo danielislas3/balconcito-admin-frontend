@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { PayrollEmployee } from '~/types/payroll'
 import { usePayrollStore } from '~/stores/payroll'
 import { storeToRefs } from 'pinia'
 import { formatWeekDisplay } from '~/utils/payrollFormatters'
@@ -14,7 +13,7 @@ const emit = defineEmits<{
 
 const payrollStore = usePayrollStore()
 const {
-  employees,
+  employeeList,
   currentEmployeeId,
   currentWeekId,
   currentEmployee,
@@ -24,20 +23,6 @@ const {
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
-
-const employeeOptions = computed(() =>
-  employees.value.map(emp => ({
-    label: emp.name,
-    value: emp.id
-  }))
-)
-
-const weekOptions = computed(() =>
-  currentEmployeeWeeks.value.map(week => ({
-    label: `Semana del ${formatWeekDisplay(week.startDate)}`,
-    value: week.id
-  }))
-)
 
 // Computed: Default shift rate from employee settings
 const defaultShiftRate = computed(() => {
@@ -110,7 +95,7 @@ const resetToDefault = () => {
             <option value="" disabled>
               Seleccionar empleado...
             </option>
-            <option v-for="emp in employees" :key="emp.id" :value="emp.id">
+            <option v-for="emp in employeeList" :key="emp.id" :value="emp.id">
               {{ emp.name }}
             </option>
           </select>
@@ -217,7 +202,7 @@ const resetToDefault = () => {
           icon="i-lucide-trash-2"
           color="error"
           variant="outline"
-          :disabled="!currentEmployee || employees.length <= 1"
+          :disabled="!currentEmployee || employeeList.length <= 1"
           :size="smAndLarger ? 'md' : 'sm'"
           class="w-full sm:w-auto"
           @click="emit('delete-employee')"

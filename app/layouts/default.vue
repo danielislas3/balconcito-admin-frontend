@@ -1,36 +1,12 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-const route = useRoute()
-const toast = useToast()
-
 const open = ref(false)
 
 const links = [[{
   label: 'Dashboard',
   icon: 'i-lucide-layout-dashboard',
   to: '/',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
-  label: 'Cierres de Turno',
-  icon: 'i-lucide-receipt',
-  to: '/turn-closures',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
-  label: 'Gastos',
-  icon: 'i-lucide-shopping-cart',
-  to: '/expenses',
-  onSelect: () => {
-    open.value = false
-  }
-}, {
-  label: 'Reembolsos',
-  icon: 'i-lucide-wallet',
-  to: '/reimbursements',
   onSelect: () => {
     open.value = false
   }
@@ -113,7 +89,5 @@ const groups = computed(() => [{
     <UDashboardSearch :groups="groups" />
 
     <slot />
-
-    <NotificationsSlideover />
   </UDashboardGroup>
 </template>
