@@ -1,10 +1,9 @@
 <script setup lang="ts">
 const store = useSuppliersStore()
-const { parseExcel } = useSupplierExcel()
 const toast = useToast()
 
 const dragOver = ref(false)
-const loading = ref(false)
+const uploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
 const handleFile = async (file: File) => {
@@ -17,18 +16,14 @@ const handleFile = async (file: File) => {
     return
   }
 
-  loading.value = true
+  uploading.value = true
   try {
-    const priceList = await parseExcel(file)
-    store.addPriceList(priceList)
+    const result = await store.uploadPriceList(file)
 
-    const supplierName = priceList.supplierType === 'apys'
-      ? `APYS - ${priceList.month} ${priceList.year}`
-      : priceList.fileName
-
+    const supplierName = `APYS - ${result.month} ${result.year}`
     toast.add({
-      title: 'Lista de precios cargada',
-      description: `${supplierName} - ${priceList.totalProducts} productos`,
+      title: result.replaced ? 'Lista reemplazada' : 'Lista de precios cargada',
+      description: `${supplierName} - ${result.totalProducts} productos`,
       color: 'success'
     })
   } catch (error) {
@@ -39,7 +34,7 @@ const handleFile = async (file: File) => {
       color: 'error'
     })
   } finally {
-    loading.value = false
+    uploading.value = false
   }
 }
 
@@ -70,7 +65,7 @@ const onFileChange = (e: Event) => {
     @drop="onDrop"
     @click="fileInput?.click()"
   >
-    <div v-if="loading" class="flex flex-col items-center gap-4">
+    <div v-if="uploading" class="flex flex-col items-center gap-4">
       <UIcon name="i-lucide-loader-2" class="w-12 h-12 animate-spin text-primary" />
       <p class="text-lg font-medium text-muted">
         Procesando archivo...

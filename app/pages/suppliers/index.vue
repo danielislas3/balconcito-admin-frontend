@@ -13,6 +13,15 @@ definePageMeta({
 
 const store = useSuppliersStore()
 
+// Debounced search
+let searchTimeout: ReturnType<typeof setTimeout>
+watch(() => store.searchTerm, (term) => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    store.searchProducts(term)
+  }, 300)
+})
+
 // Keyboard shortcut to clear search
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && store.searchTerm) {
@@ -20,8 +29,15 @@ const handleKeydown = (e: KeyboardEvent) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
+  await store.fetchSupplier('apys')
+  if (store.currentPriceListId) {
+    await store.searchProducts('')
+  }
+  if (store.hasMultipleLists) {
+    await store.fetchPriceComparison()
+  }
 })
 
 onBeforeUnmount(() => {
@@ -63,9 +79,7 @@ onBeforeUnmount(() => {
             </h2>
             <div class="flex items-center gap-3">
               <UBadge v-if="store.currentPriceList" color="primary" variant="subtle">
-                {{ store.currentPriceList.supplierType === 'apys'
-                  ? `APYS - ${store.currentPriceList.month} ${store.currentPriceList.year}`
-                  : store.currentPriceList.fileName }}
+                APYS - {{ store.currentPriceList.month }} {{ store.currentPriceList.year }}
               </UBadge>
               <UButton
                 color="neutral"
@@ -95,8 +109,15 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="flex-1 overflow-y-auto min-h-0 pr-2 pb-4">
+            <div v-if="store.loading" class="text-center py-12 text-muted">
+              <UIcon name="i-lucide-loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin" />
+              <p class="text-sm">
+                Buscando productos...
+              </p>
+            </div>
+
             <!-- Mensaje solo cuando hay 1 carácter -->
-            <div v-if="store.searchTerm.length === 1" class="text-center py-12 text-muted">
+            <div v-else-if="store.searchTerm.length === 1" class="text-center py-12 text-muted">
               <p class="text-sm">
                 Escribe al menos 2 caracteres para buscar
               </p>
@@ -104,7 +125,7 @@ onBeforeUnmount(() => {
 
             <!-- Sin resultados después de buscar -->
             <div
-              v-else-if="store.filteredProducts.length === 0 && store.searchTerm.length >= 2"
+              v-else-if="store.products.length === 0 && store.searchTerm.length >= 2"
               class="text-center py-12 text-muted"
             >
               <p>No se encontraron productos para "{{ store.searchTerm }}"</p>
@@ -122,11 +143,11 @@ onBeforeUnmount(() => {
                 </p>
               </div>
               <ProductCard
-                v-for="(product, idx) in store.filteredProducts"
+                v-for="(product, idx) in store.products"
                 :key="product.codigo"
                 :product="product"
                 :is-cheapest="idx === 0"
-                :cheapest-price="store.filteredProducts[0]?.precioPublico"
+                :cheapest-price="store.products[0]?.precioPublico"
               />
             </div>
           </div>

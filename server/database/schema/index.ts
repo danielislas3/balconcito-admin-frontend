@@ -3,6 +3,9 @@ import { pgTable, index, foreignKey, bigserial, varchar, timestamp, integer, boo
 // Re-export recipe schemas
 export { recipes, recipeIngredients, recipeSteps } from './recipes'
 
+// Re-export supplier schemas
+export { suppliers, supplierPriceLists, supplierProducts, supplierOrders, supplierOrderItems } from './suppliers'
+
 // ============================================================================
 // AUTH TABLES (Fase 3)
 // ============================================================================

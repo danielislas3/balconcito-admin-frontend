@@ -1,16 +1,27 @@
-export type SupplierType = 'generic' | 'apys'
+export interface SupplierConfig {
+  customerNumber?: string
+  businessName?: string
+  orderPerson?: string
+}
+
+export interface Supplier {
+  id: number
+  name: string
+  slug: string
+  config?: SupplierConfig
+  createdAt?: string
+  updatedAt?: string
+}
 
 export interface SupplierProduct {
+  id?: number
   codigo: string
   descripcion: string
   empaque: string
   marca: string
   precioPublico: number
   precioMayoreo: number
-  precioDistribuidor?: number
-  precioEspecial?: number
   category?: string
-  searchText: string
 }
 
 export interface OrderItem extends SupplierProduct {
@@ -18,24 +29,27 @@ export interface OrderItem extends SupplierProduct {
 }
 
 export interface PriceList {
-  id: string
-  supplierType: SupplierType
-  fileName: string
-  month?: string
-  year?: number
-  uploadDate: Date
-  products: SupplierProduct[]
+  id: number
+  supplierId: number
+  month: string
+  year: number
+  fileName?: string
   totalProducts: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface Order {
-  id: string
-  priceListId: string
-  orderDate: Date
+  id: number
+  supplierId: number
+  priceListId: number
+  orderDate: string
   weekNumber?: number
   items: OrderItem[]
   total: number
   notes?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface PriceComparison {
