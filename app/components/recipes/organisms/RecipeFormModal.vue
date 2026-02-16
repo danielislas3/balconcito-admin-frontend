@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Recipe } from '~/types/recipes'
+import type { Recipe, StorageInstructions } from '~/types/recipes'
 import RecipeIngredientList from '~/components/recipes/molecules/RecipeIngredientList.vue'
 import RecipeStepList from '~/components/recipes/molecules/RecipeStepList.vue'
 
@@ -27,11 +27,13 @@ const activeTab = ref('basic')
 const categoryOptions = ['Salsas', 'Jarabes', 'Sazonadores', 'Bebidas', 'Preparados'].map(c => ({ value: c, label: c }))
 
 const localRecipe = ref<Partial<Recipe>>({ ...props.recipe })
+const storageFields = ref<StorageInstructions>({})
 
 // Reset local recipe when modal opens
 watch(() => props.open, (isOpen) => {
   if (isOpen) {
     localRecipe.value = { ...props.recipe }
+    storageFields.value = { ...(props.recipe.storageInstructions || {}) }
   }
 })
 
@@ -86,11 +88,24 @@ const handleSave = () => {
     })
   }
 
-  // Update the recipe with filtered data
-  localRecipe.value.ingredients = ingredients
-  localRecipe.value.steps = steps
+  // Build storageInstructions only if at least one field has content
+  const si = storageFields.value
+  const hasStorage = si.temperatura?.trim() || si.vidaUtil?.trim() || si.condiciones?.trim() || si.notas?.trim()
+  const storageInstructions: StorageInstructions | undefined = hasStorage
+    ? {
+        ...(si.temperatura?.trim() ? { temperatura: si.temperatura.trim() } : {}),
+        ...(si.vidaUtil?.trim() ? { vidaUtil: si.vidaUtil.trim() } : {}),
+        ...(si.condiciones?.trim() ? { condiciones: si.condiciones.trim() } : {}),
+        ...(si.notas?.trim() ? { notas: si.notas.trim() } : {})
+      }
+    : undefined
 
-  emit('save', { ...localRecipe.value })
+  emit('save', {
+    ...localRecipe.value,
+    ingredients,
+    steps,
+    storageInstructions
+  })
 }
 </script>
 
@@ -135,9 +150,27 @@ const handleSave = () => {
               <UInput v-model="localRecipe.yieldUnit" placeholder="Ej: L, kg, g" />
             </UFormField>
           </div>
-          <UFormField label="Instrucciones de almacenamiento">
-            <UTextarea v-model="localRecipe.storageInstructions" placeholder="Condiciones de almacenamiento" />
-          </UFormField>
+
+          <div class="border border-default rounded-lg p-4 space-y-3">
+            <h4 class="text-sm font-medium flex items-center gap-2">
+              <UIcon name="i-lucide-snowflake" class="w-4 h-4 text-info" />
+              Instrucciones de almacenamiento
+            </h4>
+            <div class="grid grid-cols-2 gap-3">
+              <UFormField label="Temperatura">
+                <UInput v-model="storageFields.temperatura" placeholder="Ej: Refrigerar siempre" />
+              </UFormField>
+              <UFormField label="Vida útil">
+                <UInput v-model="storageFields.vidaUtil" placeholder="Ej: 30 días" />
+              </UFormField>
+            </div>
+            <UFormField label="Condiciones">
+              <UInput v-model="storageFields.condiciones" placeholder="Ej: Recipiente hermético, lugar fresco" />
+            </UFormField>
+            <UFormField label="Notas adicionales">
+              <UInput v-model="storageFields.notas" placeholder="Ej: Agitar antes de usar" />
+            </UFormField>
+          </div>
         </div>
 
         <div v-if="activeTab === 'ingredients'" class="space-y-4 pt-4">

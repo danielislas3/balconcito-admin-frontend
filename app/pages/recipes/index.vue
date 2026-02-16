@@ -9,6 +9,12 @@ definePageMeta({
 })
 
 const store = useRecipesStore()
+
+onMounted(() => {
+  if (store.recipes.length === 0) {
+    store.fetchRecipes()
+  }
+})
 </script>
 
 <template>

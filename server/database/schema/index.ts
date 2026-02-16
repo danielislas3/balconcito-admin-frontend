@@ -1,5 +1,8 @@
 import { pgTable, index, foreignKey, bigserial, varchar, timestamp, integer, boolean, numeric, date, uniqueIndex, bigint } from 'drizzle-orm/pg-core'
 
+// Re-export recipe schemas
+export { recipes, recipeIngredients, recipeSteps } from './recipes'
+
 // ============================================================================
 // AUTH TABLES (Fase 3)
 // ============================================================================

@@ -13,7 +13,10 @@
     "release": "node scripts/release.js",
     "hotfix": "node scripts/release.js --hotfix",
     "release:dry-run": "node scripts/release.js --dry-run",
-    "changelog": "changelogen"
+    "changelog": "changelogen",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:seed": "npx tsx server/database/seed.ts"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.73",
@@ -39,9 +42,11 @@
     "@types/pg": "^8.16.0",
     "changelogen": "^0.6.2",
     "consola": "^3.4.2",
+    "dotenv": "^16.5.0",
     "drizzle-kit": "^0.31.9",
     "eslint": "^9.39.1",
     "standard-version": "^9.5.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.3"
   },

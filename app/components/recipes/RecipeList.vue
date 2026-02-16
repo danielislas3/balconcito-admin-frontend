@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Recipe, RecipeCategory } from '~/types/recipes'
+import type { Recipe, RecipeCategory, StorageInstructions } from '~/types/recipes'
 import RecipeCard from '~/components/recipes/molecules/RecipeCard.vue'
 import RecipeFormModal from '~/components/recipes/organisms/RecipeFormModal.vue'
 
@@ -9,6 +9,7 @@ const toast = useToast()
 const showFormModal = ref(false)
 const formRecipe = ref<Partial<Recipe>>({})
 const isEditing = ref(false)
+const saving = ref(false)
 
 const categoryColors: Record<string, string> = {
   Salsas: 'red',
@@ -28,7 +29,7 @@ const handleCreateRecipe = () => {
     yieldUnit: 'kg',
     ingredients: [],
     steps: [],
-    storageInstructions: ''
+    storageInstructions: undefined
   }
   showFormModal.value = true
 }
@@ -39,59 +40,64 @@ const handleEditRecipe = (recipe: Recipe) => {
   showFormModal.value = true
 }
 
-const saveRecipe = (recipeData: Partial<Recipe>) => {
+const saveRecipe = async (recipeData: Partial<Recipe>) => {
   if (!recipeData.name || !recipeData.category || !recipeData.baseYield || !recipeData.yieldUnit) {
     toast.add({ title: 'Error', description: 'Completa los campos requeridos', color: 'error' })
     return
   }
 
-  const recipe: Recipe = {
-    id: recipeData.id || generateId(recipeData.name),
-    name: recipeData.name,
-    description: recipeData.description || '',
-    category: recipeData.category as RecipeCategory,
-    baseYield: recipeData.baseYield,
-    yieldUnit: recipeData.yieldUnit,
-    ingredients: recipeData.ingredients || [],
-    steps: recipeData.steps || [],
-    storageInstructions: recipeData.storageInstructions || '',
-    lastUpdated: new Date()
-  }
+  saving.value = true
+  try {
+    const payload = {
+      name: recipeData.name,
+      description: recipeData.description || '',
+      category: recipeData.category as RecipeCategory,
+      baseYield: recipeData.baseYield,
+      yieldUnit: recipeData.yieldUnit,
+      ingredients: recipeData.ingredients || [],
+      steps: recipeData.steps || [],
+      storageInstructions: recipeData.storageInstructions as StorageInstructions | undefined
+    }
 
-  if (recipe.id && store.recipes.some((r: Recipe) => r.id === recipe.id)) {
-    store.updateRecipe(recipe)
-    toast.add({
-      title: 'Receta actualizada',
-      description: `${recipe.name} ha sido actualizada`,
-      color: 'success'
-    })
-  } else {
-    store.addRecipe(recipe)
-    toast.add({
-      title: 'Receta creada',
-      description: `${recipe.name} ha sido creada`,
-      color: 'success'
-    })
-  }
+    if (isEditing.value && recipeData.id) {
+      await store.updateRecipe(recipeData.id, payload)
+      toast.add({
+        title: 'Receta actualizada',
+        description: `${recipeData.name} ha sido actualizada`,
+        color: 'success'
+      })
+    } else {
+      await store.addRecipe(payload as Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>)
+      toast.add({
+        title: 'Receta creada',
+        description: `${recipeData.name} ha sido creada`,
+        color: 'success'
+      })
+    }
 
-  showFormModal.value = false
-  formRecipe.value = {}
+    showFormModal.value = false
+    formRecipe.value = {}
+  } catch {
+    toast.add({ title: 'Error', description: 'No se pudo guardar la receta', color: 'error' })
+  } finally {
+    saving.value = false
+  }
 }
 
-const handleDeleteRecipe = (id: string) => {
+const handleDeleteRecipe = async (id: number) => {
   const recipe = store.recipes.find((r: Recipe) => r.id === id)
   if (recipe && confirm(`¿Seguro que quieres eliminar "${recipe.name}"?`)) {
-    store.deleteRecipe(id)
-    toast.add({
-      title: 'Receta eliminada',
-      description: `${recipe.name} ha sido eliminada`,
-      color: 'warning'
-    })
+    try {
+      await store.deleteRecipe(id)
+      toast.add({
+        title: 'Receta eliminada',
+        description: `${recipe.name} ha sido eliminada`,
+        color: 'warning'
+      })
+    } catch {
+      toast.add({ title: 'Error', description: 'No se pudo eliminar la receta', color: 'error' })
+    }
   }
-}
-
-const generateId = (name: string) => {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
 </script>
 
@@ -130,7 +136,14 @@ const generateId = (name: string) => {
     </div>
 
     <div class="flex-1 overflow-y-auto">
-      <div v-if="store.filteredRecipes.length === 0" class="p-8 text-center text-muted">
+      <div v-if="store.loading && store.recipes.length === 0" class="p-8 text-center text-muted">
+        <UIcon name="i-lucide-loader-2" class="w-8 h-8 mx-auto mb-2 animate-spin" />
+        <p class="text-sm">
+          Cargando recetas...
+        </p>
+      </div>
+
+      <div v-else-if="store.filteredRecipes.length === 0" class="p-8 text-center text-muted">
         <p class="text-sm">
           No se encontraron recetas
         </p>
@@ -155,6 +168,7 @@ const generateId = (name: string) => {
     v-model:open="showFormModal"
     :recipe="formRecipe"
     :is-editing="isEditing"
+    :loading="saving"
     @save="saveRecipe"
     @cancel="showFormModal = false"
   />
