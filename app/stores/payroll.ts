@@ -149,7 +149,7 @@ export const usePayrollStore = defineStore('payroll', () => {
 
     try {
       const api = usePayrollApi()
-      const updatedEmployee = await api.updateEmployee(currentEmployeeId.value, { settings } as { settings: EmployeeSettings })
+      const updatedEmployee = await api.updateEmployee(currentEmployeeId.value, { settings })
 
       // Actualizar en el estado local
       const index = employees.value.findIndex(e => e.id === currentEmployeeId.value)
@@ -356,7 +356,7 @@ export const usePayrollStore = defineStore('payroll', () => {
       const updatedWeek = await api.updateWeek(
         currentEmployeeId.value,
         currentWeekId.value,
-        { shift_rate: shiftRate ?? undefined }
+        { shift_rate: shiftRate }
       )
 
       // Actualizar estado local
