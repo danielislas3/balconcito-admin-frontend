@@ -1,11 +1,10 @@
 <script setup lang="ts">
 const store = useSuppliersStore()
 
-const priceChanges = computed(() => store.getPriceComparison())
 const showAll = ref(false)
 
 const displayedChanges = computed(() => {
-  return showAll.value ? priceChanges.value : priceChanges.value.slice(0, 10)
+  return showAll.value ? store.priceComparisons : store.priceComparisons.slice(0, 10)
 })
 
 const formatPrice = (amount: number) => {
@@ -32,7 +31,7 @@ const formatPercentage = (value: number) => {
           </h3>
         </div>
         <UBadge color="primary" variant="subtle">
-          {{ priceChanges.length }} cambios
+          {{ store.priceComparisons.length }} cambios
         </UBadge>
       </div>
       <p class="text-sm text-muted mt-1">
@@ -40,7 +39,7 @@ const formatPercentage = (value: number) => {
       </p>
     </template>
 
-    <div v-if="priceChanges.length === 0" class="text-center py-8 text-muted">
+    <div v-if="store.priceComparisons.length === 0" class="text-center py-8 text-muted">
       <p>No hay cambios de precio entre estas listas</p>
     </div>
 
@@ -80,13 +79,13 @@ const formatPercentage = (value: number) => {
       </div>
 
       <UButton
-        v-if="priceChanges.length > 10"
+        v-if="store.priceComparisons.length > 10"
         block
         variant="ghost"
         color="neutral"
         @click="showAll = !showAll"
       >
-        {{ showAll ? 'Ver menos' : `Ver todos (${priceChanges.length})` }}
+        {{ showAll ? 'Ver menos' : `Ver todos (${store.priceComparisons.length})` }}
       </UButton>
     </div>
   </UCard>

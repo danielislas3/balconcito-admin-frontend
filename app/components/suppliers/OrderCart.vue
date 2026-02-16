@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const store = useSuppliersStore()
+const toast = useToast()
 
 const formatPrice = (amount: number) => {
   return new Intl.NumberFormat('es-MX', {
@@ -13,7 +14,19 @@ const weekNumber = computed(() => {
   return store.getWeekNumber(now)
 })
 
-const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
+const saving = ref(false)
+
+const handleSaveOrder = async () => {
+  saving.value = true
+  try {
+    await store.saveOrder()
+    toast.add({ title: 'Pedido guardado', color: 'success' })
+  } catch {
+    toast.add({ title: 'Error al guardar pedido', color: 'error' })
+  } finally {
+    saving.value = false
+  }
+}
 </script>
 
 <template>
@@ -23,8 +36,8 @@ const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
         <UIcon name="i-lucide-shopping-cart" class="size-5 text-primary" />
         Mi Pedido ({{ store.cart.length }})
       </h2>
-      <p v-if="isApys" class="text-sm text-muted mt-1">
-        Semana {{ weekNumber }} • {{ store.currentPriceList?.month }} {{ store.currentPriceList?.year }}
+      <p v-if="store.currentPriceList" class="text-sm text-muted mt-1">
+        Semana {{ weekNumber }} • {{ store.currentPriceList.month }} {{ store.currentPriceList.year }}
       </p>
     </div>
 
@@ -95,19 +108,30 @@ const isApys = computed(() => store.currentPriceList?.supplierType === 'apys')
         </span>
       </div>
 
-      <div v-if="isApys" class="text-xs text-muted mb-3 p-2 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-800">
+      <div class="text-xs text-muted mb-3 p-2 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-800">
         <UIcon name="i-lucide-info" class="size-3 inline mr-1" />
         Recuerda: Pedidos deben enviarse antes del jueves a las 2pm
       </div>
 
-      <UButton
-        block
-        size="lg"
-        color="primary"
-        icon="i-lucide-download"
-        label="Descargar Pedido XLSX"
-        @click="store.downloadOrder"
-      />
+      <div class="flex gap-2">
+        <UButton
+          class="flex-1"
+          size="lg"
+          color="primary"
+          icon="i-lucide-download"
+          label="Descargar XLSX"
+          @click="store.downloadOrder"
+        />
+        <UButton
+          size="lg"
+          color="neutral"
+          variant="outline"
+          icon="i-lucide-save"
+          title="Guardar pedido"
+          :loading="saving"
+          @click="handleSaveOrder"
+        />
+      </div>
     </div>
   </div>
 </template>

@@ -2,30 +2,28 @@
 const store = useSuppliersStore()
 const toast = useToast()
 
-const deletePriceList = (id: string) => {
+const handleDeletePriceList = async (id: number) => {
   if (confirm('¿Estás seguro de eliminar esta lista de precios?')) {
-    store.deletePriceList(id)
-    toast.add({
-      title: 'Lista eliminada',
-      description: 'La lista de precios ha sido eliminada',
-      color: 'success'
-    })
+    try {
+      await store.deletePriceList(id)
+      toast.add({
+        title: 'Lista eliminada',
+        description: 'La lista de precios ha sido eliminada',
+        color: 'success'
+      })
+    } catch {
+      toast.add({ title: 'Error', description: 'No se pudo eliminar la lista', color: 'error' })
+    }
   }
 }
 
-const formatDate = (date: Date) => {
+const formatDate = (date?: string) => {
+  if (!date) return ''
   return new Date(date).toLocaleDateString('es-MX', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   })
-}
-
-const getListTitle = (list: any) => {
-  if (list.supplierType === 'apys') {
-    return `APYS - ${list.month} ${list.year}`
-  }
-  return list.fileName
 }
 </script>
 
@@ -61,7 +59,7 @@ const getListTitle = (list: any) => {
       >
         <div class="flex-1">
           <div class="flex items-center gap-2 mb-1">
-            <span class="font-semibold">{{ getListTitle(list) }}</span>
+            <span class="font-semibold">APYS - {{ list.month }} {{ list.year }}</span>
             <UBadge
               v-if="list.id === store.currentPriceListId"
               color="success"
@@ -70,24 +68,16 @@ const getListTitle = (list: any) => {
             >
               ACTIVA
             </UBadge>
-            <UBadge
-              v-if="list.supplierType === 'apys'"
-              color="primary"
-              variant="subtle"
-              size="xs"
-            >
-              APYS
-            </UBadge>
           </div>
           <div class="text-sm text-muted">
-            {{ list.totalProducts }} productos • {{ formatDate(list.uploadDate) }}
+            {{ list.totalProducts }} productos • {{ formatDate(list.createdAt) }}
           </div>
         </div>
 
         <button
           class="p-2 text-muted hover:text-red-600 dark:hover:text-red-400 transition-colors"
           title="Eliminar lista"
-          @click.stop="deletePriceList(list.id)"
+          @click.stop="handleDeletePriceList(list.id)"
         >
           <UIcon name="i-lucide-trash-2" class="size-4" />
         </button>
