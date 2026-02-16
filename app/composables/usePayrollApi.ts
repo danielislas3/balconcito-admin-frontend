@@ -1,8 +1,13 @@
 import type { PayrollEmployee, PayrollWeek } from '~/types/payroll'
 
+export interface EmployeeListItem {
+  id: string
+  name: string
+}
+
 export const usePayrollApi = () => {
-  const fetchEmployees = async (): Promise<PayrollEmployee[]> => {
-    const response = await $fetch<{ employees: PayrollEmployee[] }>('/api/payroll/employees')
+  const fetchEmployees = async (): Promise<EmployeeListItem[]> => {
+    const response = await $fetch<{ employees: EmployeeListItem[] }>('/api/payroll/employees')
     return response.employees
   }
 

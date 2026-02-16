@@ -18,21 +18,24 @@ const { exportEmployeeData: exportEmployeeDataUtil } = usePayrollExport()
 
 // Get employee from route params
 const employeeId = route.params.id as string
-const employee = computed(() =>
-  payrollStore.employees.find(emp => emp.id === employeeId) || null
-)
+const employee = ref<PayrollEmployee | null>(null)
 
-// Redirect if employee not found
-watch(employee, (emp) => {
-  if (!emp && import.meta.client) {
-    toast.add({
-      title: 'Error',
-      description: 'Empleado no encontrado',
-      color: 'error'
-    })
-    router.push('/payroll')
+// Load employee data
+onMounted(async () => {
+  try {
+    const api = usePayrollApi()
+    employee.value = await api.fetchEmployee(employeeId)
+  } catch {
+    if (import.meta.client) {
+      toast.add({
+        title: 'Error',
+        description: 'Empleado no encontrado',
+        color: 'error'
+      })
+      router.push('/payroll')
+    }
   }
-}, { immediate: true })
+})
 
 // Sort weeks by date (newest first)
 const sortedWeeks = computed(() => {

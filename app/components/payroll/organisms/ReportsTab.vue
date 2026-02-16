@@ -12,7 +12,7 @@ const emit = defineEmits<{
 }>()
 
 const payrollStore = usePayrollStore()
-const { employees } = storeToRefs(payrollStore)
+const { currentEmployee, employeeList } = storeToRefs(payrollStore)
 </script>
 
 <template>
@@ -35,18 +35,18 @@ const { employees } = storeToRefs(payrollStore)
         </div>
       </div>
       <UButton
-        v-if="employees.length > 0"
-        label="Exportar Reporte General"
+        v-if="currentEmployee"
+        label="Exportar"
         icon="i-lucide-download"
         color="success"
         size="lg"
-        @click="emit('export-all')"
+        @click="emit('export-employee', currentEmployee)"
       />
     </div>
 
     <!-- Empty State -->
     <div
-      v-if="employees.length === 0"
+      v-if="employeeList.length === 0"
       class="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700"
     >
       <div class="flex flex-col items-center gap-4">
@@ -59,12 +59,10 @@ const { employees } = storeToRefs(payrollStore)
       </div>
     </div>
 
-    <!-- Employee Cards Grid -->
-    <div v-else class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Current Employee Report -->
+    <div v-else-if="currentEmployee" class="w-full max-w-2xl mx-auto">
       <div
-        v-for="employee in employees"
-        :key="employee.id"
-        class="group relative bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-600 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+        class="group relative bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
       >
         <!-- Gradient Background Accent -->
         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
@@ -74,16 +72,16 @@ const { employees } = storeToRefs(payrollStore)
           <!-- Employee Header -->
           <div class="flex items-center gap-4 pb-4 border-b-2 border-gray-100 dark:border-gray-700">
             <div
-              class="p-4 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl group-hover:scale-110 transition-transform duration-300"
+              class="p-4 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl"
             >
               <UIcon name="i-lucide-user-circle" class="size-8 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div class="flex-1">
               <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                {{ employee.name }}
+                {{ currentEmployee.name }}
               </h3>
               <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {{ employee.weeks.length }} {{ employee.weeks.length === 1 ? 'semana' : 'semanas' }} registradas
+                {{ currentEmployee.weeks.length }} {{ currentEmployee.weeks.length === 1 ? 'semana' : 'semanas' }} registradas
               </p>
             </div>
           </div>
@@ -101,11 +99,11 @@ const { employees } = storeToRefs(payrollStore)
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Horas</span>
               </div>
               <span class="text-xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">
-                {{ calculateEmployeeStats(employee).totalHours.toFixed(1) }}
+                {{ calculateEmployeeStats(currentEmployee).totalHours.toFixed(1) }}
               </span>
             </div>
 
-            <!-- Total Turnos (Días Trabajados) -->
+            <!-- Total Turnos -->
             <div
               class="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
             >
@@ -116,7 +114,7 @@ const { employees } = storeToRefs(payrollStore)
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Turnos</span>
               </div>
               <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                {{ calculateEmployeeStats(employee).totalShifts }}
+                {{ calculateEmployeeStats(currentEmployee).totalShifts }}
               </span>
             </div>
 
@@ -131,11 +129,11 @@ const { employees } = storeToRefs(payrollStore)
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Promedio/Semana</span>
               </div>
               <span class="text-xl font-bold text-purple-600 dark:text-purple-400 tabular-nums">
-                {{ calculateEmployeeStats(employee).avgHoursPerWeek.toFixed(1) }}
+                {{ calculateEmployeeStats(currentEmployee).avgHoursPerWeek.toFixed(1) }}
               </span>
             </div>
 
-            <!-- Pago Total - Destacado -->
+            <!-- Pago Total -->
             <div
               class="p-5 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 rounded-xl border-2 border-violet-200 dark:border-violet-800"
             >
@@ -148,14 +146,14 @@ const { employees } = storeToRefs(payrollStore)
                     Total</span>
                 </div>
                 <span class="text-2xl font-black text-violet-600 dark:text-violet-400 tabular-nums">
-                  {{ formatCurrency(calculateEmployeeStats(employee).totalPay, employee.settings.currency) }}
+                  {{ formatCurrency(calculateEmployeeStats(currentEmployee).totalPay, currentEmployee.settings.currency) }}
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="grid grid-cols-2 gap-3 mt-4">
+          <!-- Action Button -->
+          <div class="mt-4">
             <UButton
               label="Ver Historial Detallado"
               icon="i-lucide-history"
@@ -163,16 +161,7 @@ const { employees } = storeToRefs(payrollStore)
               variant="soft"
               block
               size="lg"
-              @click="emit('view-employee', employee.id)"
-            />
-            <UButton
-              label="Exportar"
-              icon="i-lucide-download"
-              color="success"
-              variant="soft"
-              block
-              size="lg"
-              @click="emit('export-employee', employee)"
+              @click="emit('view-employee', currentEmployee.id)"
             />
           </div>
         </div>

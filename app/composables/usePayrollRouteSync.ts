@@ -9,7 +9,7 @@ export const usePayrollRouteSync = () => {
   const route = useRoute()
   const router = useRouter()
   const payrollStore = usePayrollStore()
-  const { employees, currentEmployee, currentEmployeeId, currentWeekId } = storeToRefs(payrollStore)
+  const { employeeList, currentEmployee, currentEmployeeId, currentWeekId } = storeToRefs(payrollStore)
 
   // Flag para evitar loops de actualización durante la restauración inicial
   let isRestoringFromRoute = false
@@ -25,7 +25,7 @@ export const usePayrollRouteSync = () => {
     const weekId = route.query.week as string
 
     // Restaurar empleado si existe en la URL y en los datos
-    if (employeeId && employees.value.find(e => e.id === employeeId)) {
+    if (employeeId && employeeList.value.find(e => e.id === employeeId)) {
       payrollStore.currentEmployeeId = employeeId
 
       // Cargar datos completos del empleado seleccionado

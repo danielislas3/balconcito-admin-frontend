@@ -5,11 +5,12 @@ export default defineEventHandler(async () => {
   const db = useDB()
 
   const employees = await db
-    .select()
+    .select({
+      id: payrollEmployees.employeeId,
+      name: payrollEmployees.name
+    })
     .from(payrollEmployees)
     .orderBy(asc(payrollEmployees.name))
 
-  return {
-    employees: employees.map(emp => transformEmployee(emp))
-  }
+  return { employees }
 })
