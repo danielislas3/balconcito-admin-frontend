@@ -11,7 +11,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
   const cart = ref<OrderItem[]>([])
   const orders = ref<Order[]>([])
   const priceComparisons = ref<PriceComparison[]>([])
-  const isLoading = ref(false)
+  const showDashboard = ref(false)
   const searchTerm = ref('')
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -76,7 +76,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
 
       await fetchPriceLists()
       currentPriceListId.value = result.id
-      isLoading.value = true
+      showDashboard.value = true
       cart.value = []
 
       return result
@@ -134,7 +134,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
   const setCurrentPriceList = (id: number) => {
     currentPriceListId.value = id
     cart.value = []
-    isLoading.value = true
+    showDashboard.value = true
     searchTerm.value = ''
     searchProducts('')
   }
@@ -230,7 +230,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
     currentPriceListId.value = null
     cart.value = []
     products.value = []
-    isLoading.value = false
+    showDashboard.value = false
     searchTerm.value = ''
   }
 
@@ -249,7 +249,7 @@ export const useSuppliersStore = defineStore('suppliers', () => {
     cart,
     orders,
     priceComparisons,
-    isLoading,
+    showDashboard,
     searchTerm,
     loading,
     error,

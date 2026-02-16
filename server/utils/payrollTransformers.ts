@@ -45,16 +45,9 @@ export function transformEmployee(emp: DbEmployee, weeks: ReturnType<typeof tran
     id: emp.employeeId,
     name: emp.name,
     settings: {
-      baseHourlyRate: parseFloat(emp.baseHourlyRate) || 0,
+      ...getEmployeeSettings(emp),
       currency: emp.currency || 'MXN',
-      usesOvertime: emp.usesOvertime,
-      usesTips: emp.usesTips,
-      overtimeTier1Rate: parseFloat(emp.overtimeTier1Rate || '1.5'),
-      overtimeTier2Rate: parseFloat(emp.overtimeTier2Rate || '2.0'),
-      overtimeTier1Hours: emp.overtimeTier1Hours ?? 2,
-      hoursPerShift: emp.hoursPerShift ?? 8,
-      breakHours: emp.breakHours ?? 1,
-      minHoursForBreak: emp.minHoursForBreak ?? 5
+      usesTips: emp.usesTips
     },
     weeks
   }

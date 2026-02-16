@@ -27,6 +27,7 @@ const {
 // Modales
 const showAddEmployeeModal = ref(false)
 const showCreateWeekModal = ref(false)
+const showDeleteEmployeeModal = ref(false)
 const newEmployeeName = ref('')
 const newEmployeeRate = ref(450)
 const newEmployeeCurrency = ref<'MXN' | 'USD' | 'EUR'>('MXN')
@@ -122,15 +123,18 @@ const handleAddEmployee = async () => {
   }
 }
 
-const handleDeleteEmployee = async () => {
+const handleDeleteEmployee = () => {
+  if (!currentEmployee.value) return
+  showDeleteEmployeeModal.value = true
+}
+
+const confirmDeleteEmployee = async () => {
   if (!currentEmployee.value) return
 
   const name = currentEmployee.value.name
-  if (!confirm(`¿Estás seguro de que quieres eliminar a ${name}?\n\nSe perderán todos sus horarios y no se puede deshacer.`)) {
-    return
-  }
-
   const result = await payrollStore.deleteCurrentEmployee()
+
+  showDeleteEmployeeModal.value = false
 
   if (result.success) {
     toast.add({
@@ -423,5 +427,15 @@ const tabItems = computed(() => [
     :current-employee="currentEmployee"
     :loading="loading"
     @created="onWeekCreated"
+  />
+
+  <!-- Modal: Confirmar Eliminar Empleado -->
+  <UiConfirmModal
+    v-model:open="showDeleteEmployeeModal"
+    :title="`Eliminar a ${currentEmployee?.name || 'empleado'}`"
+    description="Se eliminarán todos sus horarios y semanas registradas. Esta acción no se puede deshacer."
+    confirm-label="Eliminar empleado"
+    :loading="loading"
+    @confirm="confirmDeleteEmployee"
   />
 </template>

@@ -5,14 +5,30 @@ export interface EmployeeListItem {
   name: string
 }
 
+const API_TIMEOUT = 10_000
+
+async function apiFetch<T>(url: string, opts?: Parameters<typeof $fetch>[1]): Promise<T> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), API_TIMEOUT)
+
+  try {
+    return await $fetch<T>(url, {
+      ...opts,
+      signal: controller.signal
+    }) as T
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 export const usePayrollApi = () => {
   const fetchEmployees = async (): Promise<EmployeeListItem[]> => {
-    const response = await $fetch<{ employees: EmployeeListItem[] }>('/api/payroll/employees')
+    const response = await apiFetch<{ employees: EmployeeListItem[] }>('/api/payroll/employees')
     return response.employees
   }
 
   const fetchEmployee = async (employeeId: string): Promise<PayrollEmployee> => {
-    const response = await $fetch<{ employee: PayrollEmployee }>(`/api/payroll/employees/${employeeId}`)
+    const response = await apiFetch<{ employee: PayrollEmployee }>(`/api/payroll/employees/${employeeId}`)
     return response.employee
   }
 
@@ -21,7 +37,7 @@ export const usePayrollApi = () => {
     base_hourly_rate: number
     currency: string
   }): Promise<PayrollEmployee> => {
-    const response = await $fetch<{ employee: PayrollEmployee }>('/api/payroll/employees', {
+    const response = await apiFetch<{ employee: PayrollEmployee }>('/api/payroll/employees', {
       method: 'POST',
       body: data
     })
@@ -32,7 +48,7 @@ export const usePayrollApi = () => {
     employeeId: string,
     data: Record<string, unknown>
   ): Promise<PayrollEmployee> => {
-    const response = await $fetch<{ employee: PayrollEmployee }>(`/api/payroll/employees/${employeeId}`, {
+    const response = await apiFetch<{ employee: PayrollEmployee }>(`/api/payroll/employees/${employeeId}`, {
       method: 'PATCH',
       body: data
     })
@@ -40,11 +56,11 @@ export const usePayrollApi = () => {
   }
 
   const deleteEmployee = async (employeeId: string): Promise<void> => {
-    await $fetch(`/api/payroll/employees/${employeeId}`, { method: 'DELETE' })
+    await apiFetch(`/api/payroll/employees/${employeeId}`, { method: 'DELETE' })
   }
 
   const fetchWeeks = async (employeeId: string): Promise<PayrollWeek[]> => {
-    const response = await $fetch<{ weeks: PayrollWeek[] }>(`/api/payroll/employees/${employeeId}/weeks`)
+    const response = await apiFetch<{ weeks: PayrollWeek[] }>(`/api/payroll/employees/${employeeId}/weeks`)
     return response.weeks
   }
 
@@ -52,7 +68,7 @@ export const usePayrollApi = () => {
     employeeId: string,
     data: { start_date: string, weekly_tips?: number }
   ): Promise<PayrollWeek> => {
-    const response = await $fetch<{ week: PayrollWeek }>(`/api/payroll/employees/${employeeId}/weeks`, {
+    const response = await apiFetch<{ week: PayrollWeek }>(`/api/payroll/employees/${employeeId}/weeks`, {
       method: 'POST',
       body: data
     })
@@ -64,7 +80,7 @@ export const usePayrollApi = () => {
     weekId: string,
     schedule: Record<string, unknown>
   ): Promise<PayrollWeek> => {
-    const response = await $fetch<{ week: PayrollWeek }>(
+    const response = await apiFetch<{ week: PayrollWeek }>(
       `/api/payroll/employees/${employeeId}/weeks/${weekId}/schedule`,
       {
         method: 'PATCH',
@@ -79,7 +95,7 @@ export const usePayrollApi = () => {
     weekId: string,
     data: { weekly_tips?: number, shift_rate?: number | null }
   ): Promise<PayrollWeek> => {
-    const response = await $fetch<{ week: PayrollWeek }>(
+    const response = await apiFetch<{ week: PayrollWeek }>(
       `/api/payroll/employees/${employeeId}/weeks/${weekId}`,
       {
         method: 'PATCH',
@@ -90,7 +106,7 @@ export const usePayrollApi = () => {
   }
 
   const deleteWeek = async (employeeId: string, weekId: string): Promise<void> => {
-    await $fetch(`/api/payroll/employees/${employeeId}/weeks/${weekId}`, { method: 'DELETE' })
+    await apiFetch(`/api/payroll/employees/${employeeId}/weeks/${weekId}`, { method: 'DELETE' })
   }
 
   return {

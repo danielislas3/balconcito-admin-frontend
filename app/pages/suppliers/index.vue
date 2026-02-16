@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
 
     <template #body>
       <!-- Upload View -->
-      <div v-if="!store.isLoading" class="flex flex-col items-center justify-center h-full max-w-2xl mx-auto gap-6">
+      <div v-if="!store.showDashboard" class="flex flex-col items-center justify-center h-full max-w-2xl mx-auto gap-6">
         <div class="w-full">
           <SupplierUpload />
         </div>
@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
                 size="sm"
                 icon="i-lucide-list"
                 label="Ver listas"
-                @click="store.isLoading = false"
+                @click="store.showDashboard = false"
               />
             </div>
           </div>
