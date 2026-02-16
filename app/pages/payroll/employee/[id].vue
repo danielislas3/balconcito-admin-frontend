@@ -68,7 +68,7 @@ const employeeStats = computed(() => {
       if (dayData.hoursWorked > 0) {
         totalDaysWorked++
       }
-      shiftsThisWeek += dayData.completeShifts
+      if (dayData.hoursWorked >= 8) shiftsThisWeek++
       if (dayData.extraHours > 0) {
         totalOvertimeHours += dayData.extraHours
         hasOvertime = true
