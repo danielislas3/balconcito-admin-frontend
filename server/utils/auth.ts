@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose'
 import bcrypt from 'bcryptjs'
 import { randomUUID } from 'node:crypto'
+import { z } from 'zod'
 import type { H3Event } from 'h3'
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -54,9 +55,18 @@ export async function signJwt(user: AuthUser): Promise<{ token: string, jti: str
   return { token, jti }
 }
 
+const jwtPayloadSchema = z.object({
+  sub: z.string(),
+  email: z.string(),
+  name: z.string(),
+  role: z.string(),
+  jti: z.string()
+})
+
 export async function verifyJwt(token: string): Promise<JwtPayloadExtended> {
   const { payload } = await jwtVerify(token, getSecret())
-  return payload as JwtPayloadExtended
+  const validated = jwtPayloadSchema.parse(payload)
+  return { ...payload, ...validated } as JwtPayloadExtended
 }
 
 // ── Cookie helpers ─────────────────────────────────────────────────────────

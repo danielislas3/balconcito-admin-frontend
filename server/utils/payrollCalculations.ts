@@ -63,7 +63,7 @@ export function calculateDayHoursAndPay(
   const exitH = parseInt(day.exitHour) || 0
   const exitM = parseInt(day.exitMinute) || 0
 
-  let entryMinutes = entryH * 60 + entryM
+  const entryMinutes = entryH * 60 + entryM
   let exitMinutes = exitH * 60 + exitM
 
   // Overnight shift: exit is next day
@@ -101,7 +101,9 @@ export function calculateDayHoursAndPay(
       overtimeHours = round2(tier1Minutes / 60)
       extraHours = round2(Math.max(otMinutes - tier1Minutes, 0) / 60)
     } else {
-      regularHours = hoursWorked
+      // No overtime applies but keep the forced 1h regular split
+      overtimeHours = 0
+      extraHours = 0
     }
   } else if (settings.usesOvertime) {
     regularHours = round2(Math.min(hoursWorked, settings.hoursPerShift))

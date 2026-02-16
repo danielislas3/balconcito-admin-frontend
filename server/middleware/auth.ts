@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Allow public endpoints
-  if (PUBLIC_PATHS.some(p => path.startsWith(p))) {
+  if (PUBLIC_PATHS.some(p => path === p || path.startsWith(p + '/'))) {
     return
   }
 

@@ -20,6 +20,9 @@ export default defineEventHandler(async (event) => {
   const user = rows[0]
 
   if (!user) {
+    // Dummy verify to prevent timing side-channel
+    const FAKE_HASH = '$2a$12$000000000000000000000uGbykMWzOkB4sOyD6sAyIFdOFx0ZsXXC'
+    await verifyPassword(body.password, FAKE_HASH)
     throw createError({ statusCode: 401, message: 'Credenciales incorrectas' })
   }
 
