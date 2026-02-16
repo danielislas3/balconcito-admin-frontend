@@ -1,8 +1,10 @@
 import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import pg from 'pg'
-import { recipes, recipeIngredients, recipeSteps } from './schema'
+import { eq } from 'drizzle-orm'
+import { recipes, recipeIngredients, recipeSteps, suppliers } from './schema'
 import type { StorageInstructions } from './schema/recipes'
+import type { SupplierConfig } from './schema/suppliers'
 
 const DATABASE_URL = process.env.DATABASE_URL
 if (!DATABASE_URL) {
@@ -223,6 +225,37 @@ async function seed() {
   }
 
   console.log(`Seeded ${defaultRecipes.length} recipes`)
+
+  // =========================================================================
+  // SUPPLIERS
+  // =========================================================================
+
+  console.log('\nSeeding suppliers...')
+
+  // Check if APYS already exists
+  const [existingApys] = await db.select().from(suppliers).where(eq(suppliers.slug, 'apys'))
+
+  if (!existingApys) {
+    const apysConfig: SupplierConfig = {
+      customerNumber: 'N. 19189',
+      businessName: 'El Balconcito',
+      orderPerson: ''
+    }
+
+    await db.insert(suppliers).values({
+      name: 'APYS',
+      slug: 'apys',
+      config: apysConfig,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    })
+
+    console.log('  + APYS')
+  } else {
+    console.log('  ~ APYS (already exists)')
+  }
+
+  console.log('Seeded suppliers')
 }
 
 seed()
