@@ -1,0 +1,42 @@
+import { z } from 'zod'
+import { eq } from 'drizzle-orm'
+import { users } from '~~/server/database/schema'
+
+const loginSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(1, 'La contraseña es requerida')
+})
+
+export default defineEventHandler(async (event) => {
+  const body = await validateBody(event, loginSchema)
+  const db = useDB()
+
+  const rows = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, body.email))
+    .limit(1)
+
+  const user = rows[0]
+
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Credenciales incorrectas' })
+  }
+
+  const valid = await verifyPassword(body.password, user.encryptedPassword)
+  if (!valid) {
+    throw createError({ statusCode: 401, message: 'Credenciales incorrectas' })
+  }
+
+  const authUser: AuthUser = {
+    id: user.id.toString(),
+    email: user.email,
+    name: user.name,
+    role: user.role ?? 'admin'
+  }
+
+  const { token } = await signJwt(authUser)
+  setAuthCookie(event, token)
+
+  return { user: authUser }
+})
