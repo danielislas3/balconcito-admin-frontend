@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { PayrollEmployee, PayrollWeek, DaySchedule, WeekSchedule, EmployeeSettings } from '~/types/payroll'
 import type { EmployeeListItem } from '~/composables/usePayrollApi'
 import { calculateWeekTotals } from '~/utils/payrollCalculations'
+import { handleApiError } from '~/utils/errorHandler'
 
 /**
  * Store de Pinia para el módulo de Nóminas (Setup Syntax)
@@ -26,24 +27,15 @@ export const usePayrollStore = defineStore('payroll', () => {
 
   // ===== GETTERS (Computed) =====
 
-  /**
-   * Semanas del empleado actual
-   */
   const currentEmployeeWeeks = computed<PayrollWeek[]>(() => {
     return currentEmployee.value?.weeks || []
   })
 
-  /**
-   * Semana actualmente seleccionada
-   */
   const currentWeek = computed<PayrollWeek | null>(() => {
     if (!currentEmployee.value || !currentWeekId.value) return null
     return currentEmployee.value.weeks.find(week => week.id === currentWeekId.value) || null
   })
 
-  /**
-   * Totales de la semana actual
-   */
   const weekTotals = computed(() => {
     if (!currentWeek.value) {
       return {
@@ -65,9 +57,6 @@ export const usePayrollStore = defineStore('payroll', () => {
 
   // --- CRUD: EMPLEADOS ---
 
-  /**
-   * Obtiene la lista de empleados (solo id y name)
-   */
   async function fetchEmployees() {
     loading.value = true
     error.value = undefined
@@ -76,26 +65,20 @@ export const usePayrollStore = defineStore('payroll', () => {
       const api = usePayrollApi()
       employeeList.value = await api.fetchEmployees()
 
-      // Seleccionar primer empleado si no hay ninguno seleccionado
       if (!currentEmployeeId.value || !employeeList.value.find(e => e.id === currentEmployeeId.value)) {
         currentEmployeeId.value = employeeList.value.length > 0 ? employeeList.value[0]?.id || '' : ''
       }
 
-      // Cargar datos completos del empleado seleccionado
       if (currentEmployeeId.value) {
         await fetchCurrentEmployee()
       }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al cargar empleados'
-      console.error('Error fetching employees:', err)
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'fetchEmployees')
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Carga los datos completos (semanas + horarios) del empleado seleccionado
-   */
   async function fetchCurrentEmployee() {
     if (!currentEmployeeId.value) return
 
@@ -103,16 +86,13 @@ export const usePayrollStore = defineStore('payroll', () => {
     try {
       const api = usePayrollApi()
       currentEmployee.value = await api.fetchEmployee(currentEmployeeId.value)
-    } catch (err: any) {
-      console.error('Error fetching employee details:', err)
+    } catch (err: unknown) {
+      handleApiError(err, 'fetchCurrentEmployee')
     } finally {
       loadingEmployee.value = false
     }
   }
 
-  /**
-   * Crea un nuevo empleado
-   */
   async function createEmployee(
     name: string,
     baseHourlyRate: number,
@@ -135,17 +115,14 @@ export const usePayrollStore = defineStore('payroll', () => {
       currentWeekId.value = ''
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al crear empleado'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'createEmployee')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Actualiza la configuración de un empleado
-   */
   async function updateEmployeeSettings(
     settings: Partial<EmployeeSettings>
   ): Promise<{ success: boolean, error?: string }> {
@@ -162,17 +139,14 @@ export const usePayrollStore = defineStore('payroll', () => {
       currentEmployee.value = updatedEmployee
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar configuración'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'updateEmployeeSettings')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Elimina el empleado actual
-   */
   async function deleteCurrentEmployee(): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value) {
       return { success: false, error: 'No hay empleado seleccionado' }
@@ -189,29 +163,24 @@ export const usePayrollStore = defineStore('payroll', () => {
       const api = usePayrollApi()
       await api.deleteEmployee(currentEmployeeId.value)
 
-      // Remover de la lista
       const index = employeeList.value.findIndex(e => e.id === currentEmployeeId.value)
       if (index !== -1) {
         employeeList.value.splice(index, 1)
       }
 
-      // Seleccionar primer empleado y cargar sus datos
       currentEmployeeId.value = employeeList.value.length > 0 ? employeeList.value[0]?.id || '' : ''
       currentWeekId.value = ''
       await fetchCurrentEmployee()
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al eliminar empleado'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'deleteCurrentEmployee')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Maneja el cambio de empleado seleccionado
-   */
   async function onEmployeeChange(): Promise<void> {
     currentWeekId.value = ''
     await fetchCurrentEmployee()
@@ -219,9 +188,6 @@ export const usePayrollStore = defineStore('payroll', () => {
 
   // --- CRUD: SEMANAS ---
 
-  /**
-   * Crea una nueva semana laboral
-   */
   async function createWeek(
     startDate: string,
     weeklyTips: number = 0
@@ -240,24 +206,20 @@ export const usePayrollStore = defineStore('payroll', () => {
         weekly_tips: weeklyTips
       })
 
-      // Agregar al estado local
       if (currentEmployee.value) {
         currentEmployee.value.weeks.push(newWeek)
         currentWeekId.value = newWeek.id
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al crear semana'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'createWeek')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Actualiza el horario de un día específico
-   */
   async function updateDaySchedule(
     dayKey: keyof WeekSchedule,
     schedule: Partial<DaySchedule>
@@ -272,8 +234,6 @@ export const usePayrollStore = defineStore('payroll', () => {
     try {
       const api = usePayrollApi()
 
-      // Enviar solo datos raw al backend (entry/exit times, isWorking, forceOvertime, breakHours)
-      // El backend calculará todo lo demás
       const rawSchedule = {
         entryHour: schedule.entryHour,
         entryMinute: schedule.entryMinute,
@@ -290,7 +250,6 @@ export const usePayrollStore = defineStore('payroll', () => {
         { [dayKey]: rawSchedule }
       )
 
-      // Actualizar estado local con valores calculados del backend
       if (currentEmployee.value) {
         const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
@@ -299,17 +258,14 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar horario'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'updateDaySchedule')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Actualiza las propinas semanales
-   */
   async function updateWeeklyTips(tips: number): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
@@ -326,7 +282,6 @@ export const usePayrollStore = defineStore('payroll', () => {
         { weekly_tips: tips }
       )
 
-      // Actualizar estado local
       if (currentEmployee.value) {
         const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
@@ -335,17 +290,14 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar propinas'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'updateWeeklyTips')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Actualiza la tarifa por turno de una semana específica
-   */
   async function updateShiftRate(shiftRate: number | null): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
@@ -362,7 +314,6 @@ export const usePayrollStore = defineStore('payroll', () => {
         { shift_rate: shiftRate }
       )
 
-      // Actualizar estado local
       if (currentEmployee.value) {
         const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
@@ -371,17 +322,14 @@ export const usePayrollStore = defineStore('payroll', () => {
       }
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al actualizar tarifa por turno'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'updateShiftRate')
       return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Elimina la semana actual
-   */
   async function deleteCurrentWeek(): Promise<{ success: boolean, error?: string }> {
     if (!currentEmployeeId.value || !currentWeekId.value) {
       return { success: false, error: 'No hay empleado o semana seleccionada' }
@@ -394,7 +342,6 @@ export const usePayrollStore = defineStore('payroll', () => {
       const api = usePayrollApi()
       await api.deleteWeek(currentEmployeeId.value, currentWeekId.value)
 
-      // Remover del estado local
       if (currentEmployee.value) {
         const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
@@ -405,8 +352,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       currentWeekId.value = ''
 
       return { success: true }
-    } catch (err: any) {
-      error.value = err?.message || 'Error al eliminar semana'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'deleteCurrentWeek')
       return { success: false, error: error.value }
     } finally {
       loading.value = false

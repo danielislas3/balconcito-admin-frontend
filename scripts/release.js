@@ -70,8 +70,6 @@ function getCurrentVersion() {
   return packageJson.version
 }
 
-
-
 function parseArguments() {
   const { values } = parseArgs({
     options: {

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Supplier, SupplierProduct, OrderItem, PriceList, Order, PriceComparison } from '~/types/suppliers'
+import { handleApiError } from '~/utils/errorHandler'
 
 export const useSuppliersStore = defineStore('suppliers', () => {
   // State
@@ -41,9 +42,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
       if (supplier.value) {
         await fetchPriceLists()
       }
-    } catch (err: any) {
-      error.value = err.message || 'Error al cargar proveedor'
-      console.error('Error fetching supplier:', err)
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'fetchSupplier')
     } finally {
       loading.value = false
     }
@@ -53,12 +53,11 @@ export const useSuppliersStore = defineStore('suppliers', () => {
     if (!supplier.value) return
     try {
       priceLists.value = await $fetch<PriceList[]>(`/api/suppliers/${supplier.value.id}/price-lists`)
-      // Auto-select most recent list
       if (priceLists.value.length > 0 && !currentPriceListId.value) {
         currentPriceListId.value = priceLists.value[0]!.id
       }
-    } catch (err: any) {
-      console.error('Error fetching price lists:', err)
+    } catch (err: unknown) {
+      handleApiError(err, 'fetchPriceLists')
     }
   }
 
@@ -75,15 +74,14 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         body: formData
       })
 
-      // Refresh lists and select the new one
       await fetchPriceLists()
       currentPriceListId.value = result.id
       isLoading.value = true
       cart.value = []
 
       return result
-    } catch (err: any) {
-      error.value = err.message || 'Error al subir lista de precios'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'uploadPriceList')
       throw err
     } finally {
       loading.value = false
@@ -100,8 +98,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         cart.value = []
         products.value = []
       }
-    } catch (err: any) {
-      console.error('Error deleting price list:', err)
+    } catch (err: unknown) {
+      handleApiError(err, 'deletePriceList')
       throw err
     }
   }
@@ -114,7 +112,6 @@ export const useSuppliersStore = defineStore('suppliers', () => {
 
     const search = term !== undefined ? term : searchTerm.value
 
-    // Don't search with only 1 character
     if (search.length === 1) {
       products.value = []
       return
@@ -129,8 +126,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         `/api/suppliers/${supplier.value.id}/price-lists/${currentPriceListId.value}/products?${params}`
       )
       products.value = result
-    } catch (err: any) {
-      console.error('Error searching products:', err)
+    } catch (err: unknown) {
+      handleApiError(err, 'searchProducts')
     }
   }
 
@@ -149,8 +146,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
         `/api/suppliers/${supplier.value.id}/price-comparison`
       )
       priceComparisons.value = result.comparisons
-    } catch (err: any) {
-      console.error('Error fetching price comparison:', err)
+    } catch (err: unknown) {
+      handleApiError(err, 'fetchPriceComparison')
     }
   }
 
@@ -208,8 +205,8 @@ export const useSuppliersStore = defineStore('suppliers', () => {
       orders.value.unshift(order)
       clearCart()
       return order
-    } catch (err: any) {
-      error.value = err.message || 'Error al guardar pedido'
+    } catch (err: unknown) {
+      error.value = handleApiError(err, 'saveOrder')
       throw err
     } finally {
       loading.value = false

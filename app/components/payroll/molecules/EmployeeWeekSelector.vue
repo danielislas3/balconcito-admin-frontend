@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { PayrollEmployee } from '~/types/payroll'
 import { usePayrollStore } from '~/stores/payroll'
 import { storeToRefs } from 'pinia'
 import { formatWeekDisplay } from '~/utils/payrollFormatters'
@@ -24,20 +23,6 @@ const {
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
-
-const employeeOptions = computed(() =>
-  employeeList.value.map(emp => ({
-    label: emp.name,
-    value: emp.id
-  }))
-)
-
-const weekOptions = computed(() =>
-  currentEmployeeWeeks.value.map(week => ({
-    label: `Semana del ${formatWeekDisplay(week.startDate)}`,
-    value: week.id
-  }))
-)
 
 // Computed: Default shift rate from employee settings
 const defaultShiftRate = computed(() => {

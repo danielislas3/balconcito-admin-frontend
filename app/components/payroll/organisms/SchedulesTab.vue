@@ -2,6 +2,7 @@
 import { usePayrollStore } from '~/stores/payroll'
 import { storeToRefs } from 'pinia'
 import { formatCurrency } from '~/utils/payrollFormatters'
+import type { Currency } from '~/utils/payrollConstants'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 const emit = defineEmits<{
@@ -57,7 +58,7 @@ onBeforeUnmount(() => {
 // Helper to format currency using employee's settings
 const formatEmployeeCurrency = (amount: number) => {
   const currency = currentEmployee.value?.settings.currency || 'MXN'
-  return formatCurrency(amount, currency as any)
+  return formatCurrency(amount, currency as Currency)
 }
 </script>
 

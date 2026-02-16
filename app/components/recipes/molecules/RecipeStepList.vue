@@ -94,7 +94,7 @@ const updateStep = (index: number, step: RecipeStep) => {
     </div>
 
     <div v-else class="space-y-4">
-       <StepForm
+      <StepForm
         v-for="(step, index) in localSteps"
         :key="index"
         :step="step"

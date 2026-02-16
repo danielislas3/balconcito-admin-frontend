@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Empleado no encontrado' })
   }
 
-  const updates: Record<string, any> = { updatedAt: now }
+  const updates: Record<string, unknown> = { updatedAt: now }
 
   if (body.name) updates.name = body.name
 

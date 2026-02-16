@@ -30,7 +30,7 @@ export const usePayrollApi = () => {
 
   const updateEmployee = async (
     employeeId: string,
-    data: Record<string, any>
+    data: Record<string, unknown>
   ): Promise<PayrollEmployee> => {
     const response = await $fetch<{ employee: PayrollEmployee }>(`/api/payroll/employees/${employeeId}`, {
       method: 'PATCH',
@@ -62,7 +62,7 @@ export const usePayrollApi = () => {
   const updateWeekSchedule = async (
     employeeId: string,
     weekId: string,
-    schedule: Record<string, any>
+    schedule: Record<string, unknown>
   ): Promise<PayrollWeek> => {
     const response = await $fetch<{ week: PayrollWeek }>(
       `/api/payroll/employees/${employeeId}/weeks/${weekId}/schedule`,
