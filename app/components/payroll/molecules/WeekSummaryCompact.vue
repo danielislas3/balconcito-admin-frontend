@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { PayrollWeek } from '~/types/payroll'
+import type { Currency } from '~/utils/payrollConstants'
 import { calculateWeekTotals } from '~/utils/payrollCalculations'
 import { formatCurrency as formatCurrencyUtil, formatWeekDisplay } from '~/utils/payrollFormatters'
 import { WEEK_DAYS } from '~/utils/payrollConstants'
+import { generateWeeklySummaryText } from '~/utils/payrollShareFormatter'
+import { useClipboard } from '@vueuse/core'
 
 export interface WeekSummaryCompactProps {
   week: PayrollWeek
@@ -11,13 +14,26 @@ export interface WeekSummaryCompactProps {
 }
 
 const props = defineProps<WeekSummaryCompactProps>()
+const toast = useToast()
 
 const formatCurrency = (amount: number) => {
-  return formatCurrencyUtil(amount, (props.currency || 'MXN') as any)
+  return formatCurrencyUtil(amount, (props.currency || 'MXN') as Currency)
 }
 
-// Calcular totales de la semana (reactivo)
-// Agregar validación para evitar errores cuando week no está definido
+const { copy } = useClipboard()
+const justCopied = ref(false)
+
+const copyToClipboard = async () => {
+  if (!props.week) return
+  const text = generateWeeklySummaryText(props.week, props.employeeName, (props.currency || 'MXN') as Currency)
+  await copy(text)
+  justCopied.value = true
+  toast.add({ title: 'Copiado', description: 'Resumen listo para pegar en WhatsApp', color: 'success' })
+  setTimeout(() => {
+    justCopied.value = false
+  }, 2000)
+}
+
 const weekTotals = computed(() => {
   if (!props.week) {
     return {
@@ -38,16 +54,20 @@ const weekTotals = computed(() => {
 <template>
   <UCard variant="subtle">
     <template #header>
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-0">
-        <div class="flex items-center gap-2">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
           <UIcon name="i-lucide-receipt" class="size-4 text-muted flex-shrink-0" />
-          <h3 class="text-xs sm:text-sm font-semibold">
-            Resumen Semanal
+          <h3 class="text-xs sm:text-sm font-semibold truncate">
+            Resumen - {{ employeeName }}
           </h3>
         </div>
-        <div class="text-xs text-muted truncate max-w-full sm:max-w-[150px]">
-          {{ employeeName }}
-        </div>
+        <UButton
+          :icon="justCopied ? 'i-lucide-check' : 'i-lucide-copy'"
+          :color="justCopied ? 'success' : 'neutral'"
+          variant="ghost"
+          size="xs"
+          @click="copyToClipboard"
+        />
       </div>
     </template>
 
