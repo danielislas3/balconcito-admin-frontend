@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { PayrollEmployee, PayrollWeek, DaySchedule, WeekSchedule, EmployeeSettings } from '~/types/payroll'
+import type { EmployeeListItem } from '~/composables/usePayrollApi'
 import { calculateWeekTotals } from '~/utils/payrollCalculations'
 
 /**
@@ -9,28 +10,21 @@ import { calculateWeekTotals } from '~/utils/payrollCalculations'
  * semanas laborales y horarios. Utiliza el patrón Repository a través
  * de usePayrollApi para todas las operaciones con el backend.
  *
- * Las funciones de cálculo, formateo y exportación están en archivos separados:
- * - utils/payrollCalculations.ts
- * - utils/payrollFormatters.ts
- * - composables/usePayrollExport.ts
+ * employeeList: lista ligera (id, name) para el selector
+ * currentEmployee: datos completos del empleado seleccionado (cargado on demand)
  */
 export const usePayrollStore = defineStore('payroll', () => {
   // ===== STATE =====
-  const employees = ref<PayrollEmployee[]>([])
+  const employeeList = ref<EmployeeListItem[]>([])
   const currentEmployeeId = ref('')
+  const currentEmployee = ref<PayrollEmployee | null>(null)
   const currentWeekId = ref('')
   const activeTab = ref('schedules')
   const loading = ref(false)
+  const loadingEmployee = ref(false)
   const error = ref<string | undefined>(undefined)
 
   // ===== GETTERS (Computed) =====
-
-  /**
-   * Empleado actualmente seleccionado
-   */
-  const currentEmployee = computed<PayrollEmployee | null>(() => {
-    return employees.value.find(emp => emp.id === currentEmployeeId.value) || null
-  })
 
   /**
    * Semanas del empleado actual
@@ -49,7 +43,6 @@ export const usePayrollStore = defineStore('payroll', () => {
 
   /**
    * Totales de la semana actual
-   * Usa la función de cálculo de utils/payrollCalculations.ts
    */
   const weekTotals = computed(() => {
     if (!currentWeek.value) {
@@ -68,19 +61,12 @@ export const usePayrollStore = defineStore('payroll', () => {
     return calculateWeekTotals(currentWeek.value)
   })
 
-  /**
-   * Total de semanas de todos los empleados
-   */
-  const totalWeeks = computed<number>(() => {
-    return employees.value.reduce((total, emp) => total + emp.weeks.length, 0)
-  })
-
   // ===== ACTIONS (Functions) =====
 
   // --- CRUD: EMPLEADOS ---
 
   /**
-   * Obtiene todos los empleados desde el backend
+   * Obtiene la lista de empleados (solo id y name)
    */
   async function fetchEmployees() {
     loading.value = true
@@ -88,17 +74,39 @@ export const usePayrollStore = defineStore('payroll', () => {
 
     try {
       const api = usePayrollApi()
-      employees.value = await api.fetchEmployees()
+      employeeList.value = await api.fetchEmployees()
 
       // Seleccionar primer empleado si no hay ninguno seleccionado
-      if (!currentEmployeeId.value || !employees.value.find(e => e.id === currentEmployeeId.value)) {
-        currentEmployeeId.value = employees.value.length > 0 ? employees.value[0]?.id || '' : ''
+      if (!currentEmployeeId.value || !employeeList.value.find(e => e.id === currentEmployeeId.value)) {
+        currentEmployeeId.value = employeeList.value.length > 0 ? employeeList.value[0]?.id || '' : ''
+      }
+
+      // Cargar datos completos del empleado seleccionado
+      if (currentEmployeeId.value) {
+        await fetchCurrentEmployee()
       }
     } catch (err: any) {
       error.value = err?.message || 'Error al cargar empleados'
       console.error('Error fetching employees:', err)
     } finally {
       loading.value = false
+    }
+  }
+
+  /**
+   * Carga los datos completos (semanas + horarios) del empleado seleccionado
+   */
+  async function fetchCurrentEmployee() {
+    if (!currentEmployeeId.value) return
+
+    loadingEmployee.value = true
+    try {
+      const api = usePayrollApi()
+      currentEmployee.value = await api.fetchEmployee(currentEmployeeId.value)
+    } catch (err: any) {
+      console.error('Error fetching employee details:', err)
+    } finally {
+      loadingEmployee.value = false
     }
   }
 
@@ -121,8 +129,9 @@ export const usePayrollStore = defineStore('payroll', () => {
         currency
       })
 
-      employees.value.push(newEmployee)
+      employeeList.value.push({ id: newEmployee.id, name: newEmployee.name })
       currentEmployeeId.value = newEmployee.id
+      currentEmployee.value = newEmployee
       currentWeekId.value = ''
 
       return { success: true }
@@ -149,13 +158,8 @@ export const usePayrollStore = defineStore('payroll', () => {
 
     try {
       const api = usePayrollApi()
-      const updatedEmployee = await api.updateEmployee(currentEmployeeId.value, { settings } as { settings: EmployeeSettings })
-
-      // Actualizar en el estado local
-      const index = employees.value.findIndex(e => e.id === currentEmployeeId.value)
-      if (index !== -1) {
-        employees.value[index] = updatedEmployee
-      }
+      const updatedEmployee = await api.updateEmployee(currentEmployeeId.value, { settings })
+      currentEmployee.value = updatedEmployee
 
       return { success: true }
     } catch (err: any) {
@@ -174,7 +178,7 @@ export const usePayrollStore = defineStore('payroll', () => {
       return { success: false, error: 'No hay empleado seleccionado' }
     }
 
-    if (employees.value.length <= 1) {
+    if (employeeList.value.length <= 1) {
       return { success: false, error: 'No puedes eliminar el último empleado' }
     }
 
@@ -185,15 +189,16 @@ export const usePayrollStore = defineStore('payroll', () => {
       const api = usePayrollApi()
       await api.deleteEmployee(currentEmployeeId.value)
 
-      // Remover del estado local
-      const index = employees.value.findIndex(e => e.id === currentEmployeeId.value)
+      // Remover de la lista
+      const index = employeeList.value.findIndex(e => e.id === currentEmployeeId.value)
       if (index !== -1) {
-        employees.value.splice(index, 1)
+        employeeList.value.splice(index, 1)
       }
 
-      // Seleccionar primer empleado
-      currentEmployeeId.value = employees.value.length > 0 ? employees.value[0]?.id || '' : ''
+      // Seleccionar primer empleado y cargar sus datos
+      currentEmployeeId.value = employeeList.value.length > 0 ? employeeList.value[0]?.id || '' : ''
       currentWeekId.value = ''
+      await fetchCurrentEmployee()
 
       return { success: true }
     } catch (err: any) {
@@ -207,8 +212,9 @@ export const usePayrollStore = defineStore('payroll', () => {
   /**
    * Maneja el cambio de empleado seleccionado
    */
-  function onEmployeeChange(): void {
+  async function onEmployeeChange(): Promise<void> {
     currentWeekId.value = ''
+    await fetchCurrentEmployee()
   }
 
   // --- CRUD: SEMANAS ---
@@ -235,9 +241,8 @@ export const usePayrollStore = defineStore('payroll', () => {
       })
 
       // Agregar al estado local
-      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
-      if (employee) {
-        employee.weeks.push(newWeek)
+      if (currentEmployee.value) {
+        currentEmployee.value.weeks.push(newWeek)
         currentWeekId.value = newWeek.id
       }
 
@@ -286,11 +291,10 @@ export const usePayrollStore = defineStore('payroll', () => {
       )
 
       // Actualizar estado local con valores calculados del backend
-      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
-      if (employee) {
-        const weekIndex = employee.weeks.findIndex(w => w.id === currentWeekId.value)
+      if (currentEmployee.value) {
+        const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
-          employee.weeks[weekIndex] = updatedWeek
+          currentEmployee.value.weeks[weekIndex] = updatedWeek
         }
       }
 
@@ -323,11 +327,10 @@ export const usePayrollStore = defineStore('payroll', () => {
       )
 
       // Actualizar estado local
-      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
-      if (employee) {
-        const weekIndex = employee.weeks.findIndex(w => w.id === currentWeekId.value)
+      if (currentEmployee.value) {
+        const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
-          employee.weeks[weekIndex] = updatedWeek
+          currentEmployee.value.weeks[weekIndex] = updatedWeek
         }
       }
 
@@ -356,15 +359,14 @@ export const usePayrollStore = defineStore('payroll', () => {
       const updatedWeek = await api.updateWeek(
         currentEmployeeId.value,
         currentWeekId.value,
-        { shift_rate: shiftRate ?? undefined }
+        { shift_rate: shiftRate }
       )
 
       // Actualizar estado local
-      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
-      if (employee) {
-        const weekIndex = employee.weeks.findIndex(w => w.id === currentWeekId.value)
+      if (currentEmployee.value) {
+        const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
-          employee.weeks[weekIndex] = updatedWeek
+          currentEmployee.value.weeks[weekIndex] = updatedWeek
         }
       }
 
@@ -393,11 +395,10 @@ export const usePayrollStore = defineStore('payroll', () => {
       await api.deleteWeek(currentEmployeeId.value, currentWeekId.value)
 
       // Remover del estado local
-      const employee = employees.value.find(e => e.id === currentEmployeeId.value)
-      if (employee) {
-        const weekIndex = employee.weeks.findIndex(w => w.id === currentWeekId.value)
+      if (currentEmployee.value) {
+        const weekIndex = currentEmployee.value.weeks.findIndex(w => w.id === currentWeekId.value)
         if (weekIndex !== -1) {
-          employee.weeks.splice(weekIndex, 1)
+          currentEmployee.value.weeks.splice(weekIndex, 1)
         }
       }
 
@@ -415,20 +416,21 @@ export const usePayrollStore = defineStore('payroll', () => {
   // ===== RETURN PUBLIC API =====
   return {
     // State
-    employees,
+    employeeList,
     currentEmployeeId,
+    currentEmployee,
     currentWeekId,
     activeTab,
     loading,
+    loadingEmployee,
     error,
     // Getters
-    currentEmployee,
     currentEmployeeWeeks,
     currentWeek,
     weekTotals,
-    totalWeeks,
     // Actions
     fetchEmployees,
+    fetchCurrentEmployee,
     createEmployee,
     updateEmployeeSettings,
     deleteCurrentEmployee,

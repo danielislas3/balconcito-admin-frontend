@@ -12,7 +12,7 @@ const emit = defineEmits<{
 }>()
 
 const payrollStore = usePayrollStore()
-const { employees, totalWeeks, currentEmployee, currentWeek } = storeToRefs(payrollStore)
+const { employeeList, currentEmployee, currentWeek } = storeToRefs(payrollStore)
 const toast = useToast()
 
 // Estado para edición de configuraciones
@@ -51,11 +51,10 @@ const monthlyStats = computed(() => {
 })
 
 const totalAccumulated = computed(() => {
-  return employees.value.reduce((sum, emp) => {
-    return sum + emp.weeks.reduce((weekSum, week) => {
-      const weekTotals = calculateWeekTotals(week)
-      return weekSum + weekTotals.totalPay
-    }, 0)
+  if (!currentEmployee.value) return 0
+  return currentEmployee.value.weeks.reduce((sum, week) => {
+    const weekTotals = calculateWeekTotals(week)
+    return sum + weekTotals.totalPay
   }, 0)
 })
 

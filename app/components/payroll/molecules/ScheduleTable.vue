@@ -33,7 +33,25 @@ onBeforeUnmount(() => {
   Object.keys(saveTimers.value).forEach(key => clearTimeout(saveTimers.value[key]))
 })
 
+// Compara si los updates realmente cambiaron algo respecto al estado del servidor
+const hasActualChanges = (dayKey: string, updates: Partial<DaySchedule>): boolean => {
+  const serverSchedule = props.week.schedule[dayKey as keyof WeekSchedule]
+  if (!serverSchedule) return true
+
+  for (const [key, value] of Object.entries(updates)) {
+    const serverValue = serverSchedule[key as keyof DaySchedule]
+    // Normalizar: undefined/null/'' se tratan como equivalentes
+    const normalizedNew = value === undefined || value === null ? '' : String(value)
+    const normalizedServer = serverValue === undefined || serverValue === null ? '' : String(serverValue)
+    if (normalizedNew !== normalizedServer) return true
+  }
+  return false
+}
+
 const debouncedSave = async (dayKey: string, updates: Partial<DaySchedule>, delay = 800) => {
+  // Solo guardar si hay cambios reales vs el servidor
+  if (!hasActualChanges(dayKey, updates)) return
+
   if (saveTimers.value[dayKey]) {
     clearTimeout(saveTimers.value[dayKey])
   }
@@ -265,7 +283,7 @@ const applyPresetToAll = async (preset: typeof schedulePresets[0]) => {
     )
 
     // Actualizar el store para refrescar los datos
-    await payrollStore.fetchEmployees()
+    await payrollStore.fetchCurrentEmployee()
 
     toast.add({
       title: 'Horarios aplicados',
@@ -324,7 +342,7 @@ const applyCopy = async () => {
     )
 
     // Actualizar el store para refrescar los datos
-    await payrollStore.fetchEmployees()
+    await payrollStore.fetchCurrentEmployee()
 
     toast.add({
       title: 'Horarios copiados',

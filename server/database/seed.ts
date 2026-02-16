@@ -2,7 +2,8 @@ import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import pg from 'pg'
 import { eq } from 'drizzle-orm'
-import { recipes, recipeIngredients, recipeSteps, suppliers } from './schema'
+import { recipes, recipeIngredients, recipeSteps, suppliers,payrollEmployees } from './schema'
+
 import type { StorageInstructions } from './schema/recipes'
 import type { SupplierConfig } from './schema/suppliers'
 
@@ -258,7 +259,48 @@ async function seed() {
   console.log('Seeded suppliers')
 }
 
-seed()
+async function seedPayrollEmployees() {
+  console.log('Seeding payroll employees...')
+
+  const defaultEmployees = [
+    { name: 'Daniel', employeeId: 'EMP-001', baseHourlyRate: '62.5', currency: 'MXN' },
+    { name: 'Raúl', employeeId: 'EMP-002', baseHourlyRate: '62.5', currency: 'MXN' }
+  ]
+
+  const now = new Date().toISOString()
+
+  for (const emp of defaultEmployees) {
+    const existing = await db
+      .select({ id: payrollEmployees.id })
+      .from(payrollEmployees)
+      .where(eq(payrollEmployees.employeeId, emp.employeeId))
+      .limit(1)
+
+    if (existing.length > 0) {
+      console.log(`  ~ ${emp.name} (already exists)`)
+      continue
+    }
+
+    await db.insert(payrollEmployees).values({
+      name: emp.name,
+      employeeId: emp.employeeId,
+      baseHourlyRate: emp.baseHourlyRate,
+      currency: emp.currency,
+      createdAt: now,
+      updatedAt: now
+    })
+    console.log(`  + ${emp.name}`)
+  }
+
+  console.log(`Seeded ${defaultEmployees.length} payroll employees`)
+}
+
+async function main() {
+  await seed()
+  await seedPayrollEmployees()
+}
+
+main()
   .then(() => {
     console.log('Seed complete!')
     process.exit(0)

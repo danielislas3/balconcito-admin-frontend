@@ -47,9 +47,7 @@ const overtimeBadge = computed(() => {
       label="Tasa de Asistencia"
       :description="`${metrics.totalDaysWorked} de ${metrics.totalDaysPossible} días posibles`"
       :badge="attendanceBadge"
-      :gradient="{ from: 'from-blue-50', to: 'to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30' }"
-      icon-color="text-blue-600 dark:text-blue-400"
-      text-color="text-blue-900 dark:text-blue-100"
+      color="hours"
     />
 
     <!-- Perfect Weeks -->
@@ -59,9 +57,7 @@ const overtimeBadge = computed(() => {
       label="Semanas Perfectas"
       description="7+ turnos completos por semana"
       :badge="{ label: 'Top Performer', color: 'success' }"
-      :gradient="{ from: 'from-emerald-50', to: 'to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30' }"
-      icon-color="text-emerald-600 dark:text-emerald-400"
-      text-color="text-emerald-900 dark:text-emerald-100"
+      color="income"
     />
 
     <!-- Overtime Analysis -->
@@ -71,9 +67,7 @@ const overtimeBadge = computed(() => {
       label="Horas Extra Totales"
       :description="`En ${metrics.weeksWithOvertime} de ${metrics.totalWeeks} semanas`"
       :badge="overtimeBadge"
-      :gradient="{ from: 'from-amber-50', to: 'to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30' }"
-      icon-color="text-amber-600 dark:text-amber-400"
-      text-color="text-amber-900 dark:text-amber-100"
+      color="overtime"
     />
 
     <!-- Average Pay Per Day -->
@@ -83,9 +77,7 @@ const overtimeBadge = computed(() => {
       label="Pago Promedio/Día"
       :description="`Total: ${formatCurrency(metrics.totalPay)}`"
       :badge="{ label: 'Promedio', color: 'primary' }"
-      :gradient="{ from: 'from-violet-50', to: 'to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30' }"
-      icon-color="text-violet-600 dark:text-violet-400"
-      text-color="text-violet-900 dark:text-violet-100"
+      color="money"
     />
   </div>
 </template>

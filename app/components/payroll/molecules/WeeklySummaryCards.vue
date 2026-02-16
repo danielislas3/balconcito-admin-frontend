@@ -21,7 +21,7 @@ defineProps<WeeklySummaryCardsProps>()
 </script>
 
 <template>
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+  <div class="grid grid-cols-2 gap-3">
     <!-- Total Horas -->
     <PayrollAtomsStatCard
       icon="i-lucide-clock"

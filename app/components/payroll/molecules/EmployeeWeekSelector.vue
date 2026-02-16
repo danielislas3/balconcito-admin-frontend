@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
 const payrollStore = usePayrollStore()
 const {
-  employees,
+  employeeList,
   currentEmployeeId,
   currentWeekId,
   currentEmployee,
@@ -26,7 +26,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind)
 const smAndLarger = breakpoints.greaterOrEqual('sm')
 
 const employeeOptions = computed(() =>
-  employees.value.map(emp => ({
+  employeeList.value.map(emp => ({
     label: emp.name,
     value: emp.id
   }))
@@ -110,7 +110,7 @@ const resetToDefault = () => {
             <option value="" disabled>
               Seleccionar empleado...
             </option>
-            <option v-for="emp in employees" :key="emp.id" :value="emp.id">
+            <option v-for="emp in employeeList" :key="emp.id" :value="emp.id">
               {{ emp.name }}
             </option>
           </select>
@@ -217,7 +217,7 @@ const resetToDefault = () => {
           icon="i-lucide-trash-2"
           color="error"
           variant="outline"
-          :disabled="!currentEmployee || employees.length <= 1"
+          :disabled="!currentEmployee || employeeList.length <= 1"
           :size="smAndLarger ? 'md' : 'sm'"
           class="w-full sm:w-auto"
           @click="emit('delete-employee')"

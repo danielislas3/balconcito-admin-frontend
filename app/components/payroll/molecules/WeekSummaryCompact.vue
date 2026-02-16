@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import html2canvas from 'html2canvas-pro'
 import type { PayrollWeek } from '~/types/payroll'
+import type { Currency } from '~/utils/payrollConstants'
 import { calculateWeekTotals } from '~/utils/payrollCalculations'
 import { formatCurrency as formatCurrencyUtil, formatWeekDisplay } from '~/utils/payrollFormatters'
 import { WEEK_DAYS } from '~/utils/payrollConstants'
+import { generateWeeklySummaryText } from '~/utils/payrollShareFormatter'
+import { useClipboard } from '@vueuse/core'
 
 export interface WeekSummaryCompactProps {
   week: PayrollWeek
@@ -11,13 +15,72 @@ export interface WeekSummaryCompactProps {
 }
 
 const props = defineProps<WeekSummaryCompactProps>()
+const toast = useToast()
 
 const formatCurrency = (amount: number) => {
-  return formatCurrencyUtil(amount, (props.currency || 'MXN') as any)
+  return formatCurrencyUtil(amount, (props.currency || 'MXN') as Currency)
 }
 
-// Calcular totales de la semana (reactivo)
-// Agregar validación para evitar errores cuando week no está definido
+// Copiar texto para WhatsApp
+const { copy } = useClipboard()
+const justCopiedText = ref(false)
+
+const copyText = async () => {
+  if (!props.week) return
+  const text = generateWeeklySummaryText(props.week, props.employeeName, (props.currency || 'MXN') as Currency)
+  await copy(text)
+  justCopiedText.value = true
+  toast.add({ title: 'Texto copiado', description: 'Pega en WhatsApp', color: 'success' })
+  setTimeout(() => {
+    justCopiedText.value = false
+  }, 2000)
+}
+
+// Compartir como imagen
+const shareCardRef = ref<HTMLElement | null>(null)
+const sharing = ref(false)
+
+const shareAsImage = async () => {
+  if (!shareCardRef.value || sharing.value) return
+  sharing.value = true
+
+  try {
+    const canvas = await html2canvas(shareCardRef.value, {
+      backgroundColor: '#1c1917',
+      scale: 2,
+      useCORS: true
+    })
+
+    const blob = await new Promise<Blob | null>(resolve =>
+      canvas.toBlob(resolve, 'image/png')
+    )
+
+    if (!blob) throw new Error('No se pudo generar la imagen')
+
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
+
+    if (isMobile) {
+      const file = new File([blob], `resumen-${props.employeeName}.png`, { type: 'image/png' })
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: `Resumen - ${props.employeeName}` })
+        return
+      }
+    }
+
+    // Desktop: copiar imagen al clipboard
+    await navigator.clipboard.write([
+      new ClipboardItem({ 'image/png': blob })
+    ])
+    toast.add({ title: 'Imagen copiada', description: 'Pega con Ctrl+V en WhatsApp Web', color: 'success' })
+  } catch (err: unknown) {
+    if (err instanceof Error && err.name !== 'AbortError') {
+      toast.add({ title: 'Error al compartir', color: 'error' })
+    }
+  } finally {
+    sharing.value = false
+  }
+}
+
 const weekTotals = computed(() => {
   if (!props.week) {
     return {
@@ -36,63 +99,81 @@ const weekTotals = computed(() => {
 </script>
 
 <template>
-  <UCard variant="subtle">
-    <template #header>
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-0">
-        <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-receipt" class="size-4 text-muted flex-shrink-0" />
-          <h3 class="text-xs sm:text-sm font-semibold">
-            Resumen Semanal
-          </h3>
-        </div>
-        <div class="text-xs text-muted truncate max-w-full sm:max-w-[150px]">
-          {{ employeeName }}
-        </div>
-      </div>
-    </template>
-
-    <!-- Tabla compacta de días - Mobile Optimized -->
-    <div v-if="week && week.schedule" class="space-y-1">
-      <div
-        v-for="day in WEEK_DAYS"
-        v-show="week.schedule[day.key]?.hoursWorked > 0"
-        :key="day.key"
-        class="flex items-center justify-between p-1.5 sm:p-2 rounded bg-default border border-default"
-      >
-        <div class="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
-          <span class="text-xs sm:text-sm flex-shrink-0">{{ day.emoji }}</span>
-          <span class="text-xs sm:text-sm font-medium w-14 sm:w-20 truncate">{{ day.name }}</span>
-          <span class="text-[10px] sm:text-xs text-muted flex-shrink-0">
-            {{ week.schedule[day.key]?.hoursWorked.toFixed(1) }}h
-          </span>
-        </div>
-
-        <div class="text-xs sm:text-sm font-semibold tabular-nums flex-shrink-0">
-          {{ formatCurrency(week.schedule[day.key]?.dailyPay || 0) }}
-        </div>
-      </div>
+  <div class="space-y-2">
+    <!-- Botones de compartir -->
+    <div class="flex items-center justify-end gap-1">
+      <UButton
+        :icon="justCopiedText ? 'i-lucide-check' : 'i-lucide-clipboard'"
+        :color="justCopiedText ? 'success' : 'neutral'"
+        variant="ghost"
+        size="xs"
+        label="Texto"
+        @click="copyText"
+      />
+      <UButton
+        :icon="sharing ? 'i-lucide-loader-2' : 'i-lucide-share'"
+        color="neutral"
+        variant="ghost"
+        size="xs"
+        label="Imagen"
+        :disabled="sharing"
+        :loading="sharing"
+        @click="shareAsImage"
+      />
     </div>
 
-    <!-- Total de la semana - Mobile Optimized -->
-    <div v-if="week" class="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t-2 border-default">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-2 bg-orange-50 dark:bg-orange-950/30 rounded-lg border border-orange-200 dark:border-orange-800">
-        <div class="flex-1 min-w-0">
-          <div class="text-[10px] sm:text-xs text-muted truncate">
-            Semana del {{ formatWeekDisplay(week.startDate) }}
+    <!-- Card capturablecomo imagen -->
+    <div ref="shareCardRef" class="rounded-xl overflow-hidden">
+      <div class="bg-stone-900 p-3 space-y-2">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-bold text-white">
+            {{ employeeName }}
           </div>
-          <div class="text-xs sm:text-sm font-semibold">
-            {{ weekTotals.totalHours.toFixed(1) }}h totales
-            <span v-if="week.weeklyTips > 0" class="block sm:inline text-[10px] sm:text-xs text-amber-600 dark:text-amber-400">
-              + {{ formatCurrency(week.weeklyTips) }} propinas
+          <div class="text-xs text-stone-400">
+            {{ formatWeekDisplay(week.startDate) }}
+          </div>
+        </div>
+
+        <!-- Días trabajados -->
+        <div v-if="week && week.schedule" class="space-y-0.5">
+          <div
+            v-for="day in WEEK_DAYS"
+            v-show="week.schedule[day.key]?.hoursWorked > 0"
+            :key="day.key"
+            class="flex items-center justify-between py-1 px-2 rounded bg-stone-800"
+          >
+            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+              <span class="text-xs">{{ day.emoji }}</span>
+              <span class="text-xs font-medium text-stone-300 w-16">{{ day.name }}</span>
+              <span class="text-[11px] text-stone-500">
+                {{ week.schedule[day.key]?.hoursWorked.toFixed(1) }}h
+              </span>
+            </div>
+            <span class="text-xs font-semibold text-white tabular-nums">
+              {{ formatCurrency(week.schedule[day.key]?.dailyPay || 0) }}
             </span>
           </div>
         </div>
-        <div class="text-right self-end sm:self-auto">
-          <div class="text-base sm:text-lg font-bold text-orange-600 dark:text-orange-400 tabular-nums">
-            {{ formatCurrency(weekTotals.totalPay) }}
+
+        <!-- Totales -->
+        <div v-if="week" class="pt-1 border-t border-stone-700 space-y-1">
+          <div class="flex justify-between text-xs text-stone-400">
+            <span>{{ weekTotals.totalHours.toFixed(1) }}h trabajadas</span>
+            <span>Base: {{ formatCurrency(weekTotals.totalBasePay) }}</span>
+          </div>
+          <div v-if="week.weeklyTips > 0" class="flex justify-between text-xs text-amber-500">
+            <span>Propinas</span>
+            <span>+ {{ formatCurrency(week.weeklyTips) }}</span>
+          </div>
+          <div class="flex justify-between items-center pt-1 px-2 py-1.5 bg-orange-950/50 rounded-lg border border-orange-800">
+            <span class="text-xs font-semibold text-orange-300">Total</span>
+            <span class="text-base font-bold text-orange-400 tabular-nums">
+              {{ formatCurrency(weekTotals.totalPay) }}
+            </span>
           </div>
         </div>
       </div>
     </div>
-  </UCard>
+  </div>
 </template>
