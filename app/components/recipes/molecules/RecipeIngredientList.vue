@@ -78,12 +78,12 @@ const updateIngredient = (index: number, ingredient: Ingredient) => {
 
     <div v-else class="space-y-3">
       <IngredientForm
-        v-for="(ingredient, index) in localIngredients"
+        v-for="(ingredient, index) in ingredients"
         :key="index"
         :ingredient="ingredient"
         :index="index"
         :can-move-up="index > 0"
-        :can-move-down="index < localIngredients.length - 1"
+        :can-move-down="index < ingredients.length - 1"
         @update:ingredient="(updated) => updateIngredient(index, updated)"
         @move-up="moveIngredientUp(index)"
         @move-down="moveIngredientDown(index)"

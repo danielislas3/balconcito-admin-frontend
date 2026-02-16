@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Recipe, Ingredient } from '~/types/recipes'
+import { handleApiError } from '~/utils/errorHandler'
 
 export const useRecipesStore = defineStore('recipes', () => {
   const recipes = ref<Recipe[]>([])
@@ -27,8 +28,7 @@ export const useRecipesStore = defineStore('recipes', () => {
     try {
       recipes.value = await $fetch<Recipe[]>('/api/recipes')
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al cargar recetas'
-      console.error('Error fetching recipes:', err)
+      error.value = handleApiError(err, 'fetchRecipes')
     } finally {
       loading.value = false
     }
@@ -45,8 +45,7 @@ export const useRecipesStore = defineStore('recipes', () => {
       recipes.value.push(created)
       return created
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al crear receta'
-      console.error('Error creating recipe:', err)
+      error.value = handleApiError(err, 'addRecipe')
       throw err
     } finally {
       loading.value = false
@@ -65,8 +64,7 @@ export const useRecipesStore = defineStore('recipes', () => {
       if (index !== -1) recipes.value[index] = updated
       return updated
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al actualizar receta'
-      console.error('Error updating recipe:', err)
+      error.value = handleApiError(err, 'updateRecipe')
       throw err
     } finally {
       loading.value = false
@@ -81,8 +79,7 @@ export const useRecipesStore = defineStore('recipes', () => {
       recipes.value = recipes.value.filter(r => r.id !== id)
       if (activeRecipeId.value === id) activeRecipeId.value = null
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Error al eliminar receta'
-      console.error('Error deleting recipe:', err)
+      error.value = handleApiError(err, 'deleteRecipe')
       throw err
     } finally {
       loading.value = false

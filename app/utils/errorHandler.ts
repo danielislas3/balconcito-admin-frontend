@@ -15,39 +15,34 @@ export interface ApiError {
 /**
  * Maneja errores de API de manera centralizada
  *
- * @param error - El error capturado
+ * @param error - El error capturado (unknown del catch, se normaliza internamente)
  * @param context - Contexto opcional para logging (ej. "fetchEmployees", "createWeek")
+ * @returns Mensaje de error normalizado
  */
-export const handleApiError = (error: ApiError, context?: string) => {
+export const handleApiError = (error: unknown, context?: string): string => {
+  const message = formatErrorMessage(error)
+  const status = isApiError(error) ? error.status : null
   // 1. Log detallado para desarrollo
   if (import.meta.env.DEV) {
     console.group(`🔴 [API Error]${context ? ` ${context}` : ''}`)
-    console.error('Status:', error.status)
-    console.error('Message:', error.message)
-    if (error.data) {
-      console.error('Data:', error.data)
-    }
+    console.error('Status:', status)
+    console.error('Message:', message)
     console.groupEnd()
   }
 
   // 2. Notificación al usuario mediante toast
   // Solo mostramos toast si no es un 401 (ya que ese redirige a login)
-  if (error.status !== 401) {
+  if (status !== 401) {
     const toast = useToast()
 
     toast.add({
-      title: getErrorTitle(error.status),
-      description: error.message || 'Ocurrió un error inesperado. Por favor intenta de nuevo.',
+      title: getErrorTitle(status),
+      description: message,
       color: 'error'
     })
   }
 
-  // 3. Preparado para futura integración con sistema de reportes
-  // Descomenta cuando implementes useErrorReporting
-  // if (import.meta.env.PROD && error.status && error.status >= 500) {
-  //   const errorReporting = useErrorReporting()
-  //   errorReporting.report(error, { context })
-  // }
+  return message
 }
 
 /**

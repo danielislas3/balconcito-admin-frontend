@@ -1,4 +1,5 @@
 import type { AuthUser } from '~/stores/auth'
+import { formatErrorMessage } from '~/utils/errorHandler'
 
 export const useAuth = () => {
   const authStore = useAuthStore()
@@ -21,15 +22,15 @@ export const useAuth = () => {
       })
 
       return response
-    } catch (error: unknown) {
-      const err = error as { data?: { message?: string } }
+    } catch (err: unknown) {
+      const message = formatErrorMessage(err)
       toast.add({
         title: 'Error al iniciar sesión',
-        description: err.data?.message || 'Credenciales incorrectas',
+        description: message,
         color: 'error',
         icon: 'i-lucide-alert-circle'
       })
-      throw error
+      throw err
     }
   }
 
